@@ -68,8 +68,8 @@ public class DrawGUI extends JFrame {
         class ShapeManager implements ItemListener {
             DrawGUI gui;
 
-            abstract class ShapeDrawer
-                    extends MouseAdapter implements MouseMotionListener {
+            @SuppressWarnings("unused")
+            abstract class ShapeDrawer extends MouseAdapter implements MouseMotionListener {        
                 public void mouseMoved(MouseEvent e) {
                     /* ignore */ }
             }
@@ -236,4 +236,44 @@ public class DrawGUI extends JFrame {
         // this.show(); //awt
         this.setVisible(true); // ++
     }
+
+    /** API method: get fg color ...*/
+	public String getFGColor() {
+        if (color == Color.black) {
+            return "Black";
+        } else if (color == Color.green) {
+            return "Green";
+        } else if (color == Color.red) {
+            return "Red";
+        } else if (color == Color.blue) {
+            return "Blue";
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @param new_color
+     * @throws ColorException
+     */
+    public void setFGColor(String new_color) throws ColorException{
+        switch(new_color.toLowerCase()) {
+            case "black":
+                color = Color.black;
+                break;
+            case "green":
+            color = Color.green;
+                break;
+            case "red":
+                color = Color.red;
+                break;
+            case  "blue":
+                color = Color.blue;
+                break;
+            default:
+                throw new ColorException("Invalid color!");
+        }
+    }
+    
+
 }
