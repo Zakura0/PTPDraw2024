@@ -11,6 +11,20 @@ import javax.swing.JLabel;
 public class Draw {
     public static void main(String[] args) {
         Draw app = new Draw();
+        /* 
+        DrawGUI gui = app.window;
+
+        try {
+            gui.setBGColor("white");
+            gui.setFGColor("black");
+            Point upperLeft = new Point(250,500);
+            Point lowerRight = new Point(500,250);
+            app.drawRectangle(upperLeft, lowerRight);
+        }
+        catch (ColorException e){
+            System.err.println("invalid color");
+        } */
+        //drawRectangle funktioniert nicht wie gedacht??
     }
 
     public Draw() {
@@ -354,7 +368,17 @@ public class Draw {
         }
 
         public void drawRectangle(Point upper_left, Point lower_right){
-            //TODO
+            String  fgColorString = window.getFGColor();
+            Color fgColor = Color.decode(fgColorString);
+
+            int x = Math.min(upper_left.x, lower_right.x);
+            int y = Math.min(upper_left.y, lower_right.y);
+            int width = Math.abs(lower_right.x - upper_left.x);
+            int height = Math.abs(lower_right.y - upper_left.y);
+
+            Graphics g = window.getGraphics();
+            g.setColor(fgColor);
+            g.drawRect(x, y, width, height);
         }
 
         public void drawOval(Point upper_left, Point lower_right){
