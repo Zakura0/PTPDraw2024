@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.JFrame;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import java.lang.reflect.Field;
 
 /*
  * @authors Giahung Bui 7557640 , Ben Woller 
@@ -15,21 +16,11 @@ import javax.swing.JLabel;
 public  class Draw {
     public static void main(String[] args) {
         Draw app = new Draw();
-        
         DrawGUI gui = app.window;
-
-        try {
-            gui.setBGColor("white");
-            gui.setFGColor("red");
-            gui.setSize(800,400);
-            Point upperLeft = new Point(250,200);
-            Point lowerRight = new Point(500,100);
-            app.drawRectangle(upperLeft, lowerRight);
-            gui.setVisible(true);
-        }
-        catch (ColorException e){
-            System.err.println("invalid color");
-        } 
+        Point upperLeft = new Point(250,200);
+        Point lowerRight = new Point(500,100);
+        app.drawRectangle(upperLeft, lowerRight);
+        gui.setVisible(true);
         //drawRectangle funktioniert nicht wie gedacht??
     }
 
@@ -254,13 +245,13 @@ public  class Draw {
     
                 // user selected new color => store new color in DrawGUIs
                 public void itemStateChanged(ItemEvent e) {
-                    if (e.getItem().equals("Black")) {
+                    if (e.getItem().equals("black")) {
                         color = Color.black;
-                    } else if (e.getItem().equals("Green")) {
+                    } else if (e.getItem().equals("green")) {
                         color = Color.green;
-                    } else if (e.getItem().equals("Red")) {
+                    } else if (e.getItem().equals("red")) {
                         color = Color.red;
-                    } else if (e.getItem().equals("Blue")) {
+                    } else if (e.getItem().equals("blue")) {
                         color = Color.blue;
                     }
                 }
@@ -285,13 +276,13 @@ public  class Draw {
         /** API method: get fg color ...*/
         public String getFGColor() {
             if (color == Color.black) {
-                return "Black";
+                return "black";
             } else if (color == Color.green) {
-                return "Green";
+                return "green";
             } else if (color == Color.red) {
-                return "Red";
+                return "red";
             } else if (color == Color.blue) {
-                return "Blue";
+                return "blue";
             } else {
                 return null;
             }
@@ -362,8 +353,8 @@ public  class Draw {
                 if (bgColor == null){
                     return null;
                 }
-                String [] colorSign = {"Black", "Green", "Red", "Blue", "default (white)"};
-                Color [] colors = {Color.BLACK, Color.GREEN, Color.RED, Color.BLUE, Color.WHITE};
+                String [] colorSign = {"black", "green", "red", "blue", "default (white)"};
+                Color [] colors = {Color.black, Color.green, Color.red, Color.blue, Color.white};
                 for (int i = 0; i < colors.length; i++) {
                     if (bgColor.equals(colors[i])){
                         return colorSign[i];
@@ -374,8 +365,8 @@ public  class Draw {
         }
 
         public void drawRectangle(Point upper_left, Point lower_right){
-            String  fgColorString = window.getFGColor();
-            Color fgColor = Color.decode(fgColorString);
+            String fgColorToString = window.getFGColor();
+            Color fgColor = StringToColor(fgColorToString);
 
             int x = Math.min(upper_left.x, lower_right.x);
             int y = Math.min(upper_left.y, lower_right.y);
@@ -389,8 +380,8 @@ public  class Draw {
         }
 
         public void drawOval(Point upper_left, Point lower_right){
-            String  fgColorString = window.getFGColor();
-            Color fgColor = Color.decode(fgColorString);
+            String fgColorToString = window.getFGColor();
+            Color fgColor = StringToColor(fgColorToString);
 
             int x = Math.min(upper_left.x, lower_right.x);
             int y = Math.min(upper_left.y, lower_right.y);
@@ -404,8 +395,8 @@ public  class Draw {
         }
         
         public void drawPolyLine(java.util.List<Point> points){
-            String  fgColorString = window.getFGColor();
-            Color fgColor = Color.decode(fgColorString);
+            String fgColorToString = window.getFGColor();
+            Color fgColor = StringToColor(fgColorToString);
             Graphics g = window.getGraphics();
             g.setPaintMode();
             g.setColor(fgColor);
@@ -434,5 +425,16 @@ public  class Draw {
 
          public void autoDraw() {
             
-         }        
+         }
+         
+        public Color StringToColor(String nm){
+        Color color;
+        try {
+            Field field = Class.forName("java.awt.Color").getField(nm);
+            color = (Color)field.get(null);
+        } catch (Exception e) {
+            color = null; 
+        }
+        return color;
+    }
 }
