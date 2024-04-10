@@ -22,9 +22,10 @@ public  class Draw {
             gui.setBGColor("white");
             gui.setFGColor("red");
             gui.setSize(800,400);
-            Point upperLeft = new Point(250,500);
-            Point lowerRight = new Point(500,250);
+            Point upperLeft = new Point(250,200);
+            Point lowerRight = new Point(500,100);
             app.drawRectangle(upperLeft, lowerRight);
+            gui.setVisible(true);
         }
         catch (ColorException e){
             System.err.println("invalid color");
@@ -275,7 +276,7 @@ public  class Draw {
             });
     
             // Finally, set the size of the window, and pop it up
-            this.setSize(500, 400);
+            this.setSize(800, 400);
             this.setBackground(Color.white);
             // this.show(); //awt
             this.setVisible(true); // ++
@@ -338,18 +339,18 @@ public  class Draw {
         public void setBGColor(String new_color) throws ColorException{
             switch(new_color.toLowerCase()) {
                 case "black":
-                    this.setBackground(Color.BLACK);;
+                    this.setBackground(Color.black);;
                     break;
                 case "green":
-                this.setBackground(Color.GREEN);
+                this.setBackground(Color.green);
                     break;
                 case "red":
-                    this.setBackground(Color.RED);
+                    this.setBackground(Color.red);
                     break;
                 case  "blue":
-                    this.setBackground(Color.BLUE);
+                    this.setBackground(Color.blue);
                 case "white":
-                    this.setBackground(Color.WHITE);
+                    this.setBackground(Color.white);
                     break;
                 default:
                     throw new ColorException("Invalid color!");
@@ -382,17 +383,40 @@ public  class Draw {
             int height = Math.abs(lower_right.y - upper_left.y);
 
             Graphics g = window.getGraphics();
+            g.setPaintMode();
             g.setColor(fgColor);
             g.drawRect(x, y, width, height);
         }
 
         public void drawOval(Point upper_left, Point lower_right){
-            //TODO
+            String  fgColorString = window.getFGColor();
+            Color fgColor = Color.decode(fgColorString);
+
+            int x = Math.min(upper_left.x, lower_right.x);
+            int y = Math.min(upper_left.y, lower_right.y);
+            int width = Math.abs(lower_right.x - upper_left.x);
+            int height = Math.abs(lower_right.y - upper_left.y);
+
+            Graphics g = window.getGraphics();
+            g.setPaintMode();
+            g.setColor(fgColor);
+            g.drawOval(x, y, width, height);
         }
         
         public void drawPolyLine(java.util.List<Point> points){
-            //TODO
-        }
+            String  fgColorString = window.getFGColor();
+            Color fgColor = Color.decode(fgColorString);
+            Graphics g = window.getGraphics();
+            g.setPaintMode();
+            g.setColor(fgColor);
+            
+                for (int i = 1; i < points.size(); i++) {
+                    Point prevPoint = points.get(i - 1);
+                    Point currPoint = points.get(i);
+                    g.drawLine(prevPoint.x, prevPoint.y, currPoint.x, currPoint.y);
+                }
+            }
+        
 
         
         public Image getDrawing(){
@@ -409,9 +433,6 @@ public  class Draw {
          }
 
          public void autoDraw() {
-            //TODO after drawRectangle...
-         }
-
-
-        
+            
+         }        
 }
