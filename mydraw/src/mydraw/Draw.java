@@ -11,7 +11,7 @@ import javax.swing.JLabel;
 public class Draw {
     public static void main(String[] args) {
         Draw app = new Draw();
-        /* 
+        /*
         DrawGUI gui = app.window;
 
         try {
@@ -43,7 +43,7 @@ public class Draw {
             System.exit(0);
         }
     }
-    @SuppressWarnings("serial")
+    
     public class DrawGUI extends JFrame {
         Draw app; // A reference to the application, to send commands to.
         Color color;
