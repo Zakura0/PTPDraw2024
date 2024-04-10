@@ -12,22 +12,23 @@ import javax.swing.JLabel;
  * @authors Giahung Bui 7557640 , Ben Woller 
  */
 
-public class Draw {
+public  class Draw {
     public static void main(String[] args) {
         Draw app = new Draw();
-        /* 
+        
         DrawGUI gui = app.window;
 
         try {
             gui.setBGColor("white");
-            gui.setFGColor("black");
+            gui.setFGColor("red");
+            gui.setSize(800,400);
             Point upperLeft = new Point(250,500);
             Point lowerRight = new Point(500,250);
             app.drawRectangle(upperLeft, lowerRight);
         }
         catch (ColorException e){
             System.err.println("invalid color");
-        } */
+        } 
         //drawRectangle funktioniert nicht wie gedacht??
     }
 
