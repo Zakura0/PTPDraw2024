@@ -8,10 +8,14 @@ import javax.swing.JFrame;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
+/*
+ * @authors Giahung Bui 7557640 , Ben Woller 
+ */
+
 public class Draw {
     public static void main(String[] args) {
         Draw app = new Draw();
-        /*
+        /* 
         DrawGUI gui = app.window;
 
         try {
