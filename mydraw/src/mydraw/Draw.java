@@ -2,12 +2,13 @@ package mydraw;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import java.lang.reflect.Field;
+
 
 /*
  * @authors Giahung Bui 7557640 , Ben Woller 
@@ -15,13 +16,11 @@ import java.lang.reflect.Field;
 
 public  class Draw {
     public static void main(String[] args) {
+        Point upper_left = new Point(100, 100);
+        Point lower_right = new Point(200,50);
+        
         Draw app = new Draw();
-        DrawGUI gui = app.window;
-        Point upperLeft = new Point(250,200);
-        Point lowerRight = new Point(500,100);
-        app.drawRectangle(upperLeft, lowerRight);
-        gui.setVisible(true);
-        //drawRectangle funktioniert nicht wie gedacht??
+        app.drawRectangle(upper_left, lower_right);
     }
 
     public Draw() {
@@ -104,7 +103,7 @@ public  class Draw {
             class ShapeManager implements ItemListener {
                 DrawGUI gui;
     
-                @SuppressWarnings("unused")
+
                 abstract class ShapeDrawer extends MouseAdapter implements MouseMotionListener {        
                     public void mouseMoved(MouseEvent e) {
                         /* ignore */ }
@@ -245,13 +244,13 @@ public  class Draw {
     
                 // user selected new color => store new color in DrawGUIs
                 public void itemStateChanged(ItemEvent e) {
-                    if (e.getItem().equals("black")) {
+                    if (e.getItem().equals("Black")) {
                         color = Color.black;
-                    } else if (e.getItem().equals("green")) {
+                    } else if (e.getItem().equals("Green")) {
                         color = Color.green;
-                    } else if (e.getItem().equals("red")) {
+                    } else if (e.getItem().equals("Red")) {
                         color = Color.red;
-                    } else if (e.getItem().equals("blue")) {
+                    } else if (e.getItem().equals("Blue")) {
                         color = Color.blue;
                     }
                 }
@@ -365,41 +364,31 @@ public  class Draw {
         }
 
         public void drawRectangle(Point upper_left, Point lower_right){
-            String fgColorToString = window.getFGColor();
-            Color fgColor = StringToColor(fgColorToString);
 
             int x = Math.min(upper_left.x, lower_right.x);
             int y = Math.min(upper_left.y, lower_right.y);
             int width = Math.abs(lower_right.x - upper_left.x);
             int height = Math.abs(lower_right.y - upper_left.y);
+            
+            Graphics g = window.getGraphics();  
 
-            Graphics g = window.getGraphics();
+            g.setColor(Color.red);
             g.setPaintMode();
-            g.setColor(fgColor);
             g.drawRect(x, y, width, height);
+            
         }
 
         public void drawOval(Point upper_left, Point lower_right){
-            String fgColorToString = window.getFGColor();
-            Color fgColor = StringToColor(fgColorToString);
-
-            int x = Math.min(upper_left.x, lower_right.x);
-            int y = Math.min(upper_left.y, lower_right.y);
-            int width = Math.abs(lower_right.x - upper_left.x);
-            int height = Math.abs(lower_right.y - upper_left.y);
-
-            Graphics g = window.getGraphics();
-            g.setPaintMode();
-            g.setColor(fgColor);
-            g.drawOval(x, y, width, height);
+            //TODO
         }
         
         public void drawPolyLine(java.util.List<Point> points){
-            String fgColorToString = window.getFGColor();
-            Color fgColor = StringToColor(fgColorToString);
+            String fgColor = window.getFGColor();
+            Color c = Color.getColor(fgColor);
+
             Graphics g = window.getGraphics();
             g.setPaintMode();
-            g.setColor(fgColor);
+            g.setColor(c);
             
                 for (int i = 1; i < points.size(); i++) {
                     Point prevPoint = points.get(i - 1);
@@ -426,15 +415,5 @@ public  class Draw {
          public void autoDraw() {
             
          }
-         
-        public Color StringToColor(String nm){
-        Color color;
-        try {
-            Field field = Class.forName("java.awt.Color").getField(nm);
-            color = (Color)field.get(null);
-        } catch (Exception e) {
-            color = null; 
-        }
-        return color;
-    }
+        
 }
