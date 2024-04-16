@@ -2,8 +2,7 @@ package mydraw;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 import javax.swing.JFrame;
 import javax.swing.JButton;
@@ -14,18 +13,15 @@ import javax.swing.JLabel;
  * @authors Giahung Bui 7557640 , Ben Woller 
  */
 
-public  class Draw {
+public class Draw {
+    DrawAPIs api;
     public static void main(String[] args) {
-        Point upper_left = new Point(100, 100);
-        Point lower_right = new Point(200,50);
-        
-        Draw app = new Draw();
-        app.drawRectangle(upper_left, lower_right);
+        new Draw();
     }
 
     public Draw() {
         window = new DrawGUI(this);
-    }
+        }
 
     protected DrawGUI window;
 
@@ -43,6 +39,7 @@ public  class Draw {
     public class DrawGUI extends JFrame {
         Draw app; // A reference to the application, to send commands to.
         Color color;
+        
     
         /**
          * The GUI constructor does all the work of creating the GUI and setting
@@ -53,6 +50,7 @@ public  class Draw {
             app = application; // Remember the application reference
             color = Color.black; // the current drawing color
             // selector for drawing modes
+
             Choice shape_chooser = new Choice();
             shape_chooser.add("Scribble");
             shape_chooser.add("Rectangle");
@@ -79,7 +77,7 @@ public  class Draw {
             this.add(clear);
             this.add(quit);
             this.add(auto);
-    
+            
             // Here's a local class used for action listeners for the buttons
             class DrawActionListener implements ActionListener {
                 private String command;
@@ -102,8 +100,8 @@ public  class Draw {
             // depending on the shape mode currently set
             class ShapeManager implements ItemListener {
                 DrawGUI gui;
-    
 
+                @SuppressWarnings("unused")
                 abstract class ShapeDrawer extends MouseAdapter implements MouseMotionListener {        
                     public void mouseMoved(MouseEvent e) {
                         /* ignore */ }
@@ -264,156 +262,96 @@ public  class Draw {
                     app.doCommand("quit");
                 }
             });
-    
+            
             // Finally, set the size of the window, and pop it up
             this.setSize(800, 400);
             this.setBackground(Color.white);
             // this.show(); //awt
             this.setVisible(true); // ++
-        }
-    
-        /** API method: get fg color ...*/
-        public String getFGColor() {
-            if (color == Color.black) {
-                return "black";
-            } else if (color == Color.green) {
-                return "green";
-            } else if (color == Color.red) {
-                return "red";
-            } else if (color == Color.blue) {
-                return "blue";
-            } else {
-                return null;
-            }
-        }
-    
-        /**
-         * @param new_color
-         * @throws ColorException
-         */
-        public void setFGColor(String new_color) throws ColorException{
-            switch(new_color.toLowerCase()) {
-                case "black":
-                    color = Color.black;
-                    break;
-                case "green":
-                color = Color.green;
-                    break;
-                case "red":
-                    color = Color.red;
-                    break;
-                case  "blue":
-                    color = Color.blue;
-                    break;
-                default:
-                    throw new ColorException("Invalid color!");
-            }
-        }
-    
-        public int getWidth() {
-            return this.getSize().width;
-        }
-    
-        public int getHeight() {
-            return this.getSize().height;
-        }
-    
-        public void setWidth(int width) throws SizeException{
-            this.setSize(new Dimension(width, this.getSize().height));
-        }
-    
-        public void setHeight(int height) throws SizeException {
-            this.setSize(new Dimension(this.getSize().width, height));
-        }
+        } 
+    }
+    /** API method: get height ...
+	    more details here ...*/
 
-        public void setBGColor(String new_color) throws ColorException{
-            switch(new_color.toLowerCase()) {
-                case "black":
-                    this.setBackground(Color.black);;
-                    break;
-                case "green":
-                this.setBackground(Color.green);
-                    break;
-                case "red":
-                    this.setBackground(Color.red);
-                    break;
-                case  "blue":
-                    this.setBackground(Color.blue);
-                case "white":
-                    this.setBackground(Color.white);
-                    break;
-                default:
-                    throw new ColorException("Invalid color!");
-            }
-        }
-    
-            public String getBGColor(){
-                Color bgColor = this.getBackground();
-                if (bgColor == null){
-                    return null;
-                }
-                String [] colorSign = {"black", "green", "red", "blue", "default (white)"};
-                Color [] colors = {Color.black, Color.green, Color.red, Color.blue, Color.white};
-                for (int i = 0; i < colors.length; i++) {
-                    if (bgColor.equals(colors[i])){
-                        return colorSign[i];
-                    }
-                }
-                return null;
-            }
-        }
-
-        public void drawRectangle(Point upper_left, Point lower_right){
-
-            int x = Math.min(upper_left.x, lower_right.x);
-            int y = Math.min(upper_left.y, lower_right.y);
-            int width = Math.abs(lower_right.x - upper_left.x);
-            int height = Math.abs(lower_right.y - upper_left.y);
-            
-            Graphics g = window.getGraphics();  
-
-            g.setColor(Color.red);
-            g.setPaintMode();
-            g.drawRect(x, y, width, height);
-            
-        }
-
-        public void drawOval(Point upper_left, Point lower_right){
-            //TODO
-        }
-        
-        public void drawPolyLine(java.util.List<Point> points){
-            String fgColor = window.getFGColor();
-            Color c = Color.getColor(fgColor);
-
-            Graphics g = window.getGraphics();
-            g.setPaintMode();
-            g.setColor(c);
-            
-                for (int i = 1; i < points.size(); i++) {
-                    Point prevPoint = points.get(i - 1);
-                    Point currPoint = points.get(i);
-                    g.drawLine(prevPoint.x, prevPoint.y, currPoint.x, currPoint.y);
-                }
-            }
-        
-
-        
-        public Image getDrawing(){
-            BufferedImage image = new BufferedImage(window.getWidth(), window.getHeight(), BufferedImage.TYPE_INT_RGB);
-            Graphics2D g = image.createGraphics();
-            window.paint(g);
-            g.dispose();
-            return image;
-        }
-
-        public void clear() {
-            window.getContentPane().removeAll();
-            window.repaint();
-         }
-
-         public void autoDraw() {
-            
-         }
-        
+	public int getHeight() {
+        return api.getHeight();
+     }
+     
+     /** API method: set height ...*/
+     public void setHeight (int height) throws SizeException {
+        // do it ...
+     }
+ 
+         /** API method: get width ...*/
+     public int getWidth() {
+        return 0;
+     }
+     
+     /** API method: set width ...*/
+     public void setWidth (int width) throws SizeException {
+        // do it ...
+     }
+ 
+     /** API method: set fg color ...*/
+     public void setFGColor(String new_color) throws ColorException {
+        // do it ...
+     }
+     
+     /** API method: get fg color ...*/
+     public String getFGColor() {
+        return null;
+     }
+ 
+     /** API method: set bg color ...*/
+     public void setBGColor(String new_color) throws ColorException {
+        // do it ...
+     }
+     
+     /** API method: get bg color ...*/
+     public String getBGColor() {
+        return null;
+     }
+ 
+     /** API method: get drawing ...*/
+     public Image getDrawing() {
+        return null;
+     }
+ 
+     /** API method: writeImage ...*/
+     public void writeImage(Image img, String filename) throws IOException {
+        // do it ...
+     }
+ 
+     /** API method: readImage ...*/
+     public Image readImage(String filename) throws IOException {
+            return null;
+     }
+ 
+     /** API method: clear ...*/
+     public void clear() {
+        // do it ...
+     }
+ 
+     /** API - test method: paint every shape ...*/
+     public void autoDraw() {
+        // do it ...
+        // paint your testimage now using API methods
+     }
+     
+     
+     /** API: paint a rectangle ...*/
+     public void drawRectangle(Point upper_left, Point lower_right) {
+         // do it ...
+     }
+     
+     /** API: paint an oval ...*/
+     public void drawOval(Point upper_left, Point lower_right) {
+        // do it ...
+     }
+     
+     /** API: paint a polyline/scribble ...*/
+     public void drawPolyLine(java.util.List <Point> points) {
+        // do it ...
+     }
+     
 }
