@@ -23,11 +23,7 @@ import javax.swing.*;
 
 public class Draw {
     public static void main(String[] args) {
-<<<<<<< HEAD
-       Draw draw = new Draw();
-=======
-        new Draw();
->>>>>>> 470115bb648cc7f480c0e3dcc60bc55aa9395eb6
+       Draw = new Draw();
     }
 
     public Draw() {
