@@ -1,4 +1,7 @@
 package test;
+/*
+* @authors Giahung Bui 7557640 , Ben Woller 7740402
+*/
 
 import mydraw.ColorException;
 import mydraw.Draw;
@@ -15,126 +18,53 @@ class DrawTests {
 
     Draw draw = new Draw();
 
-    Color strToCol(String colorSign) {
-        return switch(colorSign.toLowerCase()) {
-            case "black" -> Color.black;
-            case "green" -> Color.green;
-            case "red" -> Color.red;
-            case "blue" -> Color.blue;
-            case "white" -> Color.white;
-            default -> null;
-        };
-    }
-
-    String colToStr(Color color) {
-        if (color == Color.black) {
-            return "black";
-        }
-        if (color == Color.green) {
-            return "green";
-        }
-        if (color == Color.red) {
-            return "red";
-        }
-        if (color == Color.blue) {
-            return "blue";
-        }
-        if (color == Color.white) {
-            return "white";
-        }
-        else {
-            return null;
-        }
-    }
-
     @Test
-    void getWidthTest() {
+    void WidthTest() throws SizeException {
         int expectedWidth, actualWidth;
 
         expectedWidth = 100;
-        Draw.DrawGUI.setSize(expectedWidth, 200);
+        draw.setWidth(expectedWidth);
         actualWidth = draw.getWidth();
         assertEquals(expectedWidth, actualWidth);
 
-        expectedWidth = 0;
-        window.setSize(expectedWidth, 200);
-        actualWidth = draw.getWidth();
-        assertEquals(expectedWidth, actualWidth);
-
-        expectedWidth = -10;
-        window.setSize(expectedWidth, 200);
-        actualWidth = window.getWidth();
-        assertEquals(expectedWidth, actualWidth);
+        assertThrows(SizeException.class, () ->
+                draw.setWidth(20));
     }
-
     @Test
-    void getHeightTest() {
+    void HeightTest() throws SizeException {
         int expectedHeight, actualHeight;
 
-        expectedHeight = 200;
-        window.setSize(100, expectedHeight);
-        actualHeight = window.getHeight();
+        expectedHeight = 100;
+        draw.setHeight(expectedHeight);
+        actualHeight = draw.getHeight();
         assertEquals(expectedHeight, actualHeight);
 
-        expectedHeight = 0;
-        window.setSize(100, expectedHeight);
-        actualHeight = window.getHeight();
-        assertEquals(expectedHeight, actualHeight);
-
-        expectedHeight = -10;
-        window.setSize(100, expectedHeight);
-        actualHeight = window.getHeight();
-        assertEquals(expectedHeight, actualHeight);
+        assertThrows(SizeException.class, () ->
+                draw.setHeight(20));
     }
 
     @Test
-    void setWidthTest() throws SizeException {
-        int expectedWidth = 300;
-        window.setWidth(expectedWidth);
-        int actualWidth = window.getSize().width;
-        assertEquals(expectedWidth, actualWidth);
-    }
+    void FGColorTest() throws ColorException {
+        String expectedColor, actualColor;
 
-    @Test
-    void setHeightTest() throws SizeException {
-        int expectedHeight = 400;
-        window.setHeight(expectedHeight);
-        int actualHeight = window.getSize().height;
-        assertEquals(expectedHeight, actualHeight);
-    }
-
-    @Test
-    void getFGColorTest() throws ColorException {
-        String expectedColor = "red";
-        window.setForeground(strToCol(expectedColor));
-        String actualColor = window.getFGColor();
+        expectedColor = "red";
+        draw.setFGColor(expectedColor);
+        actualColor = draw.getFGColor();
         assertEquals(expectedColor, actualColor);
-    }
 
-    @Test
-    void setFGColorTest() throws ColorException {
-        String expectedColor = "blue";
-        window.setFGColor(expectedColor);
-        String actualColor = colToStr(window.getBackground());
-        assertEquals(expectedColor, actualColor);
+        assertThrows(ColorException.class, () ->
+                draw.setFGColor("yellow"));
     }
 
     @Test
     void getBGColorTest() throws ColorException {
         String expectedColor = "red";
-        window.setBackground(strToCol(expectedColor));
-        String actualColor = window.getBGColor();
+        draw.setBGColor(expectedColor);
+        String actualColor = draw.getBGColor();
         assertEquals(expectedColor, actualColor);
-    }
 
-    @Test
-    void setBGColorTest() throws ColorException {
-        String expectedColor = "blue";
-        window.setBGColor(expectedColor);
-        String actualColor = colToStr(window.getBackground());
-        assertEquals(expectedColor, actualColor);
-        // TODO: test fails --> vermutlich wegen
-        //       Unterschieden in getFG und getBG
+        assertThrows(ColorException.class, () ->
+                draw.setBGColor("yellow"));
     }
 
     @Test
