@@ -15,15 +15,13 @@ import java.io.IOException;
 import javax.swing.*;
 
 
-
-
 /*
  * @authors Giahung Bui 7557640 , Ben Woller 
  */
 
 public class Draw {
     public static void main(String[] args) {
-       Draw = new Draw();
+       Draw draw = new Draw();
     }
 
     public Draw() {
@@ -39,6 +37,9 @@ public class Draw {
         } else if (command.equals("quit")) {
             window.dispose();
             System.exit(0);
+        }
+        else if (command.equals("auto")){
+            autoDraw();
         }
     }
 
@@ -381,7 +382,17 @@ public void setBGColor(String new_color) throws ColorException{
 
 
     public void drawOval(Point upper_left, Point lower_right){
-        //TODO
+        String fgColor = this.getFGColor();
+        Color c = Color.getColor(fgColor);
+
+        int x = Math.min(upper_left.x, lower_right.x);
+        int y = Math.min(upper_left.y, lower_right.y);
+        int width = Math.abs(lower_right.x - upper_left.x); 
+        int height = Math.abs(lower_right.y - upper_left.y);
+
+        Graphics g = window.getGraphics();
+        g.setColor(c);
+        g.drawOval(x, y, width, height);
     }
 
     public void drawPolyLine(java.util.List<Point> points){
@@ -408,12 +419,12 @@ public void setBGColor(String new_color) throws ColorException{
     }
 
     public void writeImage(Image img, String filename) throws IOException {
-        //TODO
+        MyBMPFile.write(filename, img);
     }
 
 
     public Image readImage(String filename) throws IOException {
-            return null; //TODO
+            return MyBMPFile.read(filename);
     }
 
     public void clear() {
@@ -422,7 +433,15 @@ public void setBGColor(String new_color) throws ColorException{
     }
 
     public void autoDraw() {
-    //TODO
+    Point R_upper_left = new Point(100,200);
+    Point R_lower_right = new Point(200, 100);
+    drawRectangle(R_upper_left, R_lower_right);
+    try {
+        writeImage(getDrawing(), "test.bmp");
+    } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+    }
         } 
 }
     
