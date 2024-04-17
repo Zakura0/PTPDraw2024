@@ -139,8 +139,6 @@ public class DrawAPIs extends Draw{
             }
         }
     
-
-    
     public Image getDrawing(){
         BufferedImage image = new BufferedImage(window.getWidth(), window.getHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics2D g = image.createGraphics();

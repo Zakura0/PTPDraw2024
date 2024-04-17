@@ -279,79 +279,79 @@ public class Draw {
      
      /** API method: set height ...*/
      public void setHeight (int height) throws SizeException {
-        // do it ...
-     }
+        api.setHeight(height);
+        }
  
          /** API method: get width ...*/
      public int getWidth() {
-        return 0;
+        return api.getWidth();
      }
      
      /** API method: set width ...*/
      public void setWidth (int width) throws SizeException {
-        // do it ...
-     }
+        api.setWidth(width);
+    }
  
      /** API method: set fg color ...*/
      public void setFGColor(String new_color) throws ColorException {
-        // do it ...
-     }
+        api.setFGColor(new_color);
+    }
      
      /** API method: get fg color ...*/
      public String getFGColor() {
-        return null;
+        return api.getFGColor();
      }
  
      /** API method: set bg color ...*/
      public void setBGColor(String new_color) throws ColorException {
-        // do it ...
+        api.setBGColor(new_color);
      }
      
      /** API method: get bg color ...*/
      public String getBGColor() {
-        return null;
+        return api.getBGColor();
      }
  
      /** API method: get drawing ...*/
      public Image getDrawing() {
-        return null;
+        return api.getDrawing();
      }
  
      /** API method: writeImage ...*/
      public void writeImage(Image img, String filename) throws IOException {
-        // do it ...
+        api.writeImage(img, filename);
      }
  
      /** API method: readImage ...*/
      public Image readImage(String filename) throws IOException {
-            return null;
+            return api.readImage(filename);
      }
  
      /** API method: clear ...*/
      public void clear() {
-        // do it ...
+        api.clear();
      }
  
      /** API - test method: paint every shape ...*/
      public void autoDraw() {
-        // do it ...
+        api.autoDraw();
         // paint your testimage now using API methods
      }
      
      
      /** API: paint a rectangle ...*/
      public void drawRectangle(Point upper_left, Point lower_right) {
-         // do it ...
+         api.drawRectangle(upper_left, lower_right);
      }
      
      /** API: paint an oval ...*/
      public void drawOval(Point upper_left, Point lower_right) {
-        // do it ...
+        api.drawOval(upper_left, lower_right);
      }
      
      /** API: paint a polyline/scribble ...*/
      public void drawPolyLine(java.util.List <Point> points) {
-        // do it ...
+        api.drawPolyLine(points);
      }
      
 }
