@@ -14,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class DrawTests {
 
     Draw draw = new Draw();
-    Draw.DrawGUI window = draw.new DrawGUI(draw);
 
     Color strToCol(String colorSign) {
         return switch(colorSign.toLowerCase()) {
@@ -53,13 +52,13 @@ class DrawTests {
         int expectedWidth, actualWidth;
 
         expectedWidth = 100;
-        window.setSize(expectedWidth, 200);
-        actualWidth = window.getWidth();
+        Draw.DrawGUI.setSize(expectedWidth, 200);
+        actualWidth = draw.getWidth();
         assertEquals(expectedWidth, actualWidth);
 
         expectedWidth = 0;
         window.setSize(expectedWidth, 200);
-        actualWidth = window.getWidth();
+        actualWidth = draw.getWidth();
         assertEquals(expectedWidth, actualWidth);
 
         expectedWidth = -10;

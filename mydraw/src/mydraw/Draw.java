@@ -23,8 +23,7 @@ import javax.swing.*;
 
 public class Draw {
     public static void main(String[] args) {
-        Draw draw = new Draw();
-        System.out.println(draw.getFGColor());
+        new Draw();
     }
 
     public Draw() {
