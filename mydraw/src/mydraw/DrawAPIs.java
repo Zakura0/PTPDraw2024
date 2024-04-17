@@ -1,7 +1,7 @@
 package mydraw;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-
+import java.io.IOException;
 
 /**
  * @author Giahung
@@ -12,7 +12,8 @@ public class DrawAPIs extends Draw{
     Color color;
     DrawGUI window;
 
-    public DrawAPIs() {
+    public DrawAPIs(Draw draw) {
+        
     }
 
     /** API method: get fg color ...*/
@@ -147,12 +148,21 @@ public class DrawAPIs extends Draw{
         return image;
     }
 
+         public void writeImage(Image img, String filename) throws IOException {
+            //TODO
+         }
+     
+
+         public Image readImage(String filename) throws IOException {
+                return null; //TODO
+         }
+
     public void clear() {
         window.getContentPane().removeAll();
         window.repaint();
      }
 
      public void autoDraw() {
-        
+        //TODO
      }
 }

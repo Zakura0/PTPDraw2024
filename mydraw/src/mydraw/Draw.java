@@ -14,15 +14,16 @@ import javax.swing.JLabel;
  */
 
 public class Draw {
-    DrawAPIs api;
     public static void main(String[] args) {
-        new Draw();
+        Draw draw = new Draw();
+        System.out.println(draw.getFGColor());
     }
 
     public Draw() {
         window = new DrawGUI(this);
+        api = new DrawAPIs(this);
         }
-
+    protected DrawAPIs api;
     protected DrawGUI window;
 
     public void doCommand(String command) {
