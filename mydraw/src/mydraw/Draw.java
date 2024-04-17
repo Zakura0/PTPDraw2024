@@ -23,8 +23,7 @@ import javax.swing.*;
 
 public class Draw {
     public static void main(String[] args) {
-        Draw draw = new Draw();
-        System.out.println(draw.getFGColor());
+       Draw draw = new Draw();
     }
 
     public Draw() {
@@ -455,7 +454,7 @@ public void setBGColor(String new_color) throws ColorException{
     }
      
      /** API method: get fg color ...*/
-     public String getFGColor() {
+     public String getFGColor(){
         return window.getFGColor();
      }
  
