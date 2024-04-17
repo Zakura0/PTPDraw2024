@@ -322,10 +322,16 @@ public int getHeight() {
 }
 
 public void setWidth(int width) throws SizeException{
+    if (width < 50) {
+        throw new SizeException();
+    }
     window.setSize(new Dimension(width, window.getSize().height));
 }
 
 public void setHeight(int height) throws SizeException {
+    if (height < 50) {
+        throw new SizeException();
+    }
     window.setSize(new Dimension(window.getSize().width, height));
 }
 
@@ -381,7 +387,17 @@ public void setBGColor(String new_color) throws ColorException{
 
 
     public void drawOval(Point upper_left, Point lower_right){
-        //TODO
+        String fgColor = this.getFGColor();
+        Color c = Color.getColor(fgColor);
+
+        int x = Math.min(upper_left.x, lower_right.x);
+        int y = Math.min(upper_left.y, lower_right.y);
+        int width = Math.abs(lower_right.x - upper_left.x);
+        int height = Math.abs(lower_right.y - upper_left.y);
+
+        Graphics g = window.getGraphics();
+        g.setColor(c);
+        g.drawOval(x, y, width, height);
     }
 
     public void drawPolyLine(java.util.List<Point> points){
