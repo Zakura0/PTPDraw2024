@@ -18,12 +18,12 @@ import javax.swing.*;
 
 
 /*
- * @authors Giahung Bui 7557640 , Ben Woller 7740402
+ * @authors Giahung Bui 7557640 , Ben Woller 
  */
 
 public class Draw {
     public static void main(String[] args) {
-       new Draw();
+       Draw = new Draw();
     }
 
     public Draw() {
