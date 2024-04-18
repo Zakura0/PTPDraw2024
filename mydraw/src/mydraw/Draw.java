@@ -12,6 +12,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+
 import javax.swing.*;
 
 
@@ -22,24 +24,25 @@ import javax.swing.*;
  */
 
 public class Draw {
+    protected DrawGUI window;
+    protected JFrame j;
     public static void main(String[] args) {
-       Draw = new Draw();
+       new Draw();
     }
-
+    
     public Draw() {
         window = new DrawGUI(this);
         }
-    protected DrawGUI window;
-
+        
     public void doCommand(String command) {
         if (command.equals("clear")) {
-            Graphics g = window.getGraphics();
-            g.setColor(window.getBackground());
-            g.fillRect(0, 0, window.getSize().width, window.getSize().height);
+            clear();
         } else if (command.equals("quit")) {
             window.dispose();
             System.exit(0);
         }
+        else if (command.equals("auto"));
+        autoDraw();
     }
 
 public class DrawGUI extends JFrame {
@@ -314,11 +317,18 @@ public void setFGColor(String new_color) throws ColorException{
 }
 
 public int getWidth() {
-    return window.getSize().width;
+    if (window != null){
+        return window.getSize().width;
+    }
+    return 0;
+
 }
 
 public int getHeight() {
-    return window.getSize().height;
+    if (window != null){
+        return window.getSize().height;
+    }
+    return 0;
 }
 
 public void setWidth(int width) throws SizeException{
@@ -433,12 +443,22 @@ public void setBGColor(String new_color) throws ColorException{
     }
 
     public void clear() {
-    window.getContentPane().removeAll();
-    window.repaint();
+        window.getContentPane().getGraphics().clearRect(0, 0, window.getWidth(), window.getHeight());
+        window.repaint();
     }
-
+    
     public void autoDraw() {
-    //TODO
+        Point p1 = new Point(100,200);
+        Point p2 = new Point(200,100);
+        drawRectangle(p1, p2);
+        Point p3 = new Point(300,200);
+        Point p4 = new Point(400,100);
+        drawOval(p3, p4);
+        java.util.List<Point> points = new ArrayList<>();
+        points.add(new Point(500,200));
+        points.add(new Point(600,100));
+        points.add(new Point(700,200));
+        drawPolyLine(points);
         } 
 }
     
