@@ -22,7 +22,6 @@ import javax.swing.*;
 
 public class Draw {
     protected DrawGUI window;
-    protected JFrame j;
 
     public static void main(String[] args) {
         new Draw();
@@ -46,6 +45,7 @@ public class Draw {
     public class DrawGUI extends JFrame {
         Draw app; // A reference to the application, to send commands to.
         Color color;
+        DrawGUI gui;
 
         /**
          * The GUI constructor does all the work of creating the GUI and setting
@@ -69,7 +69,7 @@ public class Draw {
             color_chooser.add("Red");
             color_chooser.add("Blue");
 
-            // Create two buttons
+            // Create three buttons
             JButton clear = new JButton("Clear");
             JButton quit = new JButton("Quit");
             JButton auto = new JButton("auto");
@@ -425,18 +425,20 @@ public class Draw {
 
         public Image getDrawing() {
             BufferedImage image = new BufferedImage(window.getWidth(), window.getHeight(), BufferedImage.TYPE_INT_RGB);
-            Graphics2D g = image.createGraphics();
+            Graphics g = image.createGraphics();
             window.paint(g);
+           // g.drawImage(window.getGraphicsConfiguration().createCompatibleImage(window.getWidth(), window.getHeight()), 0, 0, null);
             g.dispose();
             return image;
+            
         }
 
         public void writeImage(Image img, String filename) throws IOException {
-            // TODO
+            MyBMPFile.write(filename, (BufferedImage) img);
         }
 
         public Image readImage(String filename) throws IOException {
-            return null; // TODO
+            return MyBMPFile.read(filename);
         }
 
         public void clear() {
@@ -456,6 +458,14 @@ public class Draw {
             points.add(new Point(600, 100));
             points.add(new Point(700, 200));
             drawPolyLine(points);
+            Image image = window.getDrawing();
+            try {
+                window.writeImage(image, "test.bmp");
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
         }
     }
 
