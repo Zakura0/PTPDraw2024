@@ -24,7 +24,8 @@ public class Draw {
     protected DrawGUI window;
 
     public static void main(String[] args) {
-        new Draw();
+       Draw draw = new Draw();
+       draw.clear();
     }
 
     public Draw() {
@@ -45,7 +46,6 @@ public class Draw {
     public class DrawGUI extends JFrame {
         Draw app; // A reference to the application, to send commands to.
         Color color;
-        DrawGUI gui;
 
         /**
          * The GUI constructor does all the work of creating the GUI and setting
@@ -57,17 +57,17 @@ public class Draw {
             color = Color.black; // the current drawing color
             // selector for drawing modes
 
-            Choice shape_chooser = new Choice();
-            shape_chooser.add("Scribble");
-            shape_chooser.add("Rectangle");
-            shape_chooser.add("Oval");
+            JComboBox<String> shape_chooser = new JComboBox<>();
+            shape_chooser.addItem("Scribble");
+            shape_chooser.addItem("Rectangle");
+            shape_chooser.addItem("Oval");
 
             // selector for drawing colors
-            Choice color_chooser = new Choice();
-            color_chooser.add("Black");
-            color_chooser.add("Green");
-            color_chooser.add("Red");
-            color_chooser.add("Blue");
+            JComboBox<String> color_chooser = new JComboBox<>();
+            color_chooser.addItem("Black");
+            color_chooser.addItem("Green");
+            color_chooser.addItem("Red");
+            color_chooser.addItem("Blue");
 
             // Create three buttons
             JButton clear = new JButton("Clear");
@@ -425,9 +425,8 @@ public class Draw {
 
         public Image getDrawing() {
             BufferedImage image = new BufferedImage(window.getWidth(), window.getHeight(), BufferedImage.TYPE_INT_RGB);
-            Graphics g = image.createGraphics();
-            window.paint(g);
-           // g.drawImage(window.getGraphicsConfiguration().createCompatibleImage(window.getWidth(), window.getHeight()), 0, 0, null);
+            Graphics2D g = image.createGraphics();
+            window.printAll(g);
             g.dispose();
             return image;
             
