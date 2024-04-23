@@ -10,13 +10,21 @@ import java.io.IOException;
 
 public class Draw {
     protected DrawGUI window;
-
+    Color fgColor;
+    Color bgColor;
+    int height;
+    int width;
     public static void main(String[] args) {
-       Draw draw = new Draw();
+       new Draw();
     }
 
     public Draw() {
+        width = 800;
+        height = 400;
+        fgColor = Color.BLACK;
+        bgColor = Color.WHITE;
         window = new DrawGUI(this);
+        
     }
 
     public void doCommand(String command) {
@@ -25,9 +33,10 @@ public class Draw {
         } else if (command.equals("quit")) {
             window.dispose();
             System.exit(0);
-        } else if (command.equals("auto"))
-            ;
-        autoDraw();
+        } else if (command.equals("auto")){
+            autoDraw();
+        }
+
     }
 
     /**
