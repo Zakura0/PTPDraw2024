@@ -10,6 +10,8 @@ import mydraw.SizeException;
 import org.junit.jupiter.api.Test;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
@@ -26,10 +28,55 @@ class DrawTests {
             case "black" -> Color.black;
             case "green" -> Color.green;
             case "red" -> Color.red;
-            case  "blue" -> Color.blue;
+            case "blue" -> Color.blue;
             case "white" ->Color.white;
             default -> throw new ColorException("Invalid color!");
         };
+    }
+
+    public static BufferedImage toBufferedImage(Image img)
+    {
+        if (img instanceof BufferedImage)
+        {
+            return (BufferedImage) img;
+        }
+
+        // Create a buffered image with transparency
+        BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+        // Draw the image on to the buffered image
+        Graphics2D bGr = bimage.createGraphics();
+        bGr.drawImage(img, 0, 0, null);
+        bGr.dispose();
+
+        // Return the buffered image
+        return bimage;
+    }
+
+    boolean imagesEqual(BufferedImage expectedImage, BufferedImage actualImage) {
+        if (expectedImage.getWidth() == actualImage.getWidth() && expectedImage.getHeight() == actualImage.getHeight()) {
+            for (int x = 0; x < expectedImage.getWidth(); x++) {
+                for (int y = 0; y < expectedImage.getHeight(); y++) {
+                    if (expectedImage.getRGB(x, y) != actualImage.getRGB(x, y)) {
+                        System.out.println("RGB mismatch");
+                        System.out.println("Expected: " + expectedImage.getRGB(x, y));
+                        System.out.println("Actual: " + actualImage.getRGB(x, y));
+                        return false;
+                    }
+                }
+            }
+        } else {
+            System.out.println("Image size mismatch");
+            System.out.println("Expected: " + expectedImage.getWidth() + " " + expectedImage.getHeight());
+            System.out.println("Actual: " + actualImage.getWidth() + " " + actualImage.getHeight());
+            return false;
+        }
+        return true;
+    }
+
+    boolean isFile(String filepath) {
+        File file = new File(filepath);
+        return file.exists() && !file.isDirectory();
     }
 
     Draw draw = new Draw();
@@ -84,28 +131,68 @@ class DrawTests {
     }
 
     @Test
-    void  getDrawingTest() {
+    void getDrawingTest() {
 
     }
 
     @Test
     void writeImageTest() throws IOException {
+        Image image = draw.getDrawing();
+        String filepath = "test.bmp";
 
+        draw.writeImage(image,filepath);
+        assertTrue(isFile(filepath));
+
+        assertThrows(NullPointerException.class, () -> draw.writeImage(null, filepath));
     }
 
     @Test
     void readImageTest() throws IOException {
+        Image expectedImage = draw.getDrawing();
+        Image actualImage;
+        String filepath = "test.bmp";
 
+        draw.writeImage(expectedImage, filepath);
+        actualImage = draw.readImage(filepath);
+        assertTrue(imagesEqual(toBufferedImage(expectedImage), toBufferedImage(actualImage)));
+
+        assertThrows(NullPointerException.class, () -> draw.readImage(null));
     }
 
     @Test
-    void clearTest() {
+    void clearTest() throws IOException {
+        Image expectedImage;
+        Image actualImage;
 
+        draw.writeImage(draw.getDrawing(), "empty.bmp");
+
+        draw.autoDraw();
+        draw.clear();
+
+        draw.writeImage(draw.getDrawing(), "clear.bmp");
+
+        expectedImage = draw.readImage("empty.bmp");
+        actualImage = draw.readImage("clear.bmp");
+
+        assertTrue(imagesEqual(toBufferedImage(expectedImage), toBufferedImage(actualImage)));
     }
 
-    @Test
-    void autoDrawTest() {
+        @Test
+    void autoDrawTest() throws IOException {
+            Image expectedImage;
+            Image actualImage;
 
+            draw.writeImage(draw.getDrawing(), "empty.bmp");
+
+            draw.autoDraw();
+
+            draw.writeImage(draw.getDrawing(), "clear.bmp");
+
+            expectedImage = draw.readImage("empty.bmp");
+            actualImage = draw.readImage("clear.bmp");
+
+            assertFalse(imagesEqual(toBufferedImage(expectedImage), toBufferedImage(actualImage)));
+            // TODO: failt, weil detDrawing die Zeichnung nicht erkennt
     }
 
     @Test
@@ -195,5 +282,15 @@ class DrawTests {
         assertEquals(expectedColor, actualtwo);
         assertEquals(expectedColor, actualthree);
         assertEquals(expectedColor, actualfour);
+    }
+
+    @Test
+    void compareImagesTest() throws IOException {
+        Image expectedImage = draw.readImage("reference.bmp");
+        // draw.autoDraw();
+        // Image expectedImage = draw.readImage("test.bmp");
+        Image actualImage = draw.readImage("sth.bmp");
+
+        assertTrue(imagesEqual(toBufferedImage(expectedImage), toBufferedImage(actualImage)));
     }
 }
