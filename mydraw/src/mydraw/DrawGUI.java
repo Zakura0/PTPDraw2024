@@ -282,7 +282,7 @@ public class DrawGUI extends JFrame {
             });
 
             // Finally, set the size of the window, and pop it up
-            this.frontPanel.setPreferredSize(new Dimension(app.getWidth(), app.getHeight()));
+            this.frontPanel.setPreferredSize(new Dimension(app.width, app.height));
             this.pack();
             this.frontPanel.setBackground(app.bgColor);
             this.setSize(800, 400);
@@ -509,7 +509,7 @@ public class DrawGUI extends JFrame {
         }
 
         private void doubleBuffering(){
-            buffImage = new BufferedImage(app.getWidth(), app.getHeight(), BufferedImage.TYPE_INT_RGB);
+            buffImage = new BufferedImage(app.width, app.height, BufferedImage.TYPE_INT_RGB);
             Graphics g = buffImage.createGraphics();
             g.setColor(Color.white);
             g.fillRect(0, 0, buffImage.getWidth(), buffImage.getHeight());
