@@ -123,5 +123,4 @@ public class Draw {
     public void drawPolyLine(java.util.List<Point> points) {
         window.drawPolyLine(points);
     }
-
 }

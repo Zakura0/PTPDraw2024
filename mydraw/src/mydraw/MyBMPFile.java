@@ -40,6 +40,7 @@ public class MyBMPFile extends Component {
     // --- Private variable declaration
 
     // --- Bitmap file header
+    @SuppressWarnings("unused")
     private byte bitmapFileHeader[] = new byte[14];
     private byte bfType[] = { (byte) 'B', (byte) 'M' };
     private int bfSize = 0;
@@ -48,6 +49,7 @@ public class MyBMPFile extends Component {
     private int bfOffBits = BITMAPFILEHEADER_SIZE + BITMAPINFOHEADER_SIZE;
 
     // --- Bitmap info header
+    @SuppressWarnings("unused")
     private byte bitmapInfoHeader[] = new byte[40];
     private int biSize = BITMAPINFOHEADER_SIZE;
     private int biWidth = 0;
@@ -263,7 +265,7 @@ public class MyBMPFile extends Component {
 
         return result;
     }
-
+    @SuppressWarnings({ "unused", "resource" })
     private Image loadBitmap(String sfile) throws IOException {
         Image image;
 
