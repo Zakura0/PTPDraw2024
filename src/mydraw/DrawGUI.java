@@ -56,6 +56,7 @@ public class DrawGUI extends JFrame {
         // Create three buttons
         JButton clear = new JButton("Clear");
         JButton quit = new JButton("Quit");
+        JButton save = new JButton("Save");
         JButton auto = new JButton("Auto");
 
         // Set a LayoutManager, and add the choosers and buttons to the window.
@@ -66,6 +67,7 @@ public class DrawGUI extends JFrame {
         backPanel.add(color_chooser);
         backPanel.add(clear);
         backPanel.add(quit);
+        backPanel.add(save);
         backPanel.add(auto);
 
         // Initializes the GUI front panel
@@ -94,6 +96,7 @@ public class DrawGUI extends JFrame {
         // Define action listener adapters that connect the buttons to the app
         clear.addActionListener(new DrawActionListener("clear"));
         quit.addActionListener(new DrawActionListener("quit"));
+        save.addActionListener(new DrawActionListener("save"));
         auto.addActionListener(new DrawActionListener("auto"));
 
         // this class determines how mouse events are to be interpreted,
@@ -370,8 +373,8 @@ public class DrawGUI extends JFrame {
      * Throws a SizeException if the width is negative
      * **/
     public void setWidth(int width) throws SizeException {
-        if (width < 520) {
-            throw new SizeException("Width must be at least 550 pixels.");
+        if (width < 600) {
+            throw new SizeException("Width must be at least 600 pixels.");
         }
         this.frontPanel.setPreferredSize(new Dimension(width, getHeight()));
         this.pack();
@@ -567,11 +570,6 @@ public class DrawGUI extends JFrame {
             System.err.println("Color Exception: " + e.getMessage());
         }
         drawPolyLine(List.of(pl1, pl2, pl3));
-        try {
-            writeImage(buffImage, "image.bmp");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private void doubleBuffering() {

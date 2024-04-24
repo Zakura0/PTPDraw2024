@@ -93,7 +93,7 @@ class DrawTest {
     void WidthTest() throws SizeException {
         int expectedWidth, actualWidth;
 
-        expectedWidth = 520;
+        expectedWidth = 600;
         draw.setWidth(expectedWidth);
         actualWidth = draw.getWidth();
 
@@ -181,8 +181,9 @@ class DrawTest {
         Image expectedImage;
         Image actualImage;
         draw.autoDraw();
+        draw.writeImage(draw.getDrawing(), "image.bmp");
         draw.clear();
-        draw.writeImage(draw.getDrawing(), "clearTest.bmp");
+        draw.writeImage(draw.getDrawing(), "clearTest.bmp");       
 
         expectedImage = draw.readImage("image.bmp");
         actualImage = draw.readImage("clearTest.bmp");
@@ -333,6 +334,7 @@ class DrawTest {
         Image actualImage;
         draw.writeImage(draw.getDrawing(), "empty.bmp");
         draw.autoDraw();
+        draw.writeImage(draw.getDrawing(), "image.bmp");
         draw.writeImage(draw.getDrawing(), "autoDrawTest.bmp");
         expectedImage = draw.readImage("autoDrawTest.bmp");
         actualImage = draw.readImage("image.bmp");
