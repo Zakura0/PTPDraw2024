@@ -16,14 +16,18 @@ import java.util.List;
 
 import javax.swing.*;
 
+/*
+ * @authors Giahung Bui 7557640 , Ben Woller 7740402
+ */
+
 public class DrawGUI extends JFrame {
     Draw app; // A reference to the application, to send commands to.
-    Color fgColor;
-    Color bgColor;
-    int width;
-    int height;
-    JPanel frontPanel;
-    BufferedImage buffImage;
+    Color fgColor; // A referenec to the current foreground color (drawing color)
+    Color bgColor; // A reference to the current background color
+    int width;  // A reference to the current window width
+    int height; // A reference to the current window height
+    JPanel frontPanel; // A reference to the GUI panel
+    BufferedImage buffImage; // A reference to the drawing panel (used to save the drawing)
 
     /**
      * The GUI constructor does all the work of creating the GUI and setting
@@ -37,6 +41,7 @@ public class DrawGUI extends JFrame {
         width = app.width;
         height = app.height;
 
+        // Initializes the drawing panel
         doubleBuffering();
 
         // selector for drawing modes
@@ -68,9 +73,11 @@ public class DrawGUI extends JFrame {
         backPanel.add(quit);
         backPanel.add(auto);
 
+        // Initializes the GUI front panel
         frontPanel = new JPanel();
         frontPanel.setBackground(Color.WHITE);
 
+        // Sets up the different layers/panels
         Container contentPane = this.getContentPane();
         contentPane.setLayout(new BorderLayout());
         contentPane.add(backPanel, BorderLayout.NORTH);
@@ -303,7 +310,10 @@ public class DrawGUI extends JFrame {
         this.setVisible(true); // ++
     }
 
-    /** API method: get fg color ... */
+    /**
+     * API Method: retrieves current foreground color
+     * Return type: String
+     * **/
     public String getFGColor() {
         if (fgColor == Color.black) {
             return "black";
@@ -319,9 +329,11 @@ public class DrawGUI extends JFrame {
     }
 
     /**
-     * @param new_color
-     * @throws ColorException
-     */
+     * API Method: sets current foreground color.
+     * Params: String new_color
+     * Available Colors: "black", "green", "red", "blue"
+     * Throws an ColorException if the color to be set is not recognized
+     * **/
     public void setFGColor(String new_color) throws ColorException {
         switch (new_color.toLowerCase()) {
             case "black":
@@ -341,32 +353,55 @@ public class DrawGUI extends JFrame {
         }
     }
 
+    /**
+     * API Method: retrieves current width of the window
+     * Return type: int
+     * **/
     public int getWidth() {
         return width;
 
     }
 
+    /**
+     * API Method: retrieves current height of the window
+     * Return type: int
+     * **/
     public int getHeight() {
         return height;
     }
 
+    /**
+     * API Method: sets current window width
+     * Params: int width
+     * Throws a SizeException if the width is negative
+     * **/
     public void setWidth(int width) throws SizeException {
-        this.frontPanel.setPreferredSize(new Dimension(getWidth(), getHeight()));
+        this.frontPanel.setPreferredSize(new Dimension(width, getHeight()));
         this.pack();
-        this.buffImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
+        this.buffImage = new BufferedImage(width, getHeight(), BufferedImage.TYPE_INT_RGB);
     }
 
+    /**
+     * API Method: sets current window height.
+     * Params: int height
+     * Throws a SizeException if the height is negative
+     * **/
     public void setHeight(int height) throws SizeException {
-        this.frontPanel.setPreferredSize(new Dimension(getWidth(), getHeight()));
+        this.frontPanel.setPreferredSize(new Dimension(getWidth(), height));
         this.pack();
-        this.buffImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
+        this.buffImage = new BufferedImage(getWidth(), height, BufferedImage.TYPE_INT_RGB);
     }
 
+    /**
+     * API Method: sets current background color.
+     * Params: String new_color
+     * Available Colors: "black", "green", "red", "blue", "white"
+     * Throws an ColorException if the color to be set is not recognized
+     * **/
     public void setBGColor(String new_color) throws ColorException {
         switch (new_color.toLowerCase()) {
             case "black":
                 bgColor = Color.black;
-                ;
                 break;
             case "green":
                 bgColor = Color.green;
@@ -376,6 +411,7 @@ public class DrawGUI extends JFrame {
                 break;
             case "blue":
                 bgColor = Color.blue;
+                break;
             case "white":
                 bgColor = Color.white;
                 break;
@@ -393,21 +429,31 @@ public class DrawGUI extends JFrame {
         g2.dispose();
     }
 
+    /**
+     * API Method: retrieves current background color
+     * Return type: String
+     * **/
     public String getBGColor() {
-        Color bgColor = this.getBackground();
-        if (bgColor == null) {
+        if (bgColor == Color.black) {
+            return "black";
+        } else if (bgColor == Color.green) {
+            return "green";
+        } else if (bgColor == Color.red) {
+            return "red";
+        } else if (bgColor == Color.blue) {
+            return "blue";
+        } else if (bgColor == Color.white){
+            return "white";
+        } else {
             return null;
         }
-        String[] colorSign = { "black", "green", "red", "blue", "default (white)" };
-        Color[] colors = { Color.black, Color.green, Color.red, Color.blue, Color.white };
-        for (int i = 0; i < colors.length; i++) {
-            if (bgColor.equals(colors[i])) {
-                return colorSign[i];
-            }
-        }
-        return null;
     }
 
+    /**
+     * API Method: draws a rectangle on the front panel and drawing panel, where two points are used
+     * to calculate the overall width and height of the rectangle
+     * Prams: Point upper_left, Point lower_right
+     * **/
     public void drawRectangle(Point upper_left, Point lower_right) {
         int x = Math.min(upper_left.x, lower_right.x);
         int y = Math.min(upper_left.y, lower_right.y);
@@ -425,6 +471,11 @@ public class DrawGUI extends JFrame {
         g2.dispose();
     }
 
+    /**
+     * API Method: draws a circle/ellipse on the front panel and drawing panel, where two points are used
+     * to calculate the overall width and height of the circle/ellipse
+     * Prams: Point upper_left, Point lower_right
+     * **/
     public void drawOval(Point upper_left, Point lower_right) {
         int x = Math.min(upper_left.x, lower_right.x);
         int y = Math.min(upper_left.y, lower_right.y);
@@ -442,6 +493,11 @@ public class DrawGUI extends JFrame {
         g2.dispose();
     }
 
+    /**
+     * API Method: draws a polyline on the front panel and drawing panel, where multiple points are used
+     * to draw lines from one point to another: e.g. p1 - p2 - p3
+     * Prams: List<Point> points
+     * **/
     public void drawPolyLine(java.util.List<Point> points) {
         Graphics g = this.frontPanel.getGraphics();
         g.setPaintMode();

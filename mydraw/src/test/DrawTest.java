@@ -9,6 +9,7 @@ import mydraw.Draw;
 import mydraw.SizeException;
 import org.junit.jupiter.api.Test;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -178,7 +179,7 @@ class DrawTests {
     }
 
         @Test
-    void autoDrawTest() throws IOException {
+        void autoDrawTest() throws IOException {
             Image expectedImage;
             Image actualImage;
 
@@ -192,7 +193,6 @@ class DrawTests {
             actualImage = draw.readImage("clear.bmp");
 
             assertFalse(imagesEqual(toBufferedImage(expectedImage), toBufferedImage(actualImage)));
-            // TODO: failt, weil detDrawing die Zeichnung nicht erkennt
     }
 
     @Test
@@ -202,7 +202,7 @@ class DrawTests {
         ptone = new Point(100, 100);
         pttwo = new Point(200, 200);
 
-        draw.setFGColor("black");
+        draw.setFGColor("red");
 
         Color expectedColor = strToCol(draw.getFGColor());
 
