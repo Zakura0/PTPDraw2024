@@ -86,7 +86,7 @@ class DrawTests {
     void WidthTest() throws SizeException {
         int expectedWidth, actualWidth;
 
-        expectedWidth = 100;
+        expectedWidth = 800;
         draw.setWidth(expectedWidth);
         actualWidth = draw.getWidth();
         assertEquals(expectedWidth, actualWidth);
@@ -98,7 +98,7 @@ class DrawTests {
     void HeightTest() throws SizeException {
         int expectedHeight, actualHeight;
 
-        expectedHeight = 100;
+        expectedHeight = 400;
         draw.setHeight(expectedHeight);
         actualHeight = draw.getHeight();
         assertEquals(expectedHeight, actualHeight);

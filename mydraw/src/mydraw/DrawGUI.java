@@ -376,6 +376,9 @@ public class DrawGUI extends JFrame {
      * Throws a SizeException if the width is negative
      * **/
     public void setWidth(int width) throws SizeException {
+        if (width < 30) {
+            throw new SizeException();
+        }
         this.frontPanel.setPreferredSize(new Dimension(width, getHeight()));
         this.pack();
         this.buffImage = new BufferedImage(width, getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -387,6 +390,9 @@ public class DrawGUI extends JFrame {
      * Throws a SizeException if the height is negative
      * **/
     public void setHeight(int height) throws SizeException {
+        if (height < 30) {
+            throw new SizeException();
+        }
         this.frontPanel.setPreferredSize(new Dimension(getWidth(), height));
         this.pack();
         this.buffImage = new BufferedImage(getWidth(), height, BufferedImage.TYPE_INT_RGB);
