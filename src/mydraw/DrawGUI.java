@@ -17,7 +17,7 @@ import java.util.List;
 import javax.swing.*;
 
 /*
- * @authors Giahung Bui 7557640 , Ben Woller 7740402
+ * @authors Giahung Bui 7557640 , Ben Woller 7740402, Simon Kazemi 7621942
  */
 
 public class DrawGUI extends JFrame {

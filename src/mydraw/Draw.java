@@ -2,11 +2,8 @@ package mydraw;
 
 import java.awt.*;
 import java.io.IOException;
-
-import javax.swing.JOptionPane;
-
 /*
- * @authors Giahung Bui 7557640 , Ben Woller 7740402
+ * @authors Giahung Bui 7557640 , Ben Woller 7740402, Simon Kazemi 7621942
  */
 
 public class Draw {
