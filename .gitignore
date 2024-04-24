@@ -1,0 +1,7 @@
+# Ignore files with extension `.class` & `.md`
+*.class
+*.md
+
+# Ignore `bin` dir
+bin/
+test/

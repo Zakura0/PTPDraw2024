@@ -8,8 +8,6 @@ import mydraw.Draw;
 
 import mydraw.SizeException;
 import org.junit.jupiter.api.Test;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -19,10 +17,7 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DrawTests {
-
-    DrawTests() {
-    }
+class DrawTest {
 
     Color strToCol(String colorsign) throws ColorException {
         return switch(colorsign.toLowerCase()) {
