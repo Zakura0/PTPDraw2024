@@ -9,20 +9,17 @@ import mydraw.Draw;
 import mydraw.SizeException;
 import org.junit.jupiter.api.Test;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DrawTests {
-
-    DrawTests() {
-    }
+class DrawTest {
 
     Color strToCol(String colorsign) throws ColorException {
         return switch(colorsign.toLowerCase()) {
@@ -30,9 +27,16 @@ class DrawTests {
             case "green" -> Color.green;
             case "red" -> Color.red;
             case "blue" -> Color.blue;
-            case "white" ->Color.white;
+            case "white" -> Color.white;
             default -> throw new ColorException("Invalid color!");
         };
+    }
+
+    Color intToCol(int pixel) {
+        int  red = (pixel & 0x00ff0000) >> 16;
+        int  green = (pixel & 0x0000ff00) >> 8;
+        int  blue = pixel & 0x000000ff;
+        return new Color(red, green, blue);
     }
 
     public static BufferedImage toBufferedImage(Image img)
@@ -42,15 +46,12 @@ class DrawTests {
             return (BufferedImage) img;
         }
 
-        // Create a buffered image with transparency
         BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
 
-        // Draw the image on to the buffered image
         Graphics2D bGr = bimage.createGraphics();
         bGr.drawImage(img, 0, 0, null);
         bGr.dispose();
 
-        // Return the buffered image
         return bimage;
     }
 
@@ -59,17 +60,11 @@ class DrawTests {
             for (int x = 0; x < expectedImage.getWidth(); x++) {
                 for (int y = 0; y < expectedImage.getHeight(); y++) {
                     if (expectedImage.getRGB(x, y) != actualImage.getRGB(x, y)) {
-                        System.out.println("RGB mismatch");
-                        System.out.println("Expected: " + expectedImage.getRGB(x, y));
-                        System.out.println("Actual: " + actualImage.getRGB(x, y));
                         return false;
                     }
                 }
             }
         } else {
-            System.out.println("Image size mismatch");
-            System.out.println("Expected: " + expectedImage.getWidth() + " " + expectedImage.getHeight());
-            System.out.println("Actual: " + actualImage.getWidth() + " " + actualImage.getHeight());
             return false;
         }
         return true;
@@ -78,6 +73,16 @@ class DrawTests {
     boolean isFile(String filepath) {
         File file = new File(filepath);
         return file.exists() && !file.isDirectory();
+    }
+
+    List<Integer> createCircleMeasurements(List<Point> points) {
+        int centerX = (points.get(0).x + points.get(1).x) / 2;
+        int centerY = (points.get(0).y + points.get(1).y) / 2;
+        int radiusX = Math.abs(points.get(1).x - points.get(0).x) / 2;
+        int radiusY = Math.abs(points.get(1).y - points.get(0).y) / 2;
+
+        List<Integer> measures = Arrays.asList(centerX, centerY, radiusX, radiusY);
+        return measures;
     }
 
     Draw draw = new Draw();
@@ -89,10 +94,9 @@ class DrawTests {
         expectedWidth = 800;
         draw.setWidth(expectedWidth);
         actualWidth = draw.getWidth();
-        assertEquals(expectedWidth, actualWidth);
 
-        assertThrows(SizeException.class, () ->
-                draw.setWidth(20));
+        assertEquals(expectedWidth, actualWidth);
+        assertThrows(SizeException.class, () -> draw.setWidth(20));
     }
     @Test
     void HeightTest() throws SizeException {
@@ -101,10 +105,9 @@ class DrawTests {
         expectedHeight = 400;
         draw.setHeight(expectedHeight);
         actualHeight = draw.getHeight();
-        assertEquals(expectedHeight, actualHeight);
 
-        assertThrows(SizeException.class, () ->
-                draw.setHeight(20));
+        assertEquals(expectedHeight, actualHeight);
+        assertThrows(SizeException.class, () -> draw.setHeight(20));
     }
 
     @Test
@@ -114,10 +117,9 @@ class DrawTests {
         expectedColor = "red";
         draw.setFGColor(expectedColor);
         actualColor = draw.getFGColor();
-        assertEquals(expectedColor, actualColor);
 
-        assertThrows(ColorException.class, () ->
-                draw.setFGColor("yellow"));
+        assertEquals(expectedColor, actualColor);
+        assertThrows(ColorException.class, () -> draw.setFGColor("yellow"));
     }
 
     @Test
@@ -125,15 +127,15 @@ class DrawTests {
         String expectedColor = "red";
         draw.setBGColor(expectedColor);
         String actualColor = draw.getBGColor();
-        assertEquals(expectedColor, actualColor);
 
-        assertThrows(ColorException.class, () ->
-                draw.setBGColor("yellow"));
+        assertEquals(expectedColor, actualColor);
+        assertThrows(ColorException.class, () -> draw.setBGColor("yellow"));
     }
 
     @Test
     void getDrawingTest() {
-
+        assertInstanceOf(BufferedImage.class, draw.getDrawing());
+        assertNotNull(draw.getDrawing());
     }
 
     @Test
@@ -142,8 +144,8 @@ class DrawTests {
         String filepath = "test.bmp";
 
         draw.writeImage(image,filepath);
-        assertTrue(isFile(filepath));
 
+        assertTrue(isFile(filepath));
         assertThrows(NullPointerException.class, () -> draw.writeImage(null, filepath));
     }
 
@@ -155,8 +157,8 @@ class DrawTests {
 
         draw.writeImage(expectedImage, filepath);
         actualImage = draw.readImage(filepath);
-        assertTrue(imagesEqual(toBufferedImage(expectedImage), toBufferedImage(actualImage)));
 
+        assertTrue(imagesEqual(toBufferedImage(expectedImage), toBufferedImage(actualImage)));
         assertThrows(NullPointerException.class, () -> draw.readImage(null));
     }
 
@@ -164,129 +166,170 @@ class DrawTests {
     void clearTest() throws IOException {
         Image expectedImage;
         Image actualImage;
-
-        draw.writeImage(draw.getDrawing(), "empty.bmp");
-
         draw.autoDraw();
         draw.clear();
+        draw.writeImage(draw.getDrawing(), "clearTest.bmp");
 
-        draw.writeImage(draw.getDrawing(), "clear.bmp");
+        expectedImage = draw.readImage("image.bmp");
+        actualImage = draw.readImage("clearTest.bmp");
+
+        assertFalse(imagesEqual(toBufferedImage(expectedImage), toBufferedImage(actualImage)));
+    }
+
+    @Test
+    void autoDrawTest() throws IOException {
+        Image expectedImage;
+        Image actualImage;
+        draw.writeImage(draw.getDrawing(), "empty.bmp");
+        draw.autoDraw();
+        draw.writeImage(draw.getDrawing(), "autoDrawTest.bmp");
 
         expectedImage = draw.readImage("empty.bmp");
-        actualImage = draw.readImage("clear.bmp");
+        actualImage = draw.readImage("autoDrawTest.bmp");
 
-        assertTrue(imagesEqual(toBufferedImage(expectedImage), toBufferedImage(actualImage)));
-    }
-
-        @Test
-        void autoDrawTest() throws IOException {
-            Image expectedImage;
-            Image actualImage;
-
-            draw.writeImage(draw.getDrawing(), "empty.bmp");
-
-            draw.autoDraw();
-
-            draw.writeImage(draw.getDrawing(), "clear.bmp");
-
-            expectedImage = draw.readImage("empty.bmp");
-            actualImage = draw.readImage("clear.bmp");
-
-            assertFalse(imagesEqual(toBufferedImage(expectedImage), toBufferedImage(actualImage)));
+        assertFalse(imagesEqual(toBufferedImage(expectedImage), toBufferedImage(actualImage)));
     }
 
     @Test
-    void drawRectangleTest() throws AWTException, ColorException {
-        Point ptone, pttwo;
+    void drawRectangleTest() throws ColorException {
+        List<Point> pointsPos = new ArrayList<>();
+        List<Point> pointsNeg = new ArrayList<>();
 
-        ptone = new Point(100, 100);
-        pttwo = new Point(200, 200);
+        pointsPos.add(new Point(100, 100));
+        pointsPos.add(new Point(200, 200));
+
+        pointsNeg.add(new Point(40, 40));
+        pointsNeg.add(new Point(230, 340));
 
         draw.setFGColor("red");
-
         Color expectedColor = strToCol(draw.getFGColor());
+        draw.drawRectangle(pointsPos.get(0), pointsPos.get(1));
+        BufferedImage img = toBufferedImage(draw.getDrawing());
 
-        draw.drawRectangle(ptone, pttwo);
-        Color actualone = new Robot().getPixelColor(ptone.x, ptone.y);
-        Color actualtwo = new Robot().getPixelColor(pttwo.x, pttwo.y);
-        Color actualthree = new Robot().getPixelColor(pttwo.x, ptone.y);
-        Color actualfour = new Robot().getPixelColor(ptone.x, pttwo.y);
-
-        assertEquals(expectedColor, actualone);
-        assertEquals(expectedColor, actualtwo);
-        assertEquals(expectedColor, actualthree);
-        assertEquals(expectedColor, actualfour);
+        for (Point pointx : pointsPos) {
+            for (Point pointy : pointsPos) {
+                Color actual = intToCol(img.getRGB(pointx.x, pointy.y));
+                assertEquals(expectedColor, actual);
+            }
+        }
+        for (Point pointx : pointsNeg) {
+            for (Point pointy : pointsNeg) {
+                Color actual = intToCol(img.getRGB(pointx.x, pointy.y));
+                assertNotEquals(expectedColor, actual);
+            }
+        }
+        assertThrows(ColorException.class, () -> {
+            draw.setFGColor("yellow");
+            strToCol(draw.getFGColor());
+        });
     }
 
     @Test
-    void drawOvalTest() throws AWTException, ColorException {
-        Point ptone, pttwo;
+    void drawOvalTest() throws ColorException {
+        List<Point> pointsPos = new ArrayList<>();
+        List<Point> pointsNeg = new ArrayList<>();
+        List<Color> actualColorsPos = new ArrayList<>();
+        List<Color> actualColorsNeg = new ArrayList<>();
+        List<Integer> measures;
+        int centerX;
+        int centerY;
+        int radiusX;
+        int radiusY;
 
-        ptone = new Point(100, 100);
-        pttwo = new Point(200, 200);
+        pointsPos.add(new Point(100, 100));
+        pointsPos.add(new Point(200, 200));
+
+        pointsNeg.add(new Point(40, 40));
+        pointsNeg.add(new Point(230, 340));
 
         draw.setFGColor("black");
 
         Color expectedColor = strToCol(draw.getFGColor());
 
-        draw.drawOval(ptone, pttwo);
-        Color actualone = new Robot().getPixelColor((int) (ptone.x*1.5), ptone.y);
-        System.out.println(actualone.toString());
-        Color actualtwo = new Robot().getPixelColor(ptone.x, (int) (ptone.y*1.5));
-        Color actualthree = new Robot().getPixelColor(pttwo.x/2, pttwo.y);
-        Color actualfour = new Robot().getPixelColor(pttwo.x, pttwo.y/2);
+        draw.drawOval(pointsPos.get(0), pointsPos.get(1));
 
-        System.out.println(actualone);
-        System.out.println(actualtwo);
-        System.out.println(actualthree);
-        System.out.println(actualfour);
+        BufferedImage actual = toBufferedImage(draw.getDrawing());
 
-        assertEquals(expectedColor, actualone);
-        assertEquals(expectedColor, actualtwo);
-        assertEquals(expectedColor, actualthree);
-        assertEquals(expectedColor, actualfour);
+        measures = createCircleMeasurements(pointsPos);
+
+        centerX = measures.get(0);
+        centerY = measures.get(1);
+        radiusX = measures.get(2);
+        radiusY = measures.get(3);
+
+        actualColorsPos.add(intToCol(actual.getRGB(centerX, centerY - radiusY)));
+        actualColorsPos.add(intToCol(actual.getRGB(centerX, centerY + radiusY)));
+        actualColorsPos.add(intToCol(actual.getRGB(centerX + radiusX, centerY)));
+        actualColorsPos.add(intToCol(actual.getRGB(centerX - radiusX, centerY)));
+
+        for (Color color : actualColorsPos) {
+            assertEquals(expectedColor, color);
+        }
+
+        measures = createCircleMeasurements(pointsNeg);
+
+        centerX = measures.get(0);
+        centerY = measures.get(1);
+        radiusX = measures.get(2);
+        radiusY = measures.get(3);
+
+        actualColorsNeg.add(intToCol(actual.getRGB(centerX, centerY - radiusY)));
+        actualColorsNeg.add(intToCol(actual.getRGB(centerX, centerY + radiusY)));
+        actualColorsNeg.add(intToCol(actual.getRGB(centerX + radiusX, centerY)));
+        actualColorsNeg.add(intToCol(actual.getRGB(centerX - radiusX, centerY)));
+
+        for (Color color : actualColorsNeg) {
+            assertEquals(expectedColor, color);
+        }
+
+        assertThrows(ColorException.class, () -> {
+            draw.setFGColor("yellow");
+            strToCol(draw.getFGColor());
+        });
     }
 
     @Test
-    void drawPolylineTest() throws ColorException, AWTException {
-        Point ptone, pttwo, ptthree, ptfour;
+    void drawPolylineTest() throws ColorException {
+        List<Point> pointsPos = new ArrayList<>();
+        List<Point> pointsNeg = new ArrayList<>();
 
-        ptone = new Point(100, 100);
-        pttwo = new Point(150, 100);
-        ptthree = new Point(150, 150);
-        ptfour = new Point(200, 250);
+        pointsPos.add(new Point(100, 100));
+        pointsPos.add(new Point(150, 100));
+        pointsPos.add(new Point(150, 150));
+        pointsPos.add(new Point(200, 250));
 
-        List<Point> points = new ArrayList<>();
-
-        points.add(ptone);
-        points.add(pttwo);
-        points.add(ptthree);
-        points.add(ptfour);
+        pointsNeg.add(new Point(40, 40));
+        pointsNeg.add(new Point(23, 34));
+        pointsNeg.add(new Point(15, 9));
+        pointsNeg.add(new Point(230, 0));
 
         draw.setFGColor("black");
 
         Color expectedColor = strToCol(draw.getFGColor());
 
-        draw.drawPolyLine(points);
-        Color actualone = new Robot().getPixelColor(points.getFirst().x, points.getFirst().y);
-        Color actualtwo = new Robot().getPixelColor(points.get(1).x, points.get(1).y);
-        Color actualthree = new Robot().getPixelColor(points.get(2).x, points.get(2).y);
-        Color actualfour = new Robot().getPixelColor(points.getLast().x, points.getLast().y);
+        draw.drawPolyLine(pointsPos);
 
-        System.out.println(actualone);
-        System.out.println(actualtwo);
-        System.out.println(actualthree);
-        System.out.println(actualfour);
+        BufferedImage buff = toBufferedImage(draw.getDrawing());
 
-        assertEquals(expectedColor, actualone);
-        assertEquals(expectedColor, actualtwo);
-        assertEquals(expectedColor, actualthree);
-        assertEquals(expectedColor, actualfour);
+        for (Point point : pointsPos) {
+            Color actual = intToCol(buff.getRGB(point.x, point.y));
+            assertEquals(expectedColor, actual);
+        }
+
+        for (Point point : pointsNeg) {
+            Color actual = intToCol(buff.getRGB(point.x, point.y));
+            assertNotEquals(expectedColor, actual);
+        }
+
+        assertThrows(ColorException.class, () -> {
+            draw.setFGColor("yellow");
+            strToCol(draw.getFGColor());
+        });
     }
 
     @Test
     void compareImagesTest() throws IOException {
-        Image expectedImage = draw.readImage("reference.bmp");
+        Image expectedImage = draw.getDrawing();
         // draw.autoDraw();
         // Image expectedImage = draw.readImage("test.bmp");
         Image actualImage = draw.readImage("sth.bmp");
