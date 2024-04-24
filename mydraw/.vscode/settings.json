@@ -1,7 +1,0 @@
-{
-    "maven.view": "hierarchical",
-    "java.debug.settings.onBuildFailureProceed": true,
-    "java.project.sourcePaths": [
-        "src"
-    ]
-}
