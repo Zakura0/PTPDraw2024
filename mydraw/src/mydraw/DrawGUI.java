@@ -573,9 +573,8 @@ public class DrawGUI extends JFrame {
             System.err.println("Color Exception: " + e.getMessage());
         }
         drawPolyLine(List.of(pl1, pl2, pl3));
-        String filename = JOptionPane.showInputDialog("Filename:");
         try {
-            writeImage(buffImage, filename + ".bmp");
+            writeImage(buffImage, "image.bmp");
         } catch (IOException e) {
             e.printStackTrace();
         }
