@@ -17,107 +17,111 @@ import java.util.ArrayList;
 import javax.swing.*;
 
 public class DrawGUI extends JFrame {
-        Draw app; // A reference to the application, to send commands to.
-        Color fgColor;
-        Color bgColor;
-        int width;
-        int height;
-        JPanel frontPanel;
-        BufferedImage buffImage;
+    Draw app; // A reference to the application, to send commands to.
+    Color fgColor;
+    Color bgColor;
+    int width;
+    int height;
+    JPanel frontPanel;
+    BufferedImage buffImage;
 
-        /**
-         * The GUI constructor does all the work of creating the GUI and setting
-         * up event listeners. Note the use of local and anonymous classes.
-         */
-        public DrawGUI(Draw application) {
-            super("Draw"); // Create the window
-            app = application; // Remember the application reference
-            fgColor = app.fgColor;
-            bgColor = app.bgColor;
-            width = app.width;
-            height = app.height;  
+    /**
+     * The GUI constructor does all the work of creating the GUI and setting
+     * up event listeners. Note the use of local and anonymous classes.
+     */
+    public DrawGUI(Draw application) {
+        super("Draw"); // Create the window
+        app = application; // Remember the application reference
+        fgColor = app.fgColor;
+        bgColor = app.bgColor;
+        width = app.width;
+        height = app.height;
 
-            doubleBuffering();
-            
-            // selector for drawing modes
-            JComboBox<String> shape_chooser = new JComboBox<>();
-            shape_chooser.addItem("Scribble");
-            shape_chooser.addItem("Rectangle");
-            shape_chooser.addItem("Oval");
+        doubleBuffering();
 
-            // selector for drawing colors
-            JComboBox<String> color_chooser = new JComboBox<>();
-            color_chooser.addItem("Black");
-            color_chooser.addItem("Green");
-            color_chooser.addItem("Red");
-            color_chooser.addItem("Blue");
+        // selector for drawing modes
+        JComboBox<String> shape_chooser = new JComboBox<>();
+        shape_chooser.addItem("Scribble");
+        shape_chooser.addItem("Rectangle");
+        shape_chooser.addItem("Oval");
 
-            // Create three buttons
-            JButton clear = new JButton("Clear");
-            JButton quit = new JButton("Quit");
-            JButton auto = new JButton("auto");
+        // selector for drawing colors
+        JComboBox<String> color_chooser = new JComboBox<>();
+        color_chooser.addItem("Black");
+        color_chooser.addItem("Green");
+        color_chooser.addItem("Red");
+        color_chooser.addItem("Blue");
 
-            // Set a LayoutManager, and add the choosers and buttons to the window.
-            JPanel backPanel = new JPanel();
-            backPanel.setLayout(new FlowLayout());
-            backPanel.add(new JLabel("Shape:"));
-            backPanel.add(shape_chooser);
-            backPanel.add(new JLabel("Color:"));
-            backPanel.add(color_chooser);
-            backPanel.add(clear);
-            backPanel.add(quit);
-            backPanel.add(auto);
+        // Create three buttons
+        JButton clear = new JButton("Clear");
+        JButton quit = new JButton("Quit");
+        JButton auto = new JButton("auto");
 
-            frontPanel = new JPanel();
-            frontPanel.setBackground(Color.WHITE);
+        // Set a LayoutManager, and add the choosers and buttons to the window.
+        JPanel backPanel = new JPanel();
+        backPanel.setLayout(new FlowLayout());
+        backPanel.add(new JLabel("Shape:"));
+        backPanel.add(shape_chooser);
+        backPanel.add(new JLabel("Color:"));
+        backPanel.add(color_chooser);
+        backPanel.add(clear);
+        backPanel.add(quit);
+        backPanel.add(auto);
 
-            Container contentPane = this.getContentPane();
-            contentPane.setLayout(new BorderLayout());
-            contentPane.add(backPanel, BorderLayout.NORTH);
-            contentPane.add(frontPanel,BorderLayout.CENTER);
+        frontPanel = new JPanel();
+        frontPanel.setBackground(Color.WHITE);
 
-            // Here's a local class used for action listeners for the buttons
-            class DrawActionListener implements ActionListener {
-                private String command;
+        Container contentPane = this.getContentPane();
+        contentPane.setLayout(new BorderLayout());
+        contentPane.add(backPanel, BorderLayout.NORTH);
+        contentPane.add(frontPanel, BorderLayout.CENTER);
 
-                public DrawActionListener(String cmd) {
-                    command = cmd;
-                }
+        // Here's a local class used for action listeners for the buttons
+        class DrawActionListener implements ActionListener {
+            private String command;
 
-                public void actionPerformed(ActionEvent e) {
-                    app.doCommand(command);
-                }
+            public DrawActionListener(String cmd) {
+                command = cmd;
             }
 
-            // Define action listener adapters that connect the buttons to the app
-            clear.addActionListener(new DrawActionListener("clear"));
-            quit.addActionListener(new DrawActionListener("quit"));
-            auto.addActionListener(new DrawActionListener("auto"));
+            public void actionPerformed(ActionEvent e) {
+                app.doCommand(command);
+            }
+        }
 
-            // this class determines how mouse events are to be interpreted,
-            // depending on the shape mode currently set
-            class ShapeManager implements ItemListener {
-                DrawGUI gui;
+        // Define action listener adapters that connect the buttons to the app
+        clear.addActionListener(new DrawActionListener("clear"));
+        quit.addActionListener(new DrawActionListener("quit"));
+        auto.addActionListener(new DrawActionListener("auto"));
 
-                @SuppressWarnings("unused")
-                abstract class ShapeDrawer extends MouseAdapter implements MouseMotionListener {
-                    public void mouseMoved(MouseEvent e) {
-                        /* ignore */ }
+        // this class determines how mouse events are to be interpreted,
+        // depending on the shape mode currently set
+        class ShapeManager implements ItemListener {
+            DrawGUI gui;
+
+            @SuppressWarnings("unused")
+            abstract class ShapeDrawer extends MouseAdapter implements MouseMotionListener {
+                public void mouseMoved(MouseEvent e) {
+                    /* ignore */ }
+            }
+
+            // if this class is active, the mouse is interpreted as a pen
+            class ScribbleDrawer extends ShapeDrawer {
+                int lastx, lasty;
+
+                public void mousePressed(MouseEvent e) {
+                    Point p = gui.frontPanel.getMousePosition();
+                    if (p != null) {
+                        lastx = p.x;
+                        lasty = p.y;
+                    }
                 }
 
-                // if this class is active, the mouse is interpreted as a pen
-                class ScribbleDrawer extends ShapeDrawer {
-                    int lastx, lasty;
-
-                    public void mousePressed(MouseEvent e) {
-                        lastx = e.getX();
-                        lasty = e.getY();
-                    }
-
-                    public void mouseDragged(MouseEvent e) {
-                        Graphics g = gui.frontPanel.getGraphics();
-                        Graphics g2 = gui.buffImage.getGraphics();
-                        Point p = gui.frontPanel.getMousePosition();
+                public void mouseDragged(MouseEvent e) {
+                    Graphics g = gui.frontPanel.getGraphics();
+                    Graphics g2 = gui.buffImage.getGraphics();
+                    Point p = gui.frontPanel.getMousePosition();
+                    if (p != null) {
                         int x = p.x;
                         int y = p.y;
                         g.setColor(gui.fgColor);
@@ -130,60 +134,66 @@ public class DrawGUI extends JFrame {
                         lasty = y;
                     }
                 }
+            }
 
-                // if this class is active, rectangles are drawn
-                class RectangleDrawer extends ShapeDrawer {
-                    int pressx, pressy;
-                    int lastx = -1, lasty = -1;
+            // if this class is active, rectangles are drawn
+            class RectangleDrawer extends ShapeDrawer {
+                int pressx, pressy;
+                int lastx = -1, lasty = -1;
 
-                    // mouse pressed => fix first corner of rectangle
-                    public void mousePressed(MouseEvent e) {
-                        Point p = gui.frontPanel.getMousePosition();
+                // mouse pressed => fix first corner of rectangle
+                public void mousePressed(MouseEvent e) {
+                    Point p = gui.frontPanel.getMousePosition();
+                    if (p != null) {
                         int x = p.x;
                         int y = p.y;
                         pressx = x;
                         pressy = y;
                     }
+                }
 
-                    // mouse released => fix second corner of rectangle
-                    // and draw the resulting shape
-                    public void mouseReleased(MouseEvent e) {
-                        Graphics g = gui.frontPanel.getGraphics();
-                        Graphics g2 = gui.buffImage.getGraphics();
-                        if (lastx != -1) {
-                            // first undraw a rubber rect
-                            g.setXORMode(gui.fgColor);
-                            g.setColor(gui.getBackground());
-                            doDraw(pressx, pressy, lastx, lasty, g);
-                            lastx = -1;
-                            lasty = -1;
-                        }
-                        // these commands finish the rubberband mode
-                        g.setPaintMode();
-                        g2.setPaintMode();
-                        g.setColor(gui.fgColor);
-                        g2.setColor(gui.fgColor);
-                        // draw the finel rectangle
-                        Point p = gui.frontPanel.getMousePosition();
+                // mouse released => fix second corner of rectangle
+                // and draw the resulting shape
+                public void mouseReleased(MouseEvent e) {
+                    Graphics g = gui.frontPanel.getGraphics();
+                    Graphics g2 = gui.buffImage.getGraphics();
+                    if (lastx != -1) {
+                        // first undraw a rubber rect
+                        g.setXORMode(gui.fgColor);
+                        g.setColor(gui.getBackground());
+                        doDraw(pressx, pressy, lastx, lasty, g);
+                        lastx = -1;
+                        lasty = -1;
+                    }
+                    // these commands finish the rubberband mode
+                    g.setPaintMode();
+                    g2.setPaintMode();
+                    g.setColor(gui.fgColor);
+                    g2.setColor(gui.fgColor);
+                    // draw the finel rectangle
+                    Point p = gui.frontPanel.getMousePosition();
+                    if (p != null) {
                         int x = p.x;
                         int y = p.y;
                         doDraw(pressx, pressy, x, y, g);
                         doDraw(pressx, pressy, x, y, g2);
                     }
+                }
 
-                    // mouse released => temporarily set second corner of rectangle
-                    // draw the resulting shape in "rubber-band mode"
-                    public void mouseDragged(MouseEvent e) {
-                        Graphics g = gui.getGraphics();
-                        // these commands set the rubberband mode
-                        g.setXORMode(gui.fgColor);
-                        g.setColor(gui.getBackground());
-                        if (lastx != -1) {
-                            // first undraw previous rubber rect
-                            doDraw(pressx, pressy, lastx, lasty, g);
+                // mouse released => temporarily set second corner of rectangle
+                // draw the resulting shape in "rubber-band mode"
+                public void mouseDragged(MouseEvent e) {
+                    Graphics g = gui.frontPanel.getGraphics();
+                    // these commands set the rubberband mode
+                    g.setXORMode(gui.fgColor);
+                    g.setColor(gui.getBackground());
+                    if (lastx != -1) {
+                        // first undraw previous rubber rect
+                        doDraw(pressx, pressy, lastx, lasty, g);
 
-                        }
-                        Point p = gui.frontPanel.getMousePosition();
+                    }
+                    Point p = gui.frontPanel.getMousePosition();
+                    if (p != null) {
                         int x = p.x;
                         int y = p.y;
                         lastx = x;
@@ -191,330 +201,330 @@ public class DrawGUI extends JFrame {
                         // draw new rubber rect
                         doDraw(pressx, pressy, lastx, lasty, g);
                     }
-
-                    public void doDraw(int x0, int y0, int x1, int y1, Graphics g) {
-                        // calculate upperleft and width/height of rectangle
-                        int x = Math.min(x0, x1);
-                        int y = Math.min(y0, y1);
-                        int w = Math.abs(x1 - x0);
-                        int h = Math.abs(y1 - y0);
-                        // draw rectangle
-                        g.drawRect(x, y, w, h);
-                    }
                 }
 
-                // if this class is active, ovals are drawn
-                class OvalDrawer extends RectangleDrawer {
-                    public void doDraw(int x0, int y0, int x1, int y1, Graphics g) {
-                        int x = Math.min(x0, x1);
-                        int y = Math.min(y0, y1);
-                        int w = Math.abs(x1 - x0);
-                        int h = Math.abs(y1 - y0);
-                        // draw oval instead of rectangle
-                        g.drawOval(x, y, w, h);
-                    }
-                }
-
-                ScribbleDrawer scribbleDrawer = new ScribbleDrawer();
-                RectangleDrawer rectDrawer = new RectangleDrawer();
-                OvalDrawer ovalDrawer = new OvalDrawer();
-                ShapeDrawer currentDrawer;
-
-                public ShapeManager(DrawGUI itsGui) {
-                    gui = itsGui;
-                    // default: activate scribble mode
-                    currentDrawer = scribbleDrawer;
-                    gui.addMouseListener(currentDrawer);
-                    gui.addMouseMotionListener(currentDrawer);
-                }
-
-                // reset the shape drawer
-                public void setCurrentDrawer(ShapeDrawer l) {
-                    if (currentDrawer == l)
-                        return;
-
-                    // activate new drawer
-                    gui.removeMouseListener(currentDrawer);
-                    gui.removeMouseMotionListener(currentDrawer);
-                    currentDrawer = l;
-                    gui.addMouseListener(currentDrawer);
-                    gui.addMouseMotionListener(currentDrawer);
-                }
-
-                // user selected new shape => reset the shape mode
-                public void itemStateChanged(ItemEvent e) {
-                    if (e.getItem().equals("Scribble")) {
-                        setCurrentDrawer(scribbleDrawer);
-                    } else if (e.getItem().equals("Rectangle")) {
-                        setCurrentDrawer(rectDrawer);
-                    } else if (e.getItem().equals("Oval")) {
-                        setCurrentDrawer(ovalDrawer);
-                    }
+                public void doDraw(int x0, int y0, int x1, int y1, Graphics g) {
+                    // calculate upperleft and width/height of rectangle
+                    int x = Math.min(x0, x1);
+                    int y = Math.min(y0, y1);
+                    int w = Math.abs(x1 - x0);
+                    int h = Math.abs(y1 - y0);
+                    // draw rectangle
+                    g.drawRect(x, y, w, h);
                 }
             }
 
-            shape_chooser.addItemListener(new ShapeManager(this));
-
-            class ColorItemListener implements ItemListener {
-
-                // user selected new color => store new color in DrawGUIs
-                public void itemStateChanged(ItemEvent e) {
-                    if (e.getItem().equals("Black")) {
-                        fgColor = Color.black;
-                    } else if (e.getItem().equals("Green")) {
-                        fgColor = Color.green;
-                    } else if (e.getItem().equals("Red")) {
-                        fgColor = Color.red;
-                    } else if (e.getItem().equals("Blue")) {
-                        fgColor = Color.blue;
-                    }
-                
-            }
-            }
-
-            color_chooser.addItemListener(new ColorItemListener());
-
-            // Handle the window close request similarly
-            this.addWindowListener(new WindowAdapter() {
-                public void windowClosing(WindowEvent e) {
-                    app.doCommand("quit");
+            // if this class is active, ovals are drawn
+            class OvalDrawer extends RectangleDrawer {
+                public void doDraw(int x0, int y0, int x1, int y1, Graphics g) {
+                    int x = Math.min(x0, x1);
+                    int y = Math.min(y0, y1);
+                    int w = Math.abs(x1 - x0);
+                    int h = Math.abs(y1 - y0);
+                    // draw oval instead of rectangle
+                    g.drawOval(x, y, w, h);
                 }
-            });
+            }
 
-            // Finally, set the size of the window, and pop it up
-            this.frontPanel.setPreferredSize(new Dimension(app.width, app.height));
-            this.pack();
-            this.frontPanel.setBackground(app.bgColor);
-            this.setSize(800, 400);
-            this.setBackground(Color.white);
-            this.setResizable(false);
-            // this.show(); //awt
-            this.setVisible(true); // ++
-        }
+            ScribbleDrawer scribbleDrawer = new ScribbleDrawer();
+            RectangleDrawer rectDrawer = new RectangleDrawer();
+            OvalDrawer ovalDrawer = new OvalDrawer();
+            ShapeDrawer currentDrawer;
 
-        /** API method: get fg color ... */
-        public String getFGColor() {
-            if (fgColor == Color.black) {
-                return "black";
-            } else if (fgColor == Color.green) {
-                return "green";
-            } else if (fgColor == Color.red) {
-                return "red";
-            } else if (fgColor == Color.blue) {
-                return "blue";
-            } else {
-                return null;
+            public ShapeManager(DrawGUI itsGui) {
+                gui = itsGui;
+                // default: activate scribble mode
+                currentDrawer = scribbleDrawer;
+                gui.addMouseListener(currentDrawer);
+                gui.addMouseMotionListener(currentDrawer);
+            }
+
+            // reset the shape drawer
+            public void setCurrentDrawer(ShapeDrawer l) {
+                if (currentDrawer == l)
+                    return;
+
+                // activate new drawer
+                gui.removeMouseListener(currentDrawer);
+                gui.removeMouseMotionListener(currentDrawer);
+                currentDrawer = l;
+                gui.addMouseListener(currentDrawer);
+                gui.addMouseMotionListener(currentDrawer);
+            }
+
+            // user selected new shape => reset the shape mode
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getItem().equals("Scribble")) {
+                    setCurrentDrawer(scribbleDrawer);
+                } else if (e.getItem().equals("Rectangle")) {
+                    setCurrentDrawer(rectDrawer);
+                } else if (e.getItem().equals("Oval")) {
+                    setCurrentDrawer(ovalDrawer);
+                }
             }
         }
 
-        /**
-         * @param new_color
-         * @throws ColorException
-         */
-        public void setFGColor(String new_color) throws ColorException {
-            switch (new_color.toLowerCase()) {
-                case "black":
+        shape_chooser.addItemListener(new ShapeManager(this));
+
+        class ColorItemListener implements ItemListener {
+
+            // user selected new color => store new color in DrawGUIs
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getItem().equals("Black")) {
                     fgColor = Color.black;
-                    break;
-                case "green":
+                } else if (e.getItem().equals("Green")) {
                     fgColor = Color.green;
-                    break;
-                case "red":
+                } else if (e.getItem().equals("Red")) {
                     fgColor = Color.red;
-                    break;
-                case "blue":
+                } else if (e.getItem().equals("Blue")) {
                     fgColor = Color.blue;
-                    break;
-                default:
-                    throw new ColorException("Invalid color!");
-            }
-        }
-
-        public int getWidth() {
-            return width;
-
-        }
-
-        public int getHeight() {
-            return height;
-        }
-
-        public void setWidth(int width) throws SizeException {
-            this.frontPanel.setPreferredSize(new Dimension(getWidth(), getHeight()));
-            this.pack();
-            this.buffImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
-        }
-
-        public void setHeight(int height) throws SizeException {
-            this.frontPanel.setPreferredSize(new Dimension(getWidth(), getHeight()));
-            this.pack();
-            this.buffImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
-        }
-
-        public void setBGColor(String new_color) throws ColorException {
-            switch (new_color.toLowerCase()) {
-                case "black":
-                    bgColor = Color.black;
-                    ;
-                    break;
-                case "green":
-                    bgColor = Color.green;
-                    break;
-                case "red":
-                    bgColor = Color.red;
-                    break;
-                case "blue":
-                    bgColor = Color.blue;
-                case "white":
-                    bgColor = Color.white;
-                    break;
-                default:
-                    throw new ColorException("Invalid color!");
-            }
-            Graphics g = this.frontPanel.getGraphics();
-            g.setColor(bgColor);
-            g.fillRect(0, 0, this.frontPanel.getWidth(), this.frontPanel.getHeight());
-            g.dispose();
-
-            Graphics g2 = this.buffImage.createGraphics();
-            g2.setColor(bgColor);
-            g2.fillRect(0, 0, this.buffImage.getWidth(), this.buffImage.getHeight());
-            g2.dispose();
-        }
-
-        public String getBGColor() {
-            Color bgColor = this.getBackground();
-            if (bgColor == null) {
-                return null;
-            }
-            String[] colorSign = { "black", "green", "red", "blue", "default (white)" };
-            Color[] colors = { Color.black, Color.green, Color.red, Color.blue, Color.white };
-            for (int i = 0; i < colors.length; i++) {
-                if (bgColor.equals(colors[i])) {
-                    return colorSign[i];
                 }
+
             }
+        }
+
+        color_chooser.addItemListener(new ColorItemListener());
+
+        // Handle the window close request similarly
+        this.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                app.doCommand("quit");
+            }
+        });
+
+        // Finally, set the size of the window, and pop it up
+        this.frontPanel.setPreferredSize(new Dimension(app.width, app.height));
+        this.pack();
+        this.frontPanel.setBackground(app.bgColor);
+        this.setSize(800, 400);
+        this.setBackground(Color.white);
+        this.setResizable(false);
+        // this.show(); //awt
+        this.setVisible(true); // ++
+    }
+
+    /** API method: get fg color ... */
+    public String getFGColor() {
+        if (fgColor == Color.black) {
+            return "black";
+        } else if (fgColor == Color.green) {
+            return "green";
+        } else if (fgColor == Color.red) {
+            return "red";
+        } else if (fgColor == Color.blue) {
+            return "blue";
+        } else {
             return null;
         }
+    }
 
-        public void drawRectangle(Point upper_left, Point lower_right) {
-            String fgColor = this.getFGColor();
-            Color c = Color.getColor(fgColor);
-
-            int x = Math.min(upper_left.x, lower_right.x);
-            int y = Math.min(upper_left.y, lower_right.y);
-            int width = Math.abs(lower_right.x - upper_left.x);
-            int height = Math.abs(lower_right.y - upper_left.y);
-
-            Graphics g = this.frontPanel.getGraphics();
-            g.setColor(c);
-            g.drawRect(x, y, width, height);
-            g.dispose();
-
-            Graphics g2 = this.buffImage.getGraphics();
-            g2.setColor(c);
-            g2.drawRect(x, y, width, height);
-            g2.dispose();
+    /**
+     * @param new_color
+     * @throws ColorException
+     */
+    public void setFGColor(String new_color) throws ColorException {
+        switch (new_color.toLowerCase()) {
+            case "black":
+                fgColor = Color.black;
+                break;
+            case "green":
+                fgColor = Color.green;
+                break;
+            case "red":
+                fgColor = Color.red;
+                break;
+            case "blue":
+                fgColor = Color.blue;
+                break;
+            default:
+                throw new ColorException("Invalid color!");
         }
+    }
 
-        public void drawOval(Point upper_left, Point lower_right) {
-            String fgColor = this.getFGColor();
-            Color c = Color.getColor(fgColor);
-
-            int x = Math.min(upper_left.x, lower_right.x);
-            int y = Math.min(upper_left.y, lower_right.y);
-            int width = Math.abs(lower_right.x - upper_left.x);
-            int height = Math.abs(lower_right.y - upper_left.y);
-
-            Graphics g = this.frontPanel.getGraphics();
-            g.setColor(c);
-            g.drawOval(x, y, width, height);
-            g.dispose();
-
-            Graphics g2 = this.buffImage.getGraphics();
-            g2.setColor(c);
-            g2.drawOval(x, y, width, height);
-            g2.dispose();
-        }
-
-        public void drawPolyLine(java.util.List<Point> points) {
-            String fgColor = this.getFGColor();
-            Color c = Color.getColor(fgColor);
-
-            Graphics g = this.frontPanel.getGraphics();
-            g.setPaintMode();
-            g.setColor(c);
-            g.dispose();
-
-            Graphics g2 = this.buffImage.getGraphics();
-            g2.setColor(c);
-            g2.setPaintMode();
-            g2.dispose();
-
-            for (int i = 1; i < points.size(); i++) {
-                Point prevPoint = points.get(i - 1);
-                Point currPoint = points.get(i);
-                g.drawLine(prevPoint.x, prevPoint.y, currPoint.x, currPoint.y);
-                g2.drawLine(prevPoint.x, prevPoint.y, currPoint.x, currPoint.y);
-            }
-        }
-
-        public Image getDrawing() {
-                return this.buffImage;
-        }
-
-        public void writeImage(Image img, String filename) throws IOException {
-            MyBMPFile.write(filename, (BufferedImage) img);
-        }
-
-        public Image readImage(String filename) throws IOException {
-            return MyBMPFile.read(filename);
-        }
-
-        public void clear() {
-            Graphics g = frontPanel.getGraphics();
-            g.setColor(bgColor);
-            g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
-            g.dispose();
-        
-            Graphics g2 = buffImage.getGraphics();
-            g2.setColor(bgColor);
-            g2.fillRect(0, 0, buffImage.getWidth(), buffImage.getHeight());
-            g2.dispose();
-        }
-
-        public void autoDraw() {
-            Point p1 = new Point(100, 200);
-            Point p2 = new Point(200, 100);
-            drawRectangle(p1, p2);
-            Point p3 = new Point(300, 200);
-            Point p4 = new Point(400, 100);
-            drawOval(p3, p4);
-            java.util.List<Point> points = new ArrayList<>();
-            points.add(new Point(500, 200));
-            points.add(new Point(600, 100));
-            points.add(new Point(700, 200));
-            drawPolyLine(points);
-            try {
-                setBGColor("blue");
-            } catch (ColorException e) {
-                System.out.println("invalid color");
-            }
-
-            try {
-                setFGColor("red");
-            } catch (ColorException e) {
-                System.out.println("invalid color");
-            }
-        }
-
-        private void doubleBuffering(){
-            buffImage = new BufferedImage(app.width, app.height, BufferedImage.TYPE_INT_RGB);
-            Graphics g = buffImage.createGraphics();
-            g.setColor(Color.white);
-            g.fillRect(0, 0, buffImage.getWidth(), buffImage.getHeight());
-            g.dispose();
-        }
-
+    public int getWidth() {
+        return width;
 
     }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setWidth(int width) throws SizeException {
+        this.frontPanel.setPreferredSize(new Dimension(getWidth(), getHeight()));
+        this.pack();
+        this.buffImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
+    }
+
+    public void setHeight(int height) throws SizeException {
+        this.frontPanel.setPreferredSize(new Dimension(getWidth(), getHeight()));
+        this.pack();
+        this.buffImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
+    }
+
+    public void setBGColor(String new_color) throws ColorException {
+        switch (new_color.toLowerCase()) {
+            case "black":
+                bgColor = Color.black;
+                ;
+                break;
+            case "green":
+                bgColor = Color.green;
+                break;
+            case "red":
+                bgColor = Color.red;
+                break;
+            case "blue":
+                bgColor = Color.blue;
+            case "white":
+                bgColor = Color.white;
+                break;
+            default:
+                throw new ColorException("Invalid color!");
+        }
+        Graphics g = this.frontPanel.getGraphics();
+        g.setColor(bgColor);
+        g.fillRect(0, 0, this.frontPanel.getWidth(), this.frontPanel.getHeight());
+        g.dispose();
+
+        Graphics g2 = this.buffImage.createGraphics();
+        g2.setColor(bgColor);
+        g2.fillRect(0, 0, this.buffImage.getWidth(), this.buffImage.getHeight());
+        g2.dispose();
+    }
+
+    public String getBGColor() {
+        Color bgColor = this.getBackground();
+        if (bgColor == null) {
+            return null;
+        }
+        String[] colorSign = { "black", "green", "red", "blue", "default (white)" };
+        Color[] colors = { Color.black, Color.green, Color.red, Color.blue, Color.white };
+        for (int i = 0; i < colors.length; i++) {
+            if (bgColor.equals(colors[i])) {
+                return colorSign[i];
+            }
+        }
+        return null;
+    }
+
+    public void drawRectangle(Point upper_left, Point lower_right) {
+        String fgColor = this.getFGColor();
+        Color c = Color.getColor(fgColor);
+
+        int x = Math.min(upper_left.x, lower_right.x);
+        int y = Math.min(upper_left.y, lower_right.y);
+        int width = Math.abs(lower_right.x - upper_left.x);
+        int height = Math.abs(lower_right.y - upper_left.y);
+
+        Graphics g = this.frontPanel.getGraphics();
+        g.setColor(c);
+        g.drawRect(x, y, width, height);
+        g.dispose();
+
+        Graphics g2 = this.buffImage.getGraphics();
+        g2.setColor(c);
+        g2.drawRect(x, y, width, height);
+        g2.dispose();
+    }
+
+    public void drawOval(Point upper_left, Point lower_right) {
+        String fgColor = this.getFGColor();
+        Color c = Color.getColor(fgColor);
+
+        int x = Math.min(upper_left.x, lower_right.x);
+        int y = Math.min(upper_left.y, lower_right.y);
+        int width = Math.abs(lower_right.x - upper_left.x);
+        int height = Math.abs(lower_right.y - upper_left.y);
+
+        Graphics g = this.frontPanel.getGraphics();
+        g.setColor(c);
+        g.drawOval(x, y, width, height);
+        g.dispose();
+
+        Graphics g2 = this.buffImage.getGraphics();
+        g2.setColor(c);
+        g2.drawOval(x, y, width, height);
+        g2.dispose();
+    }
+
+    public void drawPolyLine(java.util.List<Point> points) {
+        String fgColor = this.getFGColor();
+        Color c = Color.getColor(fgColor);
+
+        Graphics g = this.frontPanel.getGraphics();
+        g.setPaintMode();
+        g.setColor(c);
+        g.dispose();
+
+        Graphics g2 = this.buffImage.getGraphics();
+        g2.setColor(c);
+        g2.setPaintMode();
+        g2.dispose();
+
+        for (int i = 1; i < points.size(); i++) {
+            Point prevPoint = points.get(i - 1);
+            Point currPoint = points.get(i);
+            g.drawLine(prevPoint.x, prevPoint.y, currPoint.x, currPoint.y);
+            g2.drawLine(prevPoint.x, prevPoint.y, currPoint.x, currPoint.y);
+        }
+    }
+
+    public Image getDrawing() {
+        return this.buffImage;
+    }
+
+    public void writeImage(Image img, String filename) throws IOException {
+        MyBMPFile.write(filename, (BufferedImage) img);
+    }
+
+    public Image readImage(String filename) throws IOException {
+        return MyBMPFile.read(filename);
+    }
+
+    public void clear() {
+        Graphics g = frontPanel.getGraphics();
+        g.setColor(bgColor);
+        g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
+        g.dispose();
+
+        Graphics g2 = buffImage.getGraphics();
+        g2.setColor(bgColor);
+        g2.fillRect(0, 0, buffImage.getWidth(), buffImage.getHeight());
+        g2.dispose();
+    }
+
+    public void autoDraw() {
+        Point p1 = new Point(100, 200);
+        Point p2 = new Point(200, 100);
+        drawRectangle(p1, p2);
+        Point p3 = new Point(300, 200);
+        Point p4 = new Point(400, 100);
+        drawOval(p3, p4);
+        java.util.List<Point> points = new ArrayList<>();
+        points.add(new Point(500, 200));
+        points.add(new Point(600, 100));
+        points.add(new Point(700, 200));
+        drawPolyLine(points);
+        try {
+            setBGColor("blue");
+        } catch (ColorException e) {
+            System.out.println("invalid color");
+        }
+
+        try {
+            setFGColor("red");
+        } catch (ColorException e) {
+            System.out.println("invalid color");
+        }
+    }
+
+    private void doubleBuffering() {
+        buffImage = new BufferedImage(app.width, app.height, BufferedImage.TYPE_INT_RGB);
+        Graphics g = buffImage.createGraphics();
+        g.setColor(Color.white);
+        g.fillRect(0, 0, buffImage.getWidth(), buffImage.getHeight());
+        g.dispose();
+    }
+
+}

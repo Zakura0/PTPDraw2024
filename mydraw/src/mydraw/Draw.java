@@ -3,7 +3,6 @@ package mydraw;
 import java.awt.*;
 import java.io.IOException;
 
-
 /*
  * @authors Giahung Bui 7557640 , Ben Woller 7740402
  */
@@ -14,8 +13,9 @@ public class Draw {
     Color bgColor;
     int height;
     int width;
+
     public static void main(String[] args) {
-       new Draw();
+        new Draw();
     }
 
     public Draw() {
@@ -24,7 +24,7 @@ public class Draw {
         fgColor = Color.BLACK;
         bgColor = Color.WHITE;
         window = new DrawGUI(this);
-        
+
     }
 
     public void doCommand(String command) {
@@ -33,7 +33,7 @@ public class Draw {
         } else if (command.equals("quit")) {
             window.dispose();
             System.exit(0);
-        } else if (command.equals("auto")){
+        } else if (command.equals("auto")) {
             autoDraw();
         }
 
