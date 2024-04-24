@@ -523,18 +523,38 @@ public class DrawGUI extends JFrame {
         g2.dispose();
     }
 
+    /**
+     * API Method: retrieves the current drawing as a BufferedImage
+     * Return type: BufferedImage
+     * **/
     public Image getDrawing() {
         return this.buffImage;
     }
 
+    /**
+     * API Method: saves an BufferedImage to a file and saves it under a given
+     * name in the current directory.
+     * Params: Image img, String filename
+     * Throws an IOException if image cant be saved
+     * **/
     public void writeImage(Image img, String filename) throws IOException {
         MyBMPFile.write(filename, (BufferedImage) img);
     }
 
+    /**
+     * API Method: reads a file and gets the content of the BMP file as
+     * a buffered image
+     * Returns: BufferedImage
+     * Throws an IOException if filename cant be found
+     * **/
     public Image readImage(String filename) throws IOException {
         return MyBMPFile.read(filename);
     }
 
+    /**
+     * API Method: clears the drawing pane and sets the color to the current
+     * bgColor
+     * **/
     public void clear() {
         Graphics g = frontPanel.getGraphics();
         g.setColor(bgColor);
@@ -547,6 +567,10 @@ public class DrawGUI extends JFrame {
         g2.dispose();
     }
 
+    /**
+     * API Method: script, that draws different shapes automatically on
+     * the drawing pane. Saves them afterward as an BMP image.
+     * **/
     public void autoDraw() {
         Point p1 = new Point(100, 200);
         Point p2 = new Point(200, 100);
@@ -580,6 +604,9 @@ public class DrawGUI extends JFrame {
         }
     }
 
+    /**
+     * Helper Method: Sets up a BufferedImage to save the drawings on an extra pane
+     * **/
     private void doubleBuffering() {
         buffImage = new BufferedImage(app.width, app.height, BufferedImage.TYPE_INT_RGB);
         Graphics g = buffImage.createGraphics();
