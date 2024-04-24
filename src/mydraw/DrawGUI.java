@@ -24,8 +24,6 @@ public class DrawGUI extends JFrame {
     Draw app; // A reference to the application, to send commands to.
     Color fgColor; // A referenec to the current foreground color (drawing color)
     Color bgColor; // A reference to the current background color
-    int width;  // A reference to the current window width
-    int height; // A reference to the current window height
     JPanel frontPanel; // A reference to the GUI panel
     BufferedImage buffImage; // A reference to the drawing panel (used to save the drawing)
 
@@ -38,8 +36,6 @@ public class DrawGUI extends JFrame {
         app = application; // Remember the application reference
         fgColor = app.fgColor;
         bgColor = app.bgColor;
-        width = app.width;
-        height = app.height;
 
         // Initializes the drawing panel
         doubleBuffering();
@@ -60,11 +56,10 @@ public class DrawGUI extends JFrame {
         // Create three buttons
         JButton clear = new JButton("Clear");
         JButton quit = new JButton("Quit");
-        JButton auto = new JButton("auto");
+        JButton auto = new JButton("Auto");
 
         // Set a LayoutManager, and add the choosers and buttons to the window.
-        JPanel backPanel = new JPanel();
-        backPanel.setLayout(new FlowLayout());
+        JPanel backPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
         backPanel.add(new JLabel("Shape:"));
         backPanel.add(shape_chooser);
         backPanel.add(new JLabel("Color:"));
@@ -300,10 +295,9 @@ public class DrawGUI extends JFrame {
         });
 
         // Finally, set the size of the window, and pop it up
-        this.frontPanel.setPreferredSize(new Dimension(app.width, app.height));
+        this.frontPanel.setPreferredSize(new Dimension(800, 400));
         this.pack();
         this.frontPanel.setBackground(app.bgColor);
-        this.setSize(800, 400);
         this.setBackground(Color.white);
         this.setResizable(false);
         // this.show(); //awt
@@ -358,7 +352,7 @@ public class DrawGUI extends JFrame {
      * Return type: int
      * **/
     public int getWidth() {
-        return width;
+        return this.frontPanel.getSize().width;
 
     }
 
@@ -367,7 +361,7 @@ public class DrawGUI extends JFrame {
      * Return type: int
      * **/
     public int getHeight() {
-        return height;
+        return this.frontPanel.getSize().height;
     }
 
     /**
@@ -376,6 +370,9 @@ public class DrawGUI extends JFrame {
      * Throws a SizeException if the width is negative
      * **/
     public void setWidth(int width) throws SizeException {
+        if (width < 520) {
+            throw new SizeException("Width must be at least 550 pixels.");
+        }
         this.frontPanel.setPreferredSize(new Dimension(width, getHeight()));
         this.pack();
         this.buffImage = new BufferedImage(width, getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -387,6 +384,9 @@ public class DrawGUI extends JFrame {
      * Throws a SizeException if the height is negative
      * **/
     public void setHeight(int height) throws SizeException {
+        if (height < 70) {
+            throw new SizeException("Height must be at least 70 pixels.");
+        }
         this.frontPanel.setPreferredSize(new Dimension(getWidth(), height));
         this.pack();
         this.buffImage = new BufferedImage(getWidth(), height, BufferedImage.TYPE_INT_RGB);
@@ -568,14 +568,14 @@ public class DrawGUI extends JFrame {
         }
         drawPolyLine(List.of(pl1, pl2, pl3));
         try {
-            writeImage(buffImage, "output.bmp");
+            writeImage(buffImage, "image.bmp");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     private void doubleBuffering() {
-        buffImage = new BufferedImage(app.width, app.height, BufferedImage.TYPE_INT_RGB);
+        buffImage = new BufferedImage(800, 400, BufferedImage.TYPE_INT_RGB);
         Graphics g = buffImage.createGraphics();
         g.setColor(Color.white);
         g.fillRect(0, 0, buffImage.getWidth(), buffImage.getHeight());

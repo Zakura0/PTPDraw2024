@@ -1,4 +1,4 @@
-package test;
+package mydraw.test;
 /*
  * @authors Giahung Bui 7557640 , Ben Woller 7740402
  */
@@ -7,6 +7,8 @@ import mydraw.ColorException;
 import mydraw.Draw;
 
 import mydraw.SizeException;
+
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 
 import java.awt.*;
@@ -22,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DrawTest {
 
     Color strToCol(String colorsign) throws ColorException {
-        return switch(colorsign.toLowerCase()) {
+        return switch (colorsign.toLowerCase()) {
             case "black" -> Color.black;
             case "green" -> Color.green;
             case "red" -> Color.red;
@@ -33,16 +35,14 @@ class DrawTest {
     }
 
     Color intToCol(int pixel) {
-        int  red = (pixel & 0x00ff0000) >> 16;
-        int  green = (pixel & 0x0000ff00) >> 8;
-        int  blue = pixel & 0x000000ff;
+        int red = (pixel & 0x00ff0000) >> 16;
+        int green = (pixel & 0x0000ff00) >> 8;
+        int blue = pixel & 0x000000ff;
         return new Color(red, green, blue);
     }
 
-    public static BufferedImage toBufferedImage(Image img)
-    {
-        if (img instanceof BufferedImage)
-        {
+    public static BufferedImage toBufferedImage(Image img) {
+        if (img instanceof BufferedImage) {
             return (BufferedImage) img;
         }
 
@@ -56,7 +56,8 @@ class DrawTest {
     }
 
     boolean imagesEqual(BufferedImage expectedImage, BufferedImage actualImage) {
-        if (expectedImage.getWidth() == actualImage.getWidth() && expectedImage.getHeight() == actualImage.getHeight()) {
+        if (expectedImage.getWidth() == actualImage.getWidth()
+                && expectedImage.getHeight() == actualImage.getHeight()) {
             for (int x = 0; x < expectedImage.getWidth(); x++) {
                 for (int y = 0; y < expectedImage.getHeight(); y++) {
                     if (expectedImage.getRGB(x, y) != actualImage.getRGB(x, y)) {
@@ -92,23 +93,24 @@ class DrawTest {
     void WidthTest() throws SizeException {
         int expectedWidth, actualWidth;
 
-        expectedWidth = 800;
+        expectedWidth = 520;
         draw.setWidth(expectedWidth);
         actualWidth = draw.getWidth();
 
         assertEquals(expectedWidth, actualWidth);
         assertThrows(SizeException.class, () -> draw.setWidth(20));
     }
+
     @Test
     void HeightTest() throws SizeException {
         int expectedHeight, actualHeight;
 
-        expectedHeight = 400;
+        expectedHeight = 100;
         draw.setHeight(expectedHeight);
         actualHeight = draw.getHeight();
 
         assertEquals(expectedHeight, actualHeight);
-        assertThrows(SizeException.class, () -> draw.setHeight(20));
+        assertThrows(SizeException.class, () -> draw.setHeight(60));
     }
 
     @Test
@@ -144,7 +146,7 @@ class DrawTest {
         Image image = draw.getDrawing();
         String filepath = "test.bmp";
 
-        draw.writeImage(image,filepath);
+        draw.writeImage(image, filepath);
 
         assertTrue(isFile(filepath));
         assertThrows(NullPointerException.class, () -> draw.writeImage(null, filepath));
@@ -164,6 +166,17 @@ class DrawTest {
     }
 
     @Test
+    void autoDrawTest() throws IOException {
+        Image expectedImage;
+        Image actualImage;
+        draw.autoDraw();
+        draw.writeImage(draw.getDrawing(), "autoDrawTest.bmp");
+        expectedImage = draw.readImage("empty.bmp");
+        actualImage = draw.readImage("autoDrawTest.bmp");
+        assertFalse(imagesEqual(toBufferedImage(expectedImage), toBufferedImage(actualImage)));
+    }
+
+    @Test
     void clearTest() throws IOException {
         Image expectedImage;
         Image actualImage;
@@ -173,20 +186,6 @@ class DrawTest {
 
         expectedImage = draw.readImage("image.bmp");
         actualImage = draw.readImage("clearTest.bmp");
-
-        assertFalse(imagesEqual(toBufferedImage(expectedImage), toBufferedImage(actualImage)));
-    }
-
-    @Test
-    void autoDrawTest() throws IOException {
-        Image expectedImage;
-        Image actualImage;
-        draw.writeImage(draw.getDrawing(), "empty.bmp");
-        draw.autoDraw();
-        draw.writeImage(draw.getDrawing(), "autoDrawTest.bmp");
-
-        expectedImage = draw.readImage("empty.bmp");
-        actualImage = draw.readImage("autoDrawTest.bmp");
 
         assertFalse(imagesEqual(toBufferedImage(expectedImage), toBufferedImage(actualImage)));
     }
@@ -332,9 +331,10 @@ class DrawTest {
     void compareImagesTest() throws IOException {
         Image expectedImage;
         Image actualImage;
-
-        expectedImage = draw.readImage("autoDrawTest.bmp");
+        draw.writeImage(draw.getDrawing(), "empty.bmp");
         draw.autoDraw();
+        draw.writeImage(draw.getDrawing(), "autoDrawTest.bmp");
+        expectedImage = draw.readImage("autoDrawTest.bmp");
         actualImage = draw.readImage("image.bmp");
 
         assertTrue(imagesEqual(toBufferedImage(expectedImage), toBufferedImage(actualImage)));
@@ -346,5 +346,16 @@ class DrawTest {
         assertThrows(IOException.class, () -> {
             draw.readImage("image.png");
         });
+    }
+
+    @AfterAll
+    static void cleanup() {
+        File directory = new File(".");
+        File[] files = directory.listFiles((dir, name) -> name.endsWith(".bmp"));
+        if (files != null) {
+            for (File file : files) {
+                file.delete();
+            }
+        }
     }
 }
