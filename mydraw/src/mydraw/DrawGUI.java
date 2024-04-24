@@ -12,7 +12,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -409,58 +409,47 @@ public class DrawGUI extends JFrame {
     }
 
     public void drawRectangle(Point upper_left, Point lower_right) {
-        String fgColor = this.getFGColor();
-        Color c = Color.getColor(fgColor);
-
         int x = Math.min(upper_left.x, lower_right.x);
         int y = Math.min(upper_left.y, lower_right.y);
         int width = Math.abs(lower_right.x - upper_left.x);
         int height = Math.abs(lower_right.y - upper_left.y);
 
         Graphics g = this.frontPanel.getGraphics();
-        g.setColor(c);
+        g.setColor(this.fgColor);
         g.drawRect(x, y, width, height);
         g.dispose();
 
         Graphics g2 = this.buffImage.getGraphics();
-        g2.setColor(c);
+        g2.setColor(this.fgColor);
         g2.drawRect(x, y, width, height);
         g2.dispose();
     }
 
     public void drawOval(Point upper_left, Point lower_right) {
-        String fgColor = this.getFGColor();
-        Color c = Color.getColor(fgColor);
-
         int x = Math.min(upper_left.x, lower_right.x);
         int y = Math.min(upper_left.y, lower_right.y);
         int width = Math.abs(lower_right.x - upper_left.x);
         int height = Math.abs(lower_right.y - upper_left.y);
 
         Graphics g = this.frontPanel.getGraphics();
-        g.setColor(c);
+        g.setColor(this.fgColor);
         g.drawOval(x, y, width, height);
         g.dispose();
 
         Graphics g2 = this.buffImage.getGraphics();
-        g2.setColor(c);
+        g2.setColor(this.fgColor);
         g2.drawOval(x, y, width, height);
         g2.dispose();
     }
 
     public void drawPolyLine(java.util.List<Point> points) {
-        String fgColor = this.getFGColor();
-        Color c = Color.getColor(fgColor);
-
         Graphics g = this.frontPanel.getGraphics();
         g.setPaintMode();
-        g.setColor(c);
-        g.dispose();
+        g.setColor(this.fgColor);
 
         Graphics g2 = this.buffImage.getGraphics();
-        g2.setColor(c);
+        g2.setColor(this.fgColor);
         g2.setPaintMode();
-        g2.dispose();
 
         for (int i = 1; i < points.size(); i++) {
             Point prevPoint = points.get(i - 1);
@@ -468,6 +457,8 @@ public class DrawGUI extends JFrame {
             g.drawLine(prevPoint.x, prevPoint.y, currPoint.x, currPoint.y);
             g2.drawLine(prevPoint.x, prevPoint.y, currPoint.x, currPoint.y);
         }
+        g.dispose();
+        g2.dispose();
     }
 
     public Image getDrawing() {
@@ -497,25 +488,34 @@ public class DrawGUI extends JFrame {
     public void autoDraw() {
         Point p1 = new Point(100, 200);
         Point p2 = new Point(200, 100);
-        drawRectangle(p1, p2);
-        Point p3 = new Point(300, 200);
-        Point p4 = new Point(400, 100);
-        drawOval(p3, p4);
-        java.util.List<Point> points = new ArrayList<>();
-        points.add(new Point(500, 200));
-        points.add(new Point(600, 100));
-        points.add(new Point(700, 200));
-        drawPolyLine(points);
-        try {
-            setBGColor("blue");
-        } catch (ColorException e) {
-            System.out.println("invalid color");
-        }
-
         try {
             setFGColor("red");
         } catch (ColorException e) {
-            System.out.println("invalid color");
+            System.err.println("Color Exception: " + e.getMessage());
+        }
+        drawRectangle(p1, p2);
+        Point p3 = new Point(300, 200);
+        Point p4 = new Point(400, 100);
+        try {
+            setFGColor("blue");
+        } catch (ColorException e) {
+            System.err.println("Color Exception: " + e.getMessage());
+        }
+        drawOval(p3, p4);
+        Point pl1 = new Point(500, 200);
+        Point pl2 = new Point(600, 100);
+        Point pl3 = new Point(700, 200);
+        try {
+            setFGColor("green");
+        } catch (ColorException e) {
+            System.err.println("Color Exception: " + e.getMessage());
+        }
+        drawPolyLine(List.of(pl1, pl2, pl3));
+        String filename = JOptionPane.showInputDialog("Filename:");
+        try {
+            writeImage(buffImage, filename + ".bmp");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
