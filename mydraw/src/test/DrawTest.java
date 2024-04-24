@@ -76,13 +76,14 @@ class DrawTest {
     }
 
     List<Integer> createCircleMeasurements(List<Point> points) {
+        List<Integer> result = new ArrayList<>();
         int centerX = (points.get(0).x + points.get(1).x) / 2;
         int centerY = (points.get(0).y + points.get(1).y) / 2;
         int radiusX = Math.abs(points.get(1).x - points.get(0).x) / 2;
         int radiusY = Math.abs(points.get(1).y - points.get(0).y) / 2;
 
-        List<Integer> measures = Arrays.asList(centerX, centerY, radiusX, radiusY);
-        return measures;
+        result = Arrays.asList(centerX, centerY, radiusX, radiusY);
+        return result;
     }
 
     Draw draw = new Draw();
@@ -279,7 +280,7 @@ class DrawTest {
         actualColorsNeg.add(intToCol(actual.getRGB(centerX - radiusX, centerY)));
 
         for (Color color : actualColorsNeg) {
-            assertEquals(expectedColor, color);
+            assertNotEquals(expectedColor, color);
         }
 
         assertThrows(ColorException.class, () -> {
@@ -329,11 +330,21 @@ class DrawTest {
 
     @Test
     void compareImagesTest() throws IOException {
-        Image expectedImage = draw.getDrawing();
-        // draw.autoDraw();
-        // Image expectedImage = draw.readImage("test.bmp");
-        Image actualImage = draw.readImage("sth.bmp");
+        Image expectedImage;
+        Image actualImage;
+
+        expectedImage = draw.readImage("autoDrawTest.bmp");
+        draw.autoDraw();
+        actualImage = draw.readImage("image.bmp");
 
         assertTrue(imagesEqual(toBufferedImage(expectedImage), toBufferedImage(actualImage)));
+
+        expectedImage = draw.readImage("empty.bmp");
+
+        assertFalse(imagesEqual(toBufferedImage(expectedImage), toBufferedImage(actualImage)));
+
+        assertThrows(IOException.class, () -> {
+            draw.readImage("image.png");
+        });
     }
 }
