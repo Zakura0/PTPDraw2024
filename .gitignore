@@ -4,5 +4,4 @@
 *.bmp
 
 # Ignore `bin` dir
-bin/
-test/
+bin
