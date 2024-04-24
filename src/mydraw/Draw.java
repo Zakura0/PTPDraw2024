@@ -11,16 +11,12 @@ public class Draw {
     protected DrawGUI window;
     Color fgColor;
     Color bgColor;
-    int height;
-    int width;
 
     public static void main(String[] args) {
         new Draw();
     }
 
     public Draw() {
-        width = 800;
-        height = 400;
         fgColor = Color.BLACK;
         bgColor = Color.WHITE;
         window = new DrawGUI(this);

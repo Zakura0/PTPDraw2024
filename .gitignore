@@ -1,7 +1,7 @@
 # Ignore files with extension `.class` & `.md`
 *.class
 *.md
+*.bmp
 
 # Ignore `bin` dir
-bin/
-test/
+bin
