@@ -156,7 +156,11 @@ public class DrawGUI extends JFrame {
      * Throws an ColorException if the color to be set is not recognized
      **/
     public void setFGColor(String new_color) throws ColorException {
-        fgColor = colors.get(new_color.toLowerCase());
+        if (colors.containsKey(new_color.toLowerCase())) {
+            fgColor = colors.get(new_color.toLowerCase());
+        } else {
+            throw new ColorException("Invalid color: " + new_color);
+        }
     }
 
     /**
@@ -211,24 +215,10 @@ public class DrawGUI extends JFrame {
      * Throws an ColorException if the color to be set is not recognized
      **/
     public void setBGColor(String new_color) throws ColorException {
-        switch (new_color.toLowerCase()) {
-            case "black":
-                bgColor = Color.black;
-                break;
-            case "green":
-                bgColor = Color.green;
-                break;
-            case "red":
-                bgColor = Color.red;
-                break;
-            case "blue":
-                bgColor = Color.blue;
-                break;
-            case "white":
-                bgColor = Color.white;
-                break;
-            default:
-                throw new ColorException("Invalid color!");
+        if (colors.containsKey(new_color.toLowerCase())) {
+            bgColor = colors.get(new_color.toLowerCase());
+        } else {
+            throw new ColorException("Invalid color: " + new_color);
         }
         Graphics g = this.frontPanel.getGraphics();
         g.setColor(bgColor);
@@ -246,19 +236,12 @@ public class DrawGUI extends JFrame {
      * Return type: String
      **/
     public String getBGColor() {
-        if (bgColor == Color.black) {
-            return "black";
-        } else if (bgColor == Color.green) {
-            return "green";
-        } else if (bgColor == Color.red) {
-            return "red";
-        } else if (bgColor == Color.blue) {
-            return "blue";
-        } else if (bgColor == Color.white) {
-            return "white";
-        } else {
-            return null;
+        for (String key : colors.keySet()) {
+            if (colors.get(key).equals(bgColor)) {
+                return key;
+            }
         }
+        return null;
     }
 
     /**
