@@ -25,7 +25,7 @@ public class DrawGUI extends JFrame {
     JPanel frontPanel; // A reference to the GUI panel
     BufferedImage buffImage; // A reference to the drawing panel (used to save the drawing)
 
-    public  Hashtable<String, Color> colors;
+    Hashtable<String, Color> colors;
 
     /**
      * The GUI constructor does all the work of creating the GUI and setting
@@ -109,15 +109,7 @@ public class DrawGUI extends JFrame {
 
         shape_chooser.addItemListener(new ShapeManager(this));
 
-        class ColorItemListener implements ItemListener {
-
-            // user selected new color => store new color in DrawGUIs
-            public void itemStateChanged(ItemEvent e) {
-                fgColor = colors.get(e.getItem());
-            }
-        }
-
-        color_chooser.addItemListener(new ColorItemListener());
+        color_chooser.addItemListener(new ColorItemListener(this));
 
         // Handle the window close request similarly
         this.addWindowListener(new WindowAdapter() {
@@ -149,7 +141,6 @@ public class DrawGUI extends JFrame {
         return null;
     }
 
-
     /**
      * API Method: sets current foreground color.
      * Params: String new_color
@@ -162,7 +153,6 @@ public class DrawGUI extends JFrame {
         } else {
             throw new ColorException("Invalid color: " + new_color);
         }
-
     }
 
     /**
