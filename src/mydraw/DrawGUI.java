@@ -175,10 +175,11 @@ public class DrawGUI extends JFrame {
     /**
      * API Method: sets current window width
      * Params: int width
-     * Throws a SizeException if the width is negative
+     * Throws a SizeException if the width is smaller than 750 (due to MacOS
+     * incompability)
      **/
     public void setWidth(int width) throws SizeException {
-        if (width < 600) {
+        if (width < 750) {
             throw new SizeException("Width must be at least 600 pixels.");
         }
         this.frontPanel.setPreferredSize(new Dimension(width, getHeight()));

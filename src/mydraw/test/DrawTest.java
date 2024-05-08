@@ -8,7 +8,9 @@ import mydraw.Draw;
 
 import mydraw.SizeException;
 
+import org.junit.Before;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.awt.*;
@@ -22,6 +24,8 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 class DrawTest {
+
+    Draw draw = new Draw();
 
     public static BufferedImage toBufferedImage(Image img) {
         if (img instanceof BufferedImage) {
@@ -69,13 +73,11 @@ class DrawTest {
         return result;
     }
 
-    Draw draw = new Draw();
-
     @Test
     void WidthTest() throws SizeException {
         int expectedWidth, actualWidth;
 
-        expectedWidth = 600;
+        expectedWidth = 750;
         draw.setWidth(expectedWidth);
         actualWidth = draw.getWidth();
 
