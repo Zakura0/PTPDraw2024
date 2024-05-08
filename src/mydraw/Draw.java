@@ -19,7 +19,6 @@ public class Draw {
         fgColor = Color.BLACK;
         bgColor = Color.WHITE;
         window = new DrawGUI(this);
-
     }
 
     public void doCommand(String command) {
