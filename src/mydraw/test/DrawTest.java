@@ -24,14 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DrawTest {
 
     Color strToCol(String colorsign) throws ColorException {
-        return switch (colorsign.toLowerCase()) {
-            case "black" -> Color.black;
-            case "green" -> Color.green;
-            case "red" -> Color.red;
-            case "blue" -> Color.blue;
-            case "white" -> Color.white;
-            default -> throw new ColorException("Invalid color!");
-        };
+        return colors.get(key);
     }
 
     Color intToCol(int pixel) {
@@ -183,7 +176,7 @@ class DrawTest {
         draw.autoDraw();
         draw.writeImage(draw.getDrawing(), "image.bmp");
         draw.clear();
-        draw.writeImage(draw.getDrawing(), "clearTest.bmp");       
+        draw.writeImage(draw.getDrawing(), "clearTest.bmp");
 
         expectedImage = draw.readImage("image.bmp");
         actualImage = draw.readImage("clearTest.bmp");
