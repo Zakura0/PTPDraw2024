@@ -124,4 +124,8 @@ public class Draw {
     public void drawPolyLine(java.util.List<Point> points) {
         window.drawPolyLine(points);
     }
+
+    public String intToCol(int pixel) {
+        return window.intToCol(pixel);
+    }
 }

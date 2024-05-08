@@ -105,7 +105,7 @@ public class DrawGUI extends JFrame {
         save.addActionListener(new DrawActionListener("save"));
         auto.addActionListener(new DrawActionListener("auto"));
 
-        //vorher ShapeManager hier!
+        // vorher ShapeManager hier!
 
         shape_chooser.addItemListener(new ShapeManager(this));
 
@@ -395,6 +395,19 @@ public class DrawGUI extends JFrame {
         g.setColor(Color.white);
         g.fillRect(0, 0, buffImage.getWidth(), buffImage.getHeight());
         g.dispose();
+    }
+
+    public String intToCol(int pixel) {
+        int red = (pixel & 0x00ff0000) >> 16;
+        int green = (pixel & 0x0000ff00) >> 8;
+        int blue = pixel & 0x000000ff;
+        Color col = new Color(red, green, blue);
+        for (String key : colors.keySet()) {
+            if (colors.get(key).equals(col)) {
+                return key;
+            }
+        }
+        return null;
     }
 
 }

@@ -23,17 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class DrawTest {
 
-    Color strToCol(String colorsign) throws ColorException {
-        return colors.get(key);
-    }
-
-    Color intToCol(int pixel) {
-        int red = (pixel & 0x00ff0000) >> 16;
-        int green = (pixel & 0x0000ff00) >> 8;
-        int blue = pixel & 0x000000ff;
-        return new Color(red, green, blue);
-    }
-
     public static BufferedImage toBufferedImage(Image img) {
         if (img instanceof BufferedImage) {
             return (BufferedImage) img;
@@ -196,25 +185,24 @@ class DrawTest {
         pointsNeg.add(new Point(230, 340));
 
         draw.setFGColor("red");
-        Color expectedColor = strToCol(draw.getFGColor());
+        String expectedColor = draw.getFGColor();
         draw.drawRectangle(pointsPos.get(0), pointsPos.get(1));
         BufferedImage img = toBufferedImage(draw.getDrawing());
 
         for (Point pointx : pointsPos) {
             for (Point pointy : pointsPos) {
-                Color actual = intToCol(img.getRGB(pointx.x, pointy.y));
+                String actual = draw.intToCol(img.getRGB(pointx.x, pointy.y));
                 assertEquals(expectedColor, actual);
             }
         }
         for (Point pointx : pointsNeg) {
             for (Point pointy : pointsNeg) {
-                Color actual = intToCol(img.getRGB(pointx.x, pointy.y));
+                String actual = draw.intToCol(img.getRGB(pointx.x, pointy.y));
                 assertNotEquals(expectedColor, actual);
             }
         }
         assertThrows(ColorException.class, () -> {
             draw.setFGColor("yellow");
-            strToCol(draw.getFGColor());
         });
     }
 
@@ -222,8 +210,8 @@ class DrawTest {
     void drawOvalTest() throws ColorException {
         List<Point> pointsPos = new ArrayList<>();
         List<Point> pointsNeg = new ArrayList<>();
-        List<Color> actualColorsPos = new ArrayList<>();
-        List<Color> actualColorsNeg = new ArrayList<>();
+        List<String> actualColorsPos = new ArrayList<>();
+        List<String> actualColorsNeg = new ArrayList<>();
         List<Integer> measures;
         int centerX;
         int centerY;
@@ -238,7 +226,7 @@ class DrawTest {
 
         draw.setFGColor("black");
 
-        Color expectedColor = strToCol(draw.getFGColor());
+        String expectedColor = draw.getFGColor();
 
         draw.drawOval(pointsPos.get(0), pointsPos.get(1));
 
@@ -251,12 +239,12 @@ class DrawTest {
         radiusX = measures.get(2);
         radiusY = measures.get(3);
 
-        actualColorsPos.add(intToCol(actual.getRGB(centerX, centerY - radiusY)));
-        actualColorsPos.add(intToCol(actual.getRGB(centerX, centerY + radiusY)));
-        actualColorsPos.add(intToCol(actual.getRGB(centerX + radiusX, centerY)));
-        actualColorsPos.add(intToCol(actual.getRGB(centerX - radiusX, centerY)));
+        actualColorsPos.add(draw.intToCol(actual.getRGB(centerX, centerY - radiusY)));
+        actualColorsPos.add(draw.intToCol(actual.getRGB(centerX, centerY + radiusY)));
+        actualColorsPos.add(draw.intToCol(actual.getRGB(centerX + radiusX, centerY)));
+        actualColorsPos.add(draw.intToCol(actual.getRGB(centerX - radiusX, centerY)));
 
-        for (Color color : actualColorsPos) {
+        for (String color : actualColorsPos) {
             assertEquals(expectedColor, color);
         }
 
@@ -267,18 +255,17 @@ class DrawTest {
         radiusX = measures.get(2);
         radiusY = measures.get(3);
 
-        actualColorsNeg.add(intToCol(actual.getRGB(centerX, centerY - radiusY)));
-        actualColorsNeg.add(intToCol(actual.getRGB(centerX, centerY + radiusY)));
-        actualColorsNeg.add(intToCol(actual.getRGB(centerX + radiusX, centerY)));
-        actualColorsNeg.add(intToCol(actual.getRGB(centerX - radiusX, centerY)));
+        actualColorsNeg.add(draw.intToCol(actual.getRGB(centerX, centerY - radiusY)));
+        actualColorsNeg.add(draw.intToCol(actual.getRGB(centerX, centerY + radiusY)));
+        actualColorsNeg.add(draw.intToCol(actual.getRGB(centerX + radiusX, centerY)));
+        actualColorsNeg.add(draw.intToCol(actual.getRGB(centerX - radiusX, centerY)));
 
-        for (Color color : actualColorsNeg) {
+        for (String color : actualColorsNeg) {
             assertNotEquals(expectedColor, color);
         }
 
         assertThrows(ColorException.class, () -> {
             draw.setFGColor("yellow");
-            strToCol(draw.getFGColor());
         });
     }
 
@@ -299,25 +286,24 @@ class DrawTest {
 
         draw.setFGColor("black");
 
-        Color expectedColor = strToCol(draw.getFGColor());
+        String expectedColor = draw.getFGColor();
 
         draw.drawPolyLine(pointsPos);
 
         BufferedImage buff = toBufferedImage(draw.getDrawing());
 
         for (Point point : pointsPos) {
-            Color actual = intToCol(buff.getRGB(point.x, point.y));
+            String actual = draw.intToCol(buff.getRGB(point.x, point.y));
             assertEquals(expectedColor, actual);
         }
 
         for (Point point : pointsNeg) {
-            Color actual = intToCol(buff.getRGB(point.x, point.y));
+            String actual = draw.intToCol(buff.getRGB(point.x, point.y));
             assertNotEquals(expectedColor, actual);
         }
 
         assertThrows(ColorException.class, () -> {
             draw.setFGColor("yellow");
-            strToCol(draw.getFGColor());
         });
     }
 
