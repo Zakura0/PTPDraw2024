@@ -171,6 +171,22 @@ public class Draw {
         window.drawPolyLine(points);
     }
 
+    public void drawTriangle(Point upper_left, Point lower_right) {
+        window.drawTriangle(upper_left, lower_right);
+    }
+
+    public void drawRhombus(Point upper_left, Point lower_right) {
+        window.drawRhombus(upper_left, lower_right);
+    }
+
+    public void drawFillRectangle(Point upper_left, Point lower_right) {
+        window.drawFillRectangle(upper_left, lower_right);
+    }
+
+    public void drawFillOval(Point upper_left, Point lower_right) {
+        window.drawFillOval(upper_left, lower_right);
+    }
+
     public String intToCol(int pixel) {
         return window.intToCol(pixel);
     }

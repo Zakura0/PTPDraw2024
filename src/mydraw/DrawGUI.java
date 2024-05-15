@@ -27,6 +27,7 @@ public class DrawGUI extends JFrame {
 
     public Hashtable<String, Color> colors;
     List<Drawable> commandQueue;
+    List <Drawable> undoStack;
 
     /**
      * The GUI constructor does all the work of creating the GUI and setting
@@ -44,7 +45,7 @@ public class DrawGUI extends JFrame {
         fgColor = Color.BLACK;
         bgColor = Color.WHITE;
         commandQueue = new ArrayList<>();
-
+        undoStack = new ArrayList<>();
         // Initializes the drawing panel
         doubleBuffering();
         setupGUI();
@@ -73,6 +74,9 @@ public class DrawGUI extends JFrame {
         JButton quit = new JButton("Quit");
         JButton save = new JButton("Save");
         JButton auto = new JButton("Auto");
+        JButton undo = new JButton("Undo");
+        JButton redo = new JButton("Redo");
+        
 
         // Set a LayoutManager, and add the choosers and buttons to the window.
         JPanel backPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
@@ -84,6 +88,9 @@ public class DrawGUI extends JFrame {
         backPanel.add(quit);
         backPanel.add(save);
         backPanel.add(auto);
+        backPanel.add(undo);
+        backPanel.add(redo);
+
 
         // Initializes the GUI front panel
         frontPanel = new JPanel();
@@ -100,6 +107,8 @@ public class DrawGUI extends JFrame {
         quit.addActionListener(new DrawActionListener("quit", app));
         save.addActionListener(new DrawActionListener("save", app));
         auto.addActionListener(new DrawActionListener("auto", app));
+        undo.addActionListener(new DrawActionListener("undo", app));
+        redo.addActionListener(new DrawActionListener("redo", app));
 
         // vorher ShapeManager hier!
 
@@ -132,6 +141,10 @@ public class DrawGUI extends JFrame {
             autoDraw();
         } else if (command.equals("save")) {
             openSaveDialog();
+        } else if (command.equals("undo")) {
+            undo();
+        } else if (command.equals("redo")) {
+            redo();
         }
 
     }
@@ -156,10 +169,31 @@ public class DrawGUI extends JFrame {
         }
     }
 
+<<<<<<< HEAD
     public void undo(){        
+=======
+
+    public void undo(){
+>>>>>>> ac7df7da3bb2922974afe355ff1d05b677d46d19
         if (commandQueue.size() > 0) {
+            undoStack.add(commandQueue.get(commandQueue.size()-1));
             commandQueue.remove(commandQueue.size() - 1);
-            clear();
+            g.setColor(bgColor);
+            g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
+            g.dispose();
+            for (Drawable command : commandQueue) {
+                command.draw(g);
+            }
+        }
+    }
+
+    public void redo(){
+        if (undoStack.size() > 0) {
+            commandQueue.add(undoStack.get(undoStack.size()-1));
+            undoStack.remove(undoStack.size() - 1);
+            g.setColor(bgColor);
+            g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
+            g.dispose();
             for (Drawable command : commandQueue) {
                 command.draw(g);
             }
@@ -290,6 +324,81 @@ public class DrawGUI extends JFrame {
         g2.dispose();
     }
 
+    public void drawTriangle(Point upper_left, Point lower_right) {
+        Graphics g = this.frontPanel.getGraphics();
+        g.setColor(this.fgColor);
+        g.drawLine((lower_right.x + upper_left.x) / 2, upper_left.y, lower_right.x, lower_right.y);
+        g.drawLine(upper_left.x, lower_right.y, lower_right.x, lower_right.y);
+        g.drawLine(upper_left.x, lower_right.y, (lower_right.x + upper_left.x) / 2, upper_left.y);
+        g.dispose();
+
+        Graphics g2 = this.buffImage.getGraphics();
+        g2.setColor(this.fgColor);
+        g2.drawLine((lower_right.x + upper_left.x) / 2, upper_left.y, lower_right.x, lower_right.y);
+        g2.drawLine(upper_left.x, lower_right.y, lower_right.x, lower_right.y);
+        g2.drawLine(upper_left.x, lower_right.y, (lower_right.x + upper_left.x) / 2, upper_left.y);
+        g2.dispose();
+
+    }
+
+    public void drawRhombus(Point upper_left, Point lower_right) {
+        Graphics g = this.frontPanel.getGraphics();
+        g.setColor(this.fgColor);
+        g.drawLine((upper_left.x + lower_right.x) / 2, upper_left.y, lower_right.x, (upper_left.y + lower_right.y) / 2);
+        g.drawLine(lower_right.x, (upper_left.y + lower_right.y) / 2, (upper_left.x + lower_right.x) / 2,
+                lower_right.y);
+        g.drawLine((upper_left.x + lower_right.x) / 2, lower_right.y, upper_left.x, (upper_left.y + lower_right.y) / 2);
+        g.drawLine(upper_left.x, (upper_left.y + lower_right.y) / 2, (upper_left.x + lower_right.x) / 2, upper_left.y);
+        g.dispose();
+
+        Graphics g2 = this.buffImage.getGraphics();
+        g2.setColor(this.fgColor);
+        g2.drawLine((upper_left.x + lower_right.x) / 2, upper_left.y, lower_right.x,
+                (upper_left.y + lower_right.y) / 2);
+        g2.drawLine(lower_right.x, (upper_left.y + lower_right.y) / 2, (upper_left.x + lower_right.x) / 2,
+                lower_right.y);
+        g2.drawLine((upper_left.x + lower_right.x) / 2, lower_right.y, upper_left.x,
+                (upper_left.y + lower_right.y) / 2);
+        g2.drawLine(upper_left.x, (upper_left.y + lower_right.y) / 2, (upper_left.x + lower_right.x) / 2, upper_left.y);
+        g2.dispose();
+
+    }
+
+    public void drawFillRectangle(Point upper_left, Point lower_right) {
+        int x = Math.min(upper_left.x, lower_right.x);
+        int y = Math.min(upper_left.y, lower_right.y);
+        int width = Math.abs(lower_right.x - upper_left.x);
+        int height = Math.abs(lower_right.y - upper_left.y);
+
+        Graphics g = this.frontPanel.getGraphics();
+        g.setColor(this.fgColor);
+        g.fillRect(x, y, width, height);
+        g.dispose();
+
+        Graphics g2 = this.buffImage.getGraphics();
+        g2.setColor(this.fgColor);
+        g2.fillRect(x, y, width, height);
+        g2.dispose();
+
+    }
+
+    public void drawFillOval(Point upper_left, Point lower_right) {
+        int x = Math.min(upper_left.x, lower_right.x);
+        int y = Math.min(upper_left.y, lower_right.y);
+        int width = Math.abs(lower_right.x - upper_left.x);
+        int height = Math.abs(lower_right.y - upper_left.y);
+
+        Graphics g = this.frontPanel.getGraphics();
+        g.setColor(this.fgColor);
+        g.fillOval(x, y, width, height);
+        g.dispose();
+
+        Graphics g2 = this.buffImage.getGraphics();
+        g2.setColor(this.fgColor);
+        g2.fillOval(x, y, width, height);
+        g2.dispose();
+    }
+
     /**
      * API Method: retrieves the current drawing as a BufferedImage
      * Return type: BufferedImage
@@ -357,11 +466,11 @@ public class DrawGUI extends JFrame {
         g.fillRect(0, 0, buffImage.getWidth(), buffImage.getHeight());
         g.dispose();
     }
-
+/* 
     public String intToCol(int pixel) {
-        int red = (pixel & 0x00ff0000) >> 16;
-        int green = (pixel & 0x0000ff00) >> 8;
-        int blue = pixel & 0x000000ff;
+        int red = (pixel & 0upper_left.upper_left.xff0000) >> 16;
+        int green = (pixel & 0upper_left.upper_left.x00ff00) >> 8;
+        int blue = pixel & 0upper_left.upper_left.x0000ff;
         Color col = new Color(red, green, blue);
         for (String key : colors.keySet()) {
             if (colors.get(key).equals(col)) {
@@ -370,5 +479,5 @@ public class DrawGUI extends JFrame {
         }
         return null;
     }
-
+*/
 }
