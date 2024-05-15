@@ -91,6 +91,7 @@ class ShapeManager implements ItemListener {
                 int y = p.y;
                 doDraw(pressx, pressy, x, y, g);
                 doDraw(pressx, pressy, x, y, g2);
+                gui.commandQueue.add(new rectangleCommand(gui, pressx, pressy, x, y, gui.fgColor));
             }
         }
 
@@ -126,7 +127,6 @@ class ShapeManager implements ItemListener {
                     
                     // draw rectangle
                     g.drawRect(x, y, w, h);
-                    gui.commandQueue.add(new rectangleCommand(gui, x, y, w, h, gui.fgColor));
                 }
             }
 

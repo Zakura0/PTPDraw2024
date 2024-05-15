@@ -26,7 +26,7 @@ public class DrawGUI extends JFrame {
 
     public Hashtable<String, Color> colors;
     List<Drawable> commandQueue;
-    List <Drawable> undoStack;
+    List<Drawable> undoStack;
 
     /**
      * The GUI constructor does all the work of creating the GUI and setting
@@ -40,24 +40,14 @@ public class DrawGUI extends JFrame {
         colors.put("green", Color.GREEN);
         colors.put("red", Color.RED);
         colors.put("blue", Color.BLUE);
-        colors.put("white", Color.WHITE);        
+        colors.put("white", Color.WHITE);
+        fgColor = Color.BLACK;
         bgColor = Color.WHITE;
         commandQueue = new ArrayList<>();
         undoStack = new ArrayList<>();
         // Initializes the drawing panel
         doubleBuffering();
-
         setupGUI();
-        try {
-            setFGColor("black");
-        } catch (ColorException e) {
-            System.err.println("Color Exception: " + e.getMessage());
-        }
-        try {
-            setBGColor("white");
-        } catch (ColorException e) {
-            System.err.println("Color Exception: " + e.getMessage());
-        }
     }
 
     private void setupGUI() {
@@ -85,7 +75,6 @@ public class DrawGUI extends JFrame {
         JButton auto = new JButton("Auto");
         JButton undo = new JButton("Undo");
         JButton redo = new JButton("Redo");
-        
 
         // Set a LayoutManager, and add the choosers and buttons to the window.
         JPanel backPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
@@ -100,10 +89,9 @@ public class DrawGUI extends JFrame {
         backPanel.add(undo);
         backPanel.add(redo);
 
-
         // Initializes the GUI front panel
         frontPanel = new JPanel();
-        frontPanel.setBackground(Color.WHITE);
+        frontPanel.setBackground(bgColor);
 
         // Sets up the different layers/panels
         Container contentPane = this.getContentPane();
@@ -136,7 +124,6 @@ public class DrawGUI extends JFrame {
         this.frontPanel.setPreferredSize(new Dimension(800, 400));
         this.pack();
         this.frontPanel.setBackground(bgColor);
-        this.setBackground(Color.white);
         this.setResizable(true);
         this.setVisible(true);
     }
@@ -179,30 +166,31 @@ public class DrawGUI extends JFrame {
         }
     }
 
-
-    public void undo(){
+    public void undo() {
         if (commandQueue.size() > 0) {
-            undoStack.add(commandQueue.get(commandQueue.size()-1));
+            undoStack.add(commandQueue.get(commandQueue.size() - 1));
             commandQueue.remove(commandQueue.size() - 1);
+            Graphics g = this.frontPanel.getGraphics();
             g.setColor(bgColor);
             g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
-            g.dispose();
             for (Drawable command : commandQueue) {
                 command.draw(g);
             }
+            g.dispose();
         }
     }
 
-    public void redo(){
+    public void redo() {
         if (undoStack.size() > 0) {
-            commandQueue.add(undoStack.get(undoStack.size()-1));
+            commandQueue.add(undoStack.get(undoStack.size() - 1));
             undoStack.remove(undoStack.size() - 1);
+            Graphics g = this.frontPanel.getGraphics();
             g.setColor(bgColor);
             g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
-            g.dispose();
             for (Drawable command : commandQueue) {
                 command.draw(g);
             }
+            g.dispose();
         }
     }
 
@@ -282,7 +270,7 @@ public class DrawGUI extends JFrame {
         int y = Math.min(upper_left.y, lower_right.y);
         int width = Math.abs(lower_right.x - upper_left.x);
         int height = Math.abs(lower_right.y - upper_left.y);
-        
+
         Graphics g = this.frontPanel.getGraphics();
         g.setColor(this.fgColor);
         g.drawRect(x, y, width, height);
@@ -427,6 +415,7 @@ public class DrawGUI extends JFrame {
         g.setColor(bgColor);
         g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
         g.dispose();
+        commandQueue.add(new clearCommand(this, bgColor));
 
         Graphics g2 = buffImage.getGraphics();
         g2.setColor(bgColor);
@@ -460,6 +449,18 @@ public class DrawGUI extends JFrame {
             System.err.println("Color Exception: " + e.getMessage());
         }
         drawPolyLine(List.of(pl1, pl2, pl3));
+        Point p5 = new Point(100, 350);
+        Point p6 = new Point(200, 250);
+        drawFillRectangle(p5, p6);
+        Point p7 = new Point(300, 350);
+        Point p8 = new Point(400, 250);
+        drawFillOval(p7, p8);
+        Point p9 = new Point(500, 350);
+        Point p10 = new Point(600, 250);
+        drawRhombus(p9, p10);
+        Point p11 = new Point(600, 350);
+        Point p12 = new Point(700, 250);
+        drawTriangle(p11, p12);
     }
 
     /**
@@ -474,9 +475,9 @@ public class DrawGUI extends JFrame {
     }
 
     public String intToCol(int pixel) {
-        int red = (pixel & 0upper_left.upper_left.xff0000) >> 16;
-        int green = (pixel & 0upper_left.upper_left.x00ff00) >> 8;
-        int blue = pixel & 0upper_left.upper_left.x0000ff;
+        int red = (pixel & 0xff0000) >> 16;
+        int green = (pixel & 0x00ff00) >> 8;
+        int blue = pixel & 0x0000ff;
         Color col = new Color(red, green, blue);
         for (String key : colors.keySet()) {
             if (colors.get(key).equals(col)) {
