@@ -40,7 +40,7 @@ public class DrawGUI extends JFrame {
         colors.put("green", Color.GREEN);
         colors.put("red", Color.RED);
         colors.put("blue", Color.BLUE);
-        colors.put("white", Color.WHITE);        
+        colors.put("white", Color.WHITE);
         bgColor = Color.WHITE;
         commandQueue = new ArrayList<>();
 
@@ -167,9 +167,8 @@ public class DrawGUI extends JFrame {
         }
     }
 
+    public void undo() {
 
-    public void undo(){
-        
         if (commandQueue.size() > 0) {
             commandQueue.remove(commandQueue.size() - 1);
             clear();
@@ -255,7 +254,7 @@ public class DrawGUI extends JFrame {
         int y = Math.min(upper_left.y, lower_right.y);
         int width = Math.abs(lower_right.x - upper_left.x);
         int height = Math.abs(lower_right.y - upper_left.y);
-        
+
         Graphics g = this.frontPanel.getGraphics();
         g.setColor(this.fgColor);
         g.drawRect(x, y, width, height);
@@ -433,6 +432,18 @@ public class DrawGUI extends JFrame {
             System.err.println("Color Exception: " + e.getMessage());
         }
         drawPolyLine(List.of(pl1, pl2, pl3));
+        Point p5 = new Point(100, 350);
+        Point p6 = new Point(200, 250);
+        drawFillRectangle(p5, p6);
+        Point p7 = new Point(300, 350);
+        Point p8 = new Point(400, 250);
+        drawFillOval(p7, p8);
+        Point p9 = new Point(500, 350);
+        Point p10 = new Point(600, 250);
+        drawRhombus(p9, p10);
+        Point p11 = new Point(600, 350);
+        Point p12 = new Point(700, 250);
+        drawTriangle(p11, p12);
     }
 
     /**
@@ -447,9 +458,9 @@ public class DrawGUI extends JFrame {
     }
 
     public String intToCol(int pixel) {
-        int red = (pixel & 0upper_left.upper_left.xff0000) >> 16;
-        int green = (pixel & 0upper_left.upper_left.x00ff00) >> 8;
-        int blue = pixel & 0upper_left.upper_left.x0000ff;
+        int red = (pixel & 0xff0000) >> 16;
+        int green = (pixel & 0x00ff00) >> 8;
+        int blue = pixel & 0x0000ff;
         Color col = new Color(red, green, blue);
         for (String key : colors.keySet()) {
             if (colors.get(key).equals(col)) {
