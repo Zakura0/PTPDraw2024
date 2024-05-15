@@ -23,6 +23,6 @@ public rectangleCommand(DrawGUI window, int x, int y, int w, int h, Color color)
     @Override
     public void draw(Graphics g){
         g.setColor(color);
-        g.drawRect(x, y, h, w);
+        g.drawRect(x, y, w, h);
     }
 }
