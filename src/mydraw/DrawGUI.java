@@ -131,6 +131,7 @@ public class DrawGUI extends JFrame {
             this.dispose();
             System.exit(0);
         } else if (command.equals("auto")) {
+            autoDraw();
         } else if (command.equals("save")) {
             openSaveDialog();
         }
