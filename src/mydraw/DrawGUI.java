@@ -35,20 +35,29 @@ public class DrawGUI extends JFrame {
     public DrawGUI(Draw application) {
         super("Draw"); // Create the window
         app = application; // Remember the application reference
-        fgColor = app.fgColor;
-        bgColor = app.bgColor;
         colors = new Hashtable<>();
         colors.put("black", Color.BLACK);
         colors.put("green", Color.GREEN);
         colors.put("red", Color.RED);
         colors.put("blue", Color.BLUE);
-        colors.put("white", Color.WHITE);
+        colors.put("white", Color.WHITE);        
+        bgColor = Color.WHITE;
         commandQueue = new ArrayList<>();
 
         // Initializes the drawing panel
         doubleBuffering();
 
         setupGUI();
+        try {
+            setFGColor("black");
+        } catch (ColorException e) {
+            System.err.println("Color Exception: " + e.getMessage());
+        }
+        try {
+            setBGColor("white");
+        } catch (ColorException e) {
+            System.err.println("Color Exception: " + e.getMessage());
+        }
     }
 
     private void setupGUI() {
@@ -118,7 +127,7 @@ public class DrawGUI extends JFrame {
         // Finally, set the size of the window, and pop it up
         this.frontPanel.setPreferredSize(new Dimension(800, 400));
         this.pack();
-        this.frontPanel.setBackground(app.bgColor);
+        this.frontPanel.setBackground(bgColor);
         this.setBackground(Color.white);
         this.setResizable(true);
         this.setVisible(true);

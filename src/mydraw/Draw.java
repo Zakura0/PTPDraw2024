@@ -8,16 +8,12 @@ import java.io.IOException;
 
 public class Draw {
     protected DrawGUI window;
-    Color fgColor;
-    Color bgColor;
 
     public static void main(String[] args) {
         new Draw();
     }
 
     public Draw() {
-        fgColor = Color.BLACK;
-        bgColor = Color.WHITE;
         window = new DrawGUI(this);
     }
 
