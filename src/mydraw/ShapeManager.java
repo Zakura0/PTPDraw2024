@@ -124,12 +124,10 @@ import java.awt.event.MouseEvent;
                     int y = Math.min(y0, y1);
                     int w = Math.abs(x1 - x0);
                     int h = Math.abs(y1 - y0);
-                    Point upper_left = new Point(x, y);
-                    Point lower_right = new Point(w, h);
                     
                     // draw rectangle
                     g.drawRect(x, y, w, h);
-                    gui.commandQueue.add(new rectangleCommand(gui, upper_left, lower_right));
+                    gui.commandQueue.add(new rectangleCommand(gui, x, y, w, h, gui.fgColor));
                 }
             }
 
@@ -142,6 +140,7 @@ import java.awt.event.MouseEvent;
                     int h = Math.abs(y1 - y0);
                     // draw oval instead of rectangle
                     g.drawOval(x, y, w, h);
+                    gui.commandQueue.add(new ovalCommand(gui, x, y, w, h, gui.fgColor));
                 }
             }
 

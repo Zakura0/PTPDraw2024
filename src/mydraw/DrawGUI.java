@@ -22,6 +22,7 @@ public class DrawGUI extends JFrame {
     Color bgColor; // A reference to the current background color
     JPanel frontPanel; // A reference to the GUI panel
     BufferedImage buffImage; // A reference to the drawing panel (used to save the drawing)
+    Graphics g;
 
     public Hashtable<String, Color> colors;
     List<Drawable> commandQueue;
@@ -144,6 +145,18 @@ public class DrawGUI extends JFrame {
             }
         }
 
+    }
+
+
+    public void undo(){
+        
+        if (commandQueue.size() > 0) {
+            commandQueue.remove(commandQueue.size() - 1);
+            clear();
+            for (Drawable command : commandQueue) {
+                command.draw(g);
+            }
+        }
     }
     
     public String getFGColor() {
@@ -348,48 +361,4 @@ public class DrawGUI extends JFrame {
         return null;
     }
 
-    public void redraw() {
-
-    }
-
-    public void undo() {
-
-    }
-
-    public void redo() {
-
-    }
-
-    /*
-     * public Draw getAppField() {
-     * return app;
-     * }
-     * public Color getFgColorField() {
-     * return fgColor;
-     * }
-     * public Color getBgColor() {
-     * return bgColor;
-     * }
-     * public void setBgColor(Color bgColor) {
-     * this.bgColor = bgColor;
-     * }
-     * public JPanel getFrontPanel() {
-     * return frontPanel;
-     * }
-     * public void setFrontPanel(JPanel frontPanel) {
-     * this.frontPanel = frontPanel;
-     * }
-     * public BufferedImage getBuffImage() {
-     * return buffImage;
-     * }
-     * public void setBuffImage(BufferedImage buffImage) {
-     * this.buffImage = buffImage;
-     * }
-     * public Hashtable<String, Color> getColors() {
-     * return colors;
-     * }
-     * public void setColors(Hashtable<String, Color> colors) {
-     * this.colors = colors;
-     * }
-     */
 }
