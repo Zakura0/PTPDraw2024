@@ -1,6 +1,10 @@
 package mydraw;
 
 import java.awt.event.MouseMotionListener;
+
+import mydraw.drawable.ovalCommand;
+import mydraw.drawable.rectangleCommand;
+
 import java.awt.*;
 
 import java.awt.event.ItemEvent;

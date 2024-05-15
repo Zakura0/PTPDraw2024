@@ -1,8 +1,10 @@
-package mydraw;
+package mydraw.drawable;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+
+import mydraw.DrawGUI;
 
 public class ovalCommand implements Drawable {
 

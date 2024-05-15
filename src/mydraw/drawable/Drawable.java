@@ -1,4 +1,4 @@
-package mydraw;
+package mydraw.drawable;
 
 import java.awt.Graphics;
 

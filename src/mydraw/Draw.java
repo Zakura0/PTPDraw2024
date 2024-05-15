@@ -6,6 +6,9 @@ import java.io.IOException;
  * @authors Giahung Bui 7557640 , Ben Woller 7740402, Simon Kazemi 7621942
  */
 
+import mydraw.exceptions.ColorException;
+import mydraw.exceptions.SizeException;
+
 public class Draw {
     protected DrawGUI window;
 

@@ -1,9 +1,11 @@
-package mydraw;
+package mydraw.listener;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-class DrawActionListener implements ActionListener {
+import mydraw.Draw;
+
+public class DrawActionListener implements ActionListener {
     private String command;
     Draw application;
 

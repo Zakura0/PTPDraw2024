@@ -1,6 +1,9 @@
 package mydraw;
 
 import javax.swing.JPanel;
+
+import mydraw.drawable.Drawable;
+
 import java.awt.*;
 
 public class DrawPanel extends JPanel {

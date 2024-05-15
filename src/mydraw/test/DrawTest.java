@@ -3,10 +3,9 @@ package mydraw.test;
  * @authors Giahung Bui 7557640 , Ben Woller 7740402, Simon Kazemi 7621942
  */
 
-import mydraw.ColorException;
 import mydraw.Draw;
-
-import mydraw.SizeException;
+import mydraw.exceptions.ColorException;
+import mydraw.exceptions.SizeException;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;

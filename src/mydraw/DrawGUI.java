@@ -15,6 +15,13 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import mydraw.drawable.Drawable;
+import mydraw.drawable.clearCommand;
+import mydraw.exceptions.ColorException;
+import mydraw.exceptions.SizeException;
+import mydraw.listener.ColorItemListener;
+import mydraw.listener.DrawActionListener;
+
 /*
  * @authors Giahung Bui 7557640 , Ben Woller 7740402, Simon Kazemi 7621942
  */
@@ -445,6 +452,11 @@ public class DrawGUI extends JFrame {
 
     public Image readImage(String filename) throws IOException {
         return MyBMPFile.read(filename);
+    }
+
+    public DrawPanel getDrawPanel()
+    {
+        return frontPanel;
     }
 
     public void clear() {

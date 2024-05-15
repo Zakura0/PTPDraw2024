@@ -1,7 +1,9 @@
-package mydraw;
+package mydraw.drawable;
 
 import java.awt.Color;
 import java.awt.Graphics;
+
+import mydraw.DrawGUI;
 
 public class clearCommand implements Drawable {
 
@@ -16,6 +18,6 @@ public class clearCommand implements Drawable {
     @Override
     public void draw(Graphics g){
         g.setColor(color);
-        g.fillRect(0, 0, window.frontPanel.getWidth(), window.frontPanel.getHeight());
+        g.fillRect(0, 0, window.getDrawPanel().getWidth(), window.getDrawPanel().getHeight());
     }
 }

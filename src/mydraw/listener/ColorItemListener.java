@@ -1,9 +1,12 @@
-package mydraw;
+package mydraw.listener;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-class ColorItemListener implements ItemListener {
+import mydraw.DrawGUI;
+import mydraw.exceptions.ColorException;
+
+public class ColorItemListener implements ItemListener {
 
     DrawGUI window;
     Boolean background;

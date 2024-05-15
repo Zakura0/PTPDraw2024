@@ -1,7 +1,9 @@
-package mydraw;
+package mydraw.drawable;
 
 import java.awt.Color;
 import java.awt.Graphics;
+
+import mydraw.DrawGUI;
 
 public class polyLineCommand implements Drawable {
 
