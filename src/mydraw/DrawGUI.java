@@ -281,6 +281,81 @@ public class DrawGUI extends JFrame {
         g2.dispose();
     }
 
+    public void drawTriangle(Point upper_left, Point lower_right) {
+        Graphics g = this.frontPanel.getGraphics();
+        g.setColor(this.fgColor);
+        g.drawLine((lower_right.x + upper_left.x) / 2, upper_left.y, lower_right.x, lower_right.y);
+        g.drawLine(upper_left.x, lower_right.y, lower_right.x, lower_right.y);
+        g.drawLine(upper_left.x, lower_right.y, (lower_right.x + upper_left.x) / 2, upper_left.y);
+        g.dispose();
+
+        Graphics g2 = this.buffImage.getGraphics();
+        g2.setColor(this.fgColor);
+        g2.drawLine((lower_right.x + upper_left.x) / 2, upper_left.y, lower_right.x, lower_right.y);
+        g2.drawLine(upper_left.x, lower_right.y, lower_right.x, lower_right.y);
+        g2.drawLine(upper_left.x, lower_right.y, (lower_right.x + upper_left.x) / 2, upper_left.y);
+        g2.dispose();
+
+    }
+
+    public void drawRhombus(Point upper_left, Point lower_right) {
+        Graphics g = this.frontPanel.getGraphics();
+        g.setColor(this.fgColor);
+        g.drawLine((upper_left.x + lower_right.x) / 2, upper_left.y, lower_right.x, (upper_left.y + lower_right.y) / 2);
+        g.drawLine(lower_right.x, (upper_left.y + lower_right.y) / 2, (upper_left.x + lower_right.x) / 2,
+                lower_right.y);
+        g.drawLine((upper_left.x + lower_right.x) / 2, lower_right.y, upper_left.x, (upper_left.y + lower_right.y) / 2);
+        g.drawLine(upper_left.x, (upper_left.y + lower_right.y) / 2, (upper_left.x + lower_right.x) / 2, upper_left.y);
+        g.dispose();
+
+        Graphics g2 = this.buffImage.getGraphics();
+        g2.setColor(this.fgColor);
+        g2.drawLine((upper_left.x + lower_right.x) / 2, upper_left.y, lower_right.x,
+                (upper_left.y + lower_right.y) / 2);
+        g2.drawLine(lower_right.x, (upper_left.y + lower_right.y) / 2, (upper_left.x + lower_right.x) / 2,
+                lower_right.y);
+        g2.drawLine((upper_left.x + lower_right.x) / 2, lower_right.y, upper_left.x,
+                (upper_left.y + lower_right.y) / 2);
+        g2.drawLine(upper_left.x, (upper_left.y + lower_right.y) / 2, (upper_left.x + lower_right.x) / 2, upper_left.y);
+        g2.dispose();
+
+    }
+
+    public void drawFillRectangle(Point upper_left, Point lower_right) {
+        int x = Math.min(upper_left.x, lower_right.x);
+        int y = Math.min(upper_left.y, lower_right.y);
+        int width = Math.abs(lower_right.x - upper_left.x);
+        int height = Math.abs(lower_right.y - upper_left.y);
+
+        Graphics g = this.frontPanel.getGraphics();
+        g.setColor(this.fgColor);
+        g.fillRect(x, y, width, height);
+        g.dispose();
+
+        Graphics g2 = this.buffImage.getGraphics();
+        g2.setColor(this.fgColor);
+        g2.fillRect(x, y, width, height);
+        g2.dispose();
+
+    }
+
+    public void drawFillOval(Point upper_left, Point lower_right) {
+        int x = Math.min(upper_left.x, lower_right.x);
+        int y = Math.min(upper_left.y, lower_right.y);
+        int width = Math.abs(lower_right.x - upper_left.x);
+        int height = Math.abs(lower_right.y - upper_left.y);
+
+        Graphics g = this.frontPanel.getGraphics();
+        g.setColor(this.fgColor);
+        g.fillOval(x, y, width, height);
+        g.dispose();
+
+        Graphics g2 = this.buffImage.getGraphics();
+        g2.setColor(this.fgColor);
+        g2.fillOval(x, y, width, height);
+        g2.dispose();
+    }
+
     /**
      * API Method: retrieves the current drawing as a BufferedImage
      * Return type: BufferedImage
@@ -350,9 +425,9 @@ public class DrawGUI extends JFrame {
     }
 
     public String intToCol(int pixel) {
-        int red = (pixel & 0x00ff0000) >> 16;
-        int green = (pixel & 0x0000ff00) >> 8;
-        int blue = pixel & 0x000000ff;
+        int red = (pixel & 0upper_left.upper_left.xff0000) >> 16;
+        int green = (pixel & 0upper_left.upper_left.x00ff00) >> 8;
+        int blue = pixel & 0upper_left.upper_left.x0000ff;
         Color col = new Color(red, green, blue);
         for (String key : colors.keySet()) {
             if (colors.get(key).equals(col)) {
