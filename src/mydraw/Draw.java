@@ -189,6 +189,14 @@ public class Draw {
     public void drawFillOval(Point upper_left, Point lower_right) {
         window.drawFillOval(upper_left, lower_right);
     }
+    
+    public void undo() {
+        window.undo();
+    }
+    
+    public void redo() {
+        window.redo();
+    }
 
     public String intToCol(int pixel) {
         return window.intToCol(pixel);
