@@ -23,7 +23,6 @@ public class DrawGUI extends JFrame {
     Color bgColor; // A reference to the current background color
     JPanel frontPanel; // A reference to the GUI panel
     BufferedImage buffImage; // A reference to the drawing panel (used to save the drawing)
-    Graphics g;
 
     public Hashtable<String, Color> colors;
     List<Drawable> commandQueue;
@@ -182,12 +181,15 @@ public class DrawGUI extends JFrame {
         if (commandQueue.size() > 0) {
             undoStack.add(commandQueue.get(commandQueue.size() - 1));
             commandQueue.remove(commandQueue.size() - 1);
+            Graphics g = this.frontPanel.getGraphics();
+            Graphics g2 = this.buffImage.getGraphics();
             g.setColor(bgColor);
             g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
-            g.dispose();
             for (Drawable command : commandQueue) {
                 command.draw(g);
+                command.draw(g2);
             }
+            g.dispose();
         }
     }
 
@@ -195,12 +197,15 @@ public class DrawGUI extends JFrame {
         if (undoStack.size() > 0) {
             commandQueue.add(undoStack.get(undoStack.size() - 1));
             undoStack.remove(undoStack.size() - 1);
+            Graphics g = this.frontPanel.getGraphics();
+            Graphics g2 = this.buffImage.getGraphics();
             g.setColor(bgColor);
             g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
-            g.dispose();
             for (Drawable command : commandQueue) {
                 command.draw(g);
+                command.draw(g2);
             }
+            g.dispose();
         }
     }
 
@@ -425,6 +430,7 @@ public class DrawGUI extends JFrame {
         g.setColor(bgColor);
         g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
         g.dispose();
+        commandQueue.add(new clearCommand(this, bgColor));
 
         Graphics g2 = buffImage.getGraphics();
         g2.setColor(bgColor);
