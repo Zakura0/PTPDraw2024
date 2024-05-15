@@ -117,20 +117,18 @@ class ShapeManager implements ItemListener {
             }
         }
 
-        public void doDraw(int x0, int y0, int x1, int y1, Graphics g) {
-            // calculate upperleft and width/height of rectangle
-            int x = Math.min(x0, x1);
-            int y = Math.min(y0, y1);
-            int w = Math.abs(x1 - x0);
-            int h = Math.abs(y1 - y0);
-            Point upper_left = new Point(x, y);
-            Point lower_right = new Point(w, h);
-
-            // draw rectangle
-            g.drawRect(x, y, w, h);
-            gui.commandQueue.add(new rectangleCommand(gui, upper_left, lower_right));
-        }
-    }
+                public void doDraw(int x0, int y0, int x1, int y1, Graphics g) {
+                    // calculate upperleft and width/height of rectangle
+                    int x = Math.min(x0, x1);
+                    int y = Math.min(y0, y1);
+                    int w = Math.abs(x1 - x0);
+                    int h = Math.abs(y1 - y0);
+                    
+                    // draw rectangle
+                    g.drawRect(x, y, w, h);
+                    gui.commandQueue.add(new rectangleCommand(gui, x, y, w, h, gui.fgColor));
+                }
+            }
 
     // if this class is active, ovals are drawn
     class OvalDrawer extends RectangleDrawer {
@@ -141,6 +139,7 @@ class ShapeManager implements ItemListener {
             int h = Math.abs(y1 - y0);
             // draw oval instead of rectangle
             g.drawOval(x, y, w, h);
+                    gui.commandQueue.add(new ovalCommand(gui, x, y, w, h, gui.fgColor));
         }
     }
 

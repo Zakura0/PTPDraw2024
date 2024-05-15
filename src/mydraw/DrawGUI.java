@@ -23,6 +23,7 @@ public class DrawGUI extends JFrame {
     Color bgColor; // A reference to the current background color
     JPanel frontPanel; // A reference to the GUI panel
     BufferedImage buffImage; // A reference to the drawing panel (used to save the drawing)
+    Graphics g;
 
     public Hashtable<String, Color> colors;
     List<Drawable> commandQueue;
@@ -34,20 +35,29 @@ public class DrawGUI extends JFrame {
     public DrawGUI(Draw application) {
         super("Draw"); // Create the window
         app = application; // Remember the application reference
-        fgColor = app.fgColor;
-        bgColor = app.bgColor;
         colors = new Hashtable<>();
         colors.put("black", Color.BLACK);
         colors.put("green", Color.GREEN);
         colors.put("red", Color.RED);
         colors.put("blue", Color.BLUE);
-        colors.put("white", Color.WHITE);
+        colors.put("white", Color.WHITE);        
+        bgColor = Color.WHITE;
         commandQueue = new ArrayList<>();
 
         // Initializes the drawing panel
         doubleBuffering();
 
         setupGUI();
+        try {
+            setFGColor("black");
+        } catch (ColorException e) {
+            System.err.println("Color Exception: " + e.getMessage());
+        }
+        try {
+            setBGColor("white");
+        } catch (ColorException e) {
+            System.err.println("Color Exception: " + e.getMessage());
+        }
     }
 
     private void setupGUI() {
@@ -117,11 +127,10 @@ public class DrawGUI extends JFrame {
         // Finally, set the size of the window, and pop it up
         this.frontPanel.setPreferredSize(new Dimension(800, 400));
         this.pack();
-        this.frontPanel.setBackground(app.bgColor);
+        this.frontPanel.setBackground(bgColor);
         this.setBackground(Color.white);
-        this.setResizable(false);
-        // this.show(); //awt
-        this.setVisible(true); // ++
+        this.setResizable(true);
+        this.setVisible(true);
     }
 
     public void doCommand(String command) {
@@ -131,6 +140,7 @@ public class DrawGUI extends JFrame {
             this.dispose();
             System.exit(0);
         } else if (command.equals("auto")) {
+            autoDraw();
         } else if (command.equals("save")) {
             openSaveDialog();
         }
@@ -153,6 +163,18 @@ public class DrawGUI extends JFrame {
                 writeImage(ImgToSave, filePath);
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+
+
+    public void undo(){
+        
+        if (commandQueue.size() > 0) {
+            commandQueue.remove(commandQueue.size() - 1);
+            clear();
+            for (Drawable command : commandQueue) {
+                command.draw(g);
             }
         }
     }
@@ -233,7 +255,7 @@ public class DrawGUI extends JFrame {
         int y = Math.min(upper_left.y, lower_right.y);
         int width = Math.abs(lower_right.x - upper_left.x);
         int height = Math.abs(lower_right.y - upper_left.y);
-
+        
         Graphics g = this.frontPanel.getGraphics();
         g.setColor(this.fgColor);
         g.drawRect(x, y, width, height);
@@ -437,15 +459,4 @@ public class DrawGUI extends JFrame {
         return null;
     }
 
-    public void redraw() {
-
-    }
-
-    public void undo() {
-
-    }
-
-    public void redo() {
-
-    }
 }
