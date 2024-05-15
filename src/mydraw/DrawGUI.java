@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.List;
@@ -125,10 +126,17 @@ public class DrawGUI extends JFrame {
             autoDraw();
         } else if (command.equals("save")) {
             Image ImgToSave = getDrawing();
-            try {
-                writeImage(ImgToSave, "image.bmp");
-            } catch (IOException e) {
-                e.printStackTrace();
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Save Image");
+            int userSelection = fileChooser.showSaveDialog(this);
+            if (userSelection == JFileChooser.APPROVE_OPTION) {
+                File fileToSave = fileChooser.getSelectedFile();
+                String filePath = fileToSave.getAbsolutePath();
+                try {
+                    writeImage(ImgToSave, filePath);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
