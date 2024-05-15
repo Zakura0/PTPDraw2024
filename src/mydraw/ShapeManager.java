@@ -67,6 +67,7 @@ class ShapeManager implements ItemListener {
             List<Point> final_points = new ArrayList<Point>(this.points);
             gui.commandQueue.add(new polyLineCommand(gui, gui.fgColor, final_points));
             points.clear();
+            gui.undoStack.clear(); 
         }
     }
 
@@ -133,7 +134,8 @@ class ShapeManager implements ItemListener {
                 }
                 else {
                     gui.commandQueue.add(new rectangleCommand(gui, pressx, pressy, x, y, gui.fgColor));
-                }           
+                }
+                gui.undoStack.clear();           
             }
         }
 

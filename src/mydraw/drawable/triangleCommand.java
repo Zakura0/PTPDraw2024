@@ -2,7 +2,6 @@ package mydraw.drawable;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Point;
 
 import mydraw.DrawGUI;
 
@@ -10,7 +9,6 @@ public class triangleCommand implements Drawable {
 
 int x0, y0, x1, y1;
 DrawGUI window;
-Point upper_left, lower_right;
 Color color;
 
 public triangleCommand(DrawGUI window, int x0, int y0, int x1, int y1, Color color) {

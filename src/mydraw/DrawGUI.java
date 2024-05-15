@@ -143,6 +143,9 @@ public class DrawGUI extends JFrame {
         this.pack();        
         this.setResizable(true);
         this.setVisible(true);
+        Graphics g = frontPanel.getGraphics();
+        g.setColor(bgColor);
+        g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
     }
 
     public void doCommand(String command) {
