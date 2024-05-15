@@ -171,10 +171,12 @@ public class DrawGUI extends JFrame {
             undoStack.add(commandQueue.get(commandQueue.size() - 1));
             commandQueue.remove(commandQueue.size() - 1);
             Graphics g = this.frontPanel.getGraphics();
+            Graphics g2 = this.buffImage.getGraphics();
             g.setColor(bgColor);
             g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
             for (Drawable command : commandQueue) {
                 command.draw(g);
+                command.draw(g2);
             }
             g.dispose();
         }
@@ -185,10 +187,12 @@ public class DrawGUI extends JFrame {
             commandQueue.add(undoStack.get(undoStack.size() - 1));
             undoStack.remove(undoStack.size() - 1);
             Graphics g = this.frontPanel.getGraphics();
+            Graphics g2 = this.buffImage.getGraphics();
             g.setColor(bgColor);
             g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
             for (Drawable command : commandQueue) {
                 command.draw(g);
+                command.draw(g2);
             }
             g.dispose();
         }
