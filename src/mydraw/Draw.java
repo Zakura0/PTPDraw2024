@@ -19,7 +19,15 @@ public class Draw {
         fgColor = Color.BLACK;
         bgColor = Color.WHITE;
         window = new DrawGUI(this);
-    }    
+    }
+
+    /**
+     * API Method: gets the current window
+     * Return type: DrawGUI
+     **/
+    public DrawGUI getWindow() {
+        return window;
+    }
 
     /**
      * API Method: retrieves current height of the window
