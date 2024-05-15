@@ -23,7 +23,6 @@ public class DrawGUI extends JFrame {
     Color bgColor; // A reference to the current background color
     JPanel frontPanel; // A reference to the GUI panel
     BufferedImage buffImage; // A reference to the drawing panel (used to save the drawing)
-    Graphics g;
 
     public Hashtable<String, Color> colors;
     List<Drawable> commandQueue;
@@ -473,7 +472,7 @@ public class DrawGUI extends JFrame {
         g.fillRect(0, 0, buffImage.getWidth(), buffImage.getHeight());
         g.dispose();
     }
-/* 
+
     public String intToCol(int pixel) {
         int red = (pixel & 0upper_left.upper_left.xff0000) >> 16;
         int green = (pixel & 0upper_left.upper_left.x00ff00) >> 8;
@@ -486,5 +485,5 @@ public class DrawGUI extends JFrame {
         }
         return null;
     }
-*/
+
 }
