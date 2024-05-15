@@ -128,25 +128,29 @@ public class DrawGUI extends JFrame {
             System.exit(0);
         } else if (command.equals("auto")) {
         } else if (command.equals("save")) {
-            Image ImgToSave = getDrawing();
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle("Save Image");
-            fileChooser.setFileFilter(new FileNameExtensionFilter("Bitmap Image (*.bmp)", "bmp"));
-            int userSelection = fileChooser.showSaveDialog(this);
-            if (userSelection == JFileChooser.APPROVE_OPTION) {
-                File fileToSave = fileChooser.getSelectedFile();
-                String filePath = fileToSave.getAbsolutePath();
-                if (!filePath.toLowerCase().endsWith(".bmp")) {
-                    filePath += ".bmp";
-                }
-                try {
-                    writeImage(ImgToSave, filePath);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            openSaveDialog();
         }
 
+    }
+
+    private void openSaveDialog() {
+        Image ImgToSave = getDrawing();
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Save Image");
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Bitmap Image (*.bmp)", "bmp"));
+        int userSelection = fileChooser.showSaveDialog(this);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            String filePath = fileToSave.getAbsolutePath();
+            if (!filePath.toLowerCase().endsWith(".bmp")) {
+                filePath += ".bmp";
+            }
+            try {
+                writeImage(ImgToSave, filePath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public String getFGColor() {
