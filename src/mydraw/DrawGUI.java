@@ -11,6 +11,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /*
  * @authors Giahung Bui 7557640 , Ben Woller 7740402, Simon Kazemi 7621942
@@ -26,7 +27,6 @@ public class DrawGUI extends JFrame {
 
     public Hashtable<String, Color> colors;
     List<Drawable> commandQueue;
-
 
     /**
      * The GUI constructor does all the work of creating the GUI and setting
@@ -51,12 +51,16 @@ public class DrawGUI extends JFrame {
         setupGUI();
     }
 
-    private void setupGUI(){
+    private void setupGUI() {
         // selector for drawing modes
         JComboBox<String> shape_chooser = new JComboBox<>();
         shape_chooser.addItem("Scribble");
         shape_chooser.addItem("Rectangle");
         shape_chooser.addItem("Oval");
+        shape_chooser.addItem("Triangle");
+        shape_chooser.addItem("Rhombus");
+        shape_chooser.addItem("Fill Rectangle");
+        shape_chooser.addItem("Fill Oval");
 
         // selector for drawing colors
         JComboBox<String> color_chooser = new JComboBox<>();
@@ -116,11 +120,10 @@ public class DrawGUI extends JFrame {
         this.pack();
         this.frontPanel.setBackground(app.bgColor);
         this.setBackground(Color.white);
-        this.setResizable(false);
-        // this.show(); //awt
-        this.setVisible(true); // ++
+        this.setResizable(true);
+        this.setVisible(true);
     }
-    
+
     public void doCommand(String command) {
         if (command.equals("clear")) {
             clear();
@@ -128,23 +131,30 @@ public class DrawGUI extends JFrame {
             this.dispose();
             System.exit(0);
         } else if (command.equals("auto")) {
-            autoDraw();
         } else if (command.equals("save")) {
-            Image ImgToSave = getDrawing();
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle("Save Image");
-            int userSelection = fileChooser.showSaveDialog(this);
-            if (userSelection == JFileChooser.APPROVE_OPTION) {
-                File fileToSave = fileChooser.getSelectedFile();
-                String filePath = fileToSave.getAbsolutePath();
-                try {
-                    writeImage(ImgToSave, filePath);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            openSaveDialog();
         }
 
+    }
+
+    private void openSaveDialog() {
+        Image ImgToSave = getDrawing();
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Save Image");
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Bitmap Image (*.bmp)", "bmp"));
+        int userSelection = fileChooser.showSaveDialog(this);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            String filePath = fileToSave.getAbsolutePath();
+            if (!filePath.toLowerCase().endsWith(".bmp")) {
+                filePath += ".bmp";
+            }
+            try {
+                writeImage(ImgToSave, filePath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
@@ -158,7 +168,7 @@ public class DrawGUI extends JFrame {
             }
         }
     }
-    
+
     public String getFGColor() {
         for (String key : colors.keySet()) {
             if (colors.get(key).equals(bgColor)) {
@@ -194,7 +204,7 @@ public class DrawGUI extends JFrame {
         this.pack();
         this.buffImage = new BufferedImage(width, getHeight(), BufferedImage.TYPE_INT_RGB);
     }
-    
+
     public void setHeight(int height) throws SizeException {
         if (height < 70) {
             throw new SizeException("Height must be at least 70 pixels.");
@@ -203,7 +213,7 @@ public class DrawGUI extends JFrame {
         this.pack();
         this.buffImage = new BufferedImage(getWidth(), height, BufferedImage.TYPE_INT_RGB);
     }
-    
+
     public void setBGColor(String new_color) throws ColorException {
         if (colors.containsKey(new_color.toLowerCase())) {
             bgColor = colors.get(new_color.toLowerCase());
@@ -221,7 +231,6 @@ public class DrawGUI extends JFrame {
         g2.dispose();
     }
 
-    
     public String getBGColor() {
         for (String key : colors.keySet()) {
             if (colors.get(key).equals(bgColor)) {
@@ -230,13 +239,13 @@ public class DrawGUI extends JFrame {
         }
         return null;
     }
-    
+
     public void drawRectangle(Point upper_left, Point lower_right) {
         int x = Math.min(upper_left.x, lower_right.x);
         int y = Math.min(upper_left.y, lower_right.y);
         int width = Math.abs(lower_right.x - upper_left.x);
         int height = Math.abs(lower_right.y - upper_left.y);
-
+        
         Graphics g = this.frontPanel.getGraphics();
         g.setColor(this.fgColor);
         g.drawRect(x, y, width, height);
@@ -247,7 +256,7 @@ public class DrawGUI extends JFrame {
         g2.drawRect(x, y, width, height);
         g2.dispose();
     }
-    
+
     public void drawOval(Point upper_left, Point lower_right) {
         int x = Math.min(upper_left.x, lower_right.x);
         int y = Math.min(upper_left.y, lower_right.y);
@@ -264,7 +273,7 @@ public class DrawGUI extends JFrame {
         g2.drawOval(x, y, width, height);
         g2.dispose();
     }
-    
+
     public void drawPolyLine(java.util.List<Point> points) {
         Graphics g = this.frontPanel.getGraphics();
         g.setPaintMode();
@@ -283,11 +292,16 @@ public class DrawGUI extends JFrame {
         g.dispose();
         g2.dispose();
     }
-    
+
+    /**
+     * API Method: retrieves the current drawing as a BufferedImage
+     * Return type: BufferedImage
+     **/
+
     public Image getDrawing() {
         return this.buffImage;
     }
-    
+
     public void writeImage(Image img, String filename) throws IOException {
         MyBMPFile.write(filename, (BufferedImage) img);
     }
@@ -308,7 +322,6 @@ public class DrawGUI extends JFrame {
         g2.dispose();
     }
 
-    
     public void autoDraw() {
         Point p1 = new Point(100, 200);
         Point p2 = new Point(200, 100);
