@@ -3,8 +3,6 @@ package mydraw;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -25,7 +23,7 @@ public class DrawGUI extends JFrame {
     JPanel frontPanel; // A reference to the GUI panel
     BufferedImage buffImage; // A reference to the drawing panel (used to save the drawing)
 
-    Hashtable<String, Color> colors;
+    public  Hashtable<String, Color> colors;
 
     /**
      * The GUI constructor does all the work of creating the GUI and setting
@@ -86,14 +84,12 @@ public class DrawGUI extends JFrame {
         contentPane.add(backPanel, BorderLayout.NORTH);
         contentPane.add(frontPanel, BorderLayout.CENTER);
 
-        // Here's a local class used for action listeners for the buttons
         class DrawActionListener implements ActionListener {
             private String command;
-
-            public DrawActionListener(String cmd) {
+        
+            public DrawActionListener(String cmd){
                 command = cmd;
             }
-
             public void actionPerformed(ActionEvent e) {
                 app.doCommand(command);
             }
@@ -108,6 +104,7 @@ public class DrawGUI extends JFrame {
         //vorher ShapeManager hier!
 
         shape_chooser.addItemListener(new ShapeManager(this));
+
 
         color_chooser.addItemListener(new ColorItemListener(this));
 
@@ -127,19 +124,19 @@ public class DrawGUI extends JFrame {
         // this.show(); //awt
         this.setVisible(true); // ++
     }
-
     /**
      * API Method: retrieves current foreground color
      * Return type: String
      **/
     public String getFGColor() {
         for (String key : colors.keySet()) {
-            if (colors.get(key).equals(fgColor)) {
+            if (colors.get(key).equals(bgColor)) {
                 return key;
             }
         }
         return null;
     }
+
 
     /**
      * API Method: sets current foreground color.
@@ -153,6 +150,7 @@ public class DrawGUI extends JFrame {
         } else {
             throw new ColorException("Invalid color: " + new_color);
         }
+
     }
 
     /**
@@ -397,4 +395,36 @@ public class DrawGUI extends JFrame {
         g.dispose();
     }
 
+    /* 
+    public Draw getAppField() {
+        return app;
+    }
+    public Color getFgColorField() {
+        return fgColor;
+    }
+    public Color getBgColor() {
+        return bgColor;
+    }
+    public void setBgColor(Color bgColor) {
+        this.bgColor = bgColor;
+    }
+    public JPanel getFrontPanel() {
+        return frontPanel;
+    }
+    public void setFrontPanel(JPanel frontPanel) {
+        this.frontPanel = frontPanel;
+    }
+    public BufferedImage getBuffImage() {
+        return buffImage;
+    }
+    public void setBuffImage(BufferedImage buffImage) {
+        this.buffImage = buffImage;
+    }
+    public  Hashtable<String, Color> getColors() {
+        return colors;
+    }
+    public void setColors(Hashtable<String, Color> colors) {
+        this.colors = colors;
+    }
+    */
 }

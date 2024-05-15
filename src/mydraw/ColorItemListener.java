@@ -1,6 +1,5 @@
 package mydraw;
 
-import mydraw.DrawGUI;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
