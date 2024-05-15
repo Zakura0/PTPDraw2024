@@ -187,7 +187,7 @@ public class Draw {
         window.drawFillOval(upper_left, lower_right);
     }
 
-    // public String intToCol(int pixel) {
-    //     return window.intToCol(pixel);
-    // }
+    public String intToCol(int pixel) {
+         return window.intToCol(pixel);
+     }
 }
