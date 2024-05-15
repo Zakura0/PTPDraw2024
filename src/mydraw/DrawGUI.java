@@ -47,6 +47,10 @@ public class DrawGUI extends JFrame {
         shape_chooser.addItem("Scribble");
         shape_chooser.addItem("Rectangle");
         shape_chooser.addItem("Oval");
+        shape_chooser.addItem("Triangle");
+        shape_chooser.addItem("Rhombus");
+        shape_chooser.addItem("Fill Rectangle");
+        shape_chooser.addItem("Fill Oval");
 
         // selector for drawing colors
         JComboBox<String> color_chooser = new JComboBox<>();
@@ -290,6 +294,18 @@ public class DrawGUI extends JFrame {
         }
         g.dispose();
         g2.dispose();
+    }
+
+    public void drawTriangle() {
+
+    }
+
+    public void drawRhombus() {
+
+    }
+
+    public void draw() {
+
     }
 
     /**
