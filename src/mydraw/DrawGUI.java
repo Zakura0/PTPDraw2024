@@ -6,6 +6,7 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -23,6 +24,8 @@ public class DrawGUI extends JFrame {
     BufferedImage buffImage; // A reference to the drawing panel (used to save the drawing)
 
     public Hashtable<String, Color> colors;
+    List<Drawable> commandQueue;
+
 
     /**
      * The GUI constructor does all the work of creating the GUI and setting
@@ -39,6 +42,7 @@ public class DrawGUI extends JFrame {
         colors.put("red", Color.RED);
         colors.put("blue", Color.BLUE);
         colors.put("white", Color.WHITE);
+        commandQueue = new ArrayList<>();
 
         // Initializes the drawing panel
         doubleBuffering();
