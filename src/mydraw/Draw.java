@@ -188,6 +188,6 @@ public class Draw {
     }
 
     public String intToCol(int pixel) {
-         return window.intToCol(pixel);
-     }
+        return window.intToCol(pixel);
+    }
 }
