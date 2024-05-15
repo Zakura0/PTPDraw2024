@@ -1,8 +1,6 @@
 package mydraw;
 
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -140,16 +138,6 @@ public class DrawGUI extends JFrame {
             }
         });
 
-        this.addComponentListener(new ComponentAdapter() {
-            public void componentResized(ComponentEvent e) {
-                Graphics g = frontPanel.getGraphics();
-                g.setColor(bgColor);
-                g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
-                g.dispose();
-                redraw();
-            }
-        });
-
         // Finally, set the size of the window, and pop it up
         this.frontPanel.setPreferredSize(new Dimension(800, 400));
         this.pack();        
@@ -195,8 +183,7 @@ public class DrawGUI extends JFrame {
         }
     }
 
-    private void redraw() {
-        Graphics g = frontPanel.getGraphics();
+    public void redraw(Graphics g) {
         g.setColor(bgColor);
         g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
         for (Drawable drawable : commandQueue)

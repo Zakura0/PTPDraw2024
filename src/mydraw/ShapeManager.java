@@ -2,9 +2,16 @@ package mydraw;
 
 import java.awt.event.MouseMotionListener;
 
+import mydraw.drawable.fillovalCommand;
+import mydraw.drawable.fillrectangleCommand;
 import mydraw.drawable.ovalCommand;
+import mydraw.drawable.polyLineCommand;
 import mydraw.drawable.rectangleCommand;
+import mydraw.drawable.rhombusCommand;
+import mydraw.drawable.triangleCommand;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.awt.*;
 
 import java.awt.event.ItemEvent;
@@ -26,12 +33,14 @@ class ShapeManager implements ItemListener {
     // if this class is active, the mouse is interpreted as a pen
     class ScribbleDrawer extends ShapeDrawer {
         int lastx, lasty;
+        List<Point> points = new ArrayList<Point>();
 
         public void mousePressed(MouseEvent e) {
             Point p = gui.frontPanel.getMousePosition();
             if (p != null) {
                 lastx = p.x;
                 lasty = p.y;
+                points.add(p);
             }
         }
 
@@ -40,6 +49,7 @@ class ShapeManager implements ItemListener {
             Graphics g2 = gui.buffImage.getGraphics();
             Point p = gui.frontPanel.getMousePosition();
             if (p != null) {
+                points.add(p);
                 int x = p.x;
                 int y = p.y;
                 g.setColor(gui.fgColor);
@@ -51,6 +61,12 @@ class ShapeManager implements ItemListener {
                 lastx = x;
                 lasty = y;
             }
+        }
+        
+        public void mouseReleased(MouseEvent e) {
+            List<Point> final_points = new ArrayList<Point>(this.points);
+            gui.commandQueue.add(new polyLineCommand(gui, gui.fgColor, final_points));
+            points.clear();
         }
     }
 
@@ -98,6 +114,22 @@ class ShapeManager implements ItemListener {
                 if (this instanceof OvalDrawer)
                 {
                     gui.commandQueue.add(new ovalCommand(gui, pressx, pressy, x, y, gui.fgColor));
+                }
+                else  if (this instanceof TriangleDrawer)
+                {
+                    gui.commandQueue.add(new triangleCommand(gui, pressx, pressy, x, y, gui.fgColor));
+                }
+                else if (this instanceof RhombusDrawer)
+                {
+                    gui.commandQueue.add(new rhombusCommand(gui, pressx, pressy, x, y, gui.fgColor));
+                }
+                else if (this instanceof RectangleFillDrawer)
+                {
+                    gui.commandQueue.add(new fillrectangleCommand(gui, pressx, pressy, x, y, gui.fgColor));
+                }
+                else if (this instanceof OvalFillDrawer)
+                {
+                    gui.commandQueue.add(new fillovalCommand(gui, pressx, pressy, x, y, gui.fgColor));
                 }
                 else {
                     gui.commandQueue.add(new rectangleCommand(gui, pressx, pressy, x, y, gui.fgColor));

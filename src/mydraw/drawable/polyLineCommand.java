@@ -2,27 +2,31 @@ package mydraw.drawable;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
 
 import mydraw.DrawGUI;
 
 public class polyLineCommand implements Drawable {
 
 DrawGUI window;
-int nPoints;
-int pointsX [];
-int pointsY [];
+List<Point> points;
 Color color;
 
-public polyLineCommand(DrawGUI window,Color color, int pointsX [], int pointsY [], int nPoints){
+public polyLineCommand(DrawGUI window, Color color, List<Point> points){
     this.window = window;
-    this.pointsX = pointsX;
-    this.pointsY = pointsY;
     this.color = color;
-    this.nPoints = nPoints;
+    this.points = points;
 }
     @Override
     public void draw(Graphics g){
         g.setColor(color);
-        g.drawPolyline(pointsX, pointsY, nPoints);
+        g.setPaintMode();
+        for (int i = 1; i < points.size(); i++) {
+            Point prevPoint = points.get(i - 1);
+            Point nextPoint = points.get(i);
+            g.drawLine(prevPoint.x, prevPoint.y, nextPoint.x, nextPoint.y);
+        }
     }
 }
