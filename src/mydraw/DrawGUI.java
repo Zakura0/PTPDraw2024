@@ -40,24 +40,14 @@ public class DrawGUI extends JFrame {
         colors.put("green", Color.GREEN);
         colors.put("red", Color.RED);
         colors.put("blue", Color.BLUE);
-        colors.put("white", Color.WHITE);        
+        colors.put("white", Color.WHITE);
+        fgColor = Color.BLACK;
         bgColor = Color.WHITE;
         commandQueue = new ArrayList<>();
 
         // Initializes the drawing panel
         doubleBuffering();
-
         setupGUI();
-        try {
-            setFGColor("black");
-        } catch (ColorException e) {
-            System.err.println("Color Exception: " + e.getMessage());
-        }
-        try {
-            setBGColor("white");
-        } catch (ColorException e) {
-            System.err.println("Color Exception: " + e.getMessage());
-        }
     }
 
     private void setupGUI() {
@@ -97,7 +87,7 @@ public class DrawGUI extends JFrame {
 
         // Initializes the GUI front panel
         frontPanel = new JPanel();
-        frontPanel.setBackground(Color.WHITE);
+        frontPanel.setBackground(bgColor);
 
         // Sets up the different layers/panels
         Container contentPane = this.getContentPane();
@@ -128,7 +118,6 @@ public class DrawGUI extends JFrame {
         this.frontPanel.setPreferredSize(new Dimension(800, 400));
         this.pack();
         this.frontPanel.setBackground(bgColor);
-        this.setBackground(Color.white);
         this.setResizable(true);
         this.setVisible(true);
     }
@@ -167,9 +156,7 @@ public class DrawGUI extends JFrame {
         }
     }
 
-
-    public void undo(){
-        
+    public void undo(){        
         if (commandQueue.size() > 0) {
             commandQueue.remove(commandQueue.size() - 1);
             clear();
