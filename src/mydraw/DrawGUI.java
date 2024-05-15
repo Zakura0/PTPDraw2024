@@ -69,6 +69,13 @@ public class DrawGUI extends JFrame {
         color_chooser.addItem("Red");
         color_chooser.addItem("Blue");
 
+        JComboBox<String> bgColor_chooser = new JComboBox<>();
+        bgColor_chooser.addItem("White");
+        bgColor_chooser.addItem("Black");
+        bgColor_chooser.addItem("Green");
+        bgColor_chooser.addItem("Red");
+        bgColor_chooser.addItem("Blue");
+
         // Create three buttons
         JButton clear = new JButton("Clear");
         JButton quit = new JButton("Quit");
@@ -83,6 +90,8 @@ public class DrawGUI extends JFrame {
         backPanel.add(shape_chooser);
         backPanel.add(new JLabel("Color:"));
         backPanel.add(color_chooser);
+        backPanel.add(new JLabel("BGColor:"));
+        backPanel.add(bgColor_chooser);
         backPanel.add(clear);
         backPanel.add(quit);
         backPanel.add(save);
@@ -112,7 +121,9 @@ public class DrawGUI extends JFrame {
 
         shape_chooser.addItemListener(new ShapeManager(this));
 
-        color_chooser.addItemListener(new ColorItemListener(this));
+        color_chooser.addItemListener(new ColorItemListener(this, false));
+
+        bgColor_chooser.addItemListener(new ColorItemListener(this, true));
 
         // Handle the window close request similarly
         this.addWindowListener(new WindowAdapter() {
@@ -456,8 +467,8 @@ public class DrawGUI extends JFrame {
         Point p9 = new Point(500, 350);
         Point p10 = new Point(600, 250);
         drawRhombus(p9, p10);
-        Point p11 = new Point(600, 350);
-        Point p12 = new Point(700, 250);
+        Point p11 = new Point(600, 250);
+        Point p12 = new Point(700, 350);
         drawTriangle(p11, p12);
     }
 
