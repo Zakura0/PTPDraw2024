@@ -27,6 +27,7 @@ public class DrawGUI extends JFrame {
 
     public Hashtable<String, Color> colors;
     List<Drawable> commandQueue;
+    List<Drawable> undoStack;
 
     /**
      * The GUI constructor does all the work of creating the GUI and setting
@@ -41,23 +42,13 @@ public class DrawGUI extends JFrame {
         colors.put("red", Color.RED);
         colors.put("blue", Color.BLUE);
         colors.put("white", Color.WHITE);
+        fgColor = Color.BLACK;
         bgColor = Color.WHITE;
         commandQueue = new ArrayList<>();
-
+        undoStack = new ArrayList<>();
         // Initializes the drawing panel
         doubleBuffering();
-
         setupGUI();
-        try {
-            setFGColor("black");
-        } catch (ColorException e) {
-            System.err.println("Color Exception: " + e.getMessage());
-        }
-        try {
-            setBGColor("white");
-        } catch (ColorException e) {
-            System.err.println("Color Exception: " + e.getMessage());
-        }
     }
 
     private void setupGUI() {
@@ -83,6 +74,8 @@ public class DrawGUI extends JFrame {
         JButton quit = new JButton("Quit");
         JButton save = new JButton("Save");
         JButton auto = new JButton("Auto");
+        JButton undo = new JButton("Undo");
+        JButton redo = new JButton("Redo");
 
         // Set a LayoutManager, and add the choosers and buttons to the window.
         JPanel backPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
@@ -94,10 +87,12 @@ public class DrawGUI extends JFrame {
         backPanel.add(quit);
         backPanel.add(save);
         backPanel.add(auto);
+        backPanel.add(undo);
+        backPanel.add(redo);
 
         // Initializes the GUI front panel
         frontPanel = new JPanel();
-        frontPanel.setBackground(Color.WHITE);
+        frontPanel.setBackground(bgColor);
 
         // Sets up the different layers/panels
         Container contentPane = this.getContentPane();
@@ -110,6 +105,8 @@ public class DrawGUI extends JFrame {
         quit.addActionListener(new DrawActionListener("quit", app));
         save.addActionListener(new DrawActionListener("save", app));
         auto.addActionListener(new DrawActionListener("auto", app));
+        undo.addActionListener(new DrawActionListener("undo", app));
+        redo.addActionListener(new DrawActionListener("redo", app));
 
         // vorher ShapeManager hier!
 
@@ -128,7 +125,6 @@ public class DrawGUI extends JFrame {
         this.frontPanel.setPreferredSize(new Dimension(800, 400));
         this.pack();
         this.frontPanel.setBackground(bgColor);
-        this.setBackground(Color.white);
         this.setResizable(true);
         this.setVisible(true);
     }
@@ -143,6 +139,10 @@ public class DrawGUI extends JFrame {
             autoDraw();
         } else if (command.equals("save")) {
             openSaveDialog();
+        } else if (command.equals("undo")) {
+            undo();
+        } else if (command.equals("redo")) {
+            redo();
         }
 
     }
@@ -168,10 +168,25 @@ public class DrawGUI extends JFrame {
     }
 
     public void undo() {
-
         if (commandQueue.size() > 0) {
+            undoStack.add(commandQueue.get(commandQueue.size() - 1));
             commandQueue.remove(commandQueue.size() - 1);
-            clear();
+            g.setColor(bgColor);
+            g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
+            g.dispose();
+            for (Drawable command : commandQueue) {
+                command.draw(g);
+            }
+        }
+    }
+
+    public void redo() {
+        if (undoStack.size() > 0) {
+            commandQueue.add(undoStack.get(undoStack.size() - 1));
+            undoStack.remove(undoStack.size() - 1);
+            g.setColor(bgColor);
+            g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
+            g.dispose();
             for (Drawable command : commandQueue) {
                 command.draw(g);
             }
@@ -456,18 +471,18 @@ public class DrawGUI extends JFrame {
         g.fillRect(0, 0, buffImage.getWidth(), buffImage.getHeight());
         g.dispose();
     }
-
-    public String intToCol(int pixel) {
-        int red = (pixel & 0xff0000) >> 16;
-        int green = (pixel & 0x00ff00) >> 8;
-        int blue = pixel & 0x0000ff;
-        Color col = new Color(red, green, blue);
-        for (String key : colors.keySet()) {
-            if (colors.get(key).equals(col)) {
-                return key;
-            }
-        }
-        return null;
-    }
-
+    /*
+     * public String intToCol(int pixel) {
+     * int red = (pixel & 0xff0000) >> 16;
+     * int green = (pixel & 0x00ff00) >> 8;
+     * int blue = pixel & 0x0000ff;
+     * Color col = new Color(red, green, blue);
+     * for (String key : colors.keySet()) {
+     * if (colors.get(key).equals(col)) {
+     * return key;
+     * }
+     * }
+     * return null;
+     * }
+     */
 }
