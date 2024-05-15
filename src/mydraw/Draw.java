@@ -21,106 +21,156 @@ public class Draw {
         window = new DrawGUI(this);
     }
 
-    public void doCommand(String command) {
-        if (command.equals("clear")) {
-            clear();
-        } else if (command.equals("quit")) {
-            window.dispose();
-            System.exit(0);
-        } else if (command.equals("auto")) {
-            autoDraw();
-        } else if (command.equals("save")) {
-            Image ImgToSave = getDrawing();
-            try {
-                writeImage(ImgToSave, "image.bmp");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
+    /**
+     * API Method: gets the current window
+     * Return type: DrawGUI
+     **/
+    public DrawGUI getWindow() {
+        return window;
     }
 
     /**
-     * API method: get height ...
-     * more details here ...
-     */
-
+     * API Method: retrieves current height of the window
+     * Return type: int
+     **/
     public int getHeight() {
         return window.getHeight();
     }
 
-    /** API method: set height ... */
+    /**
+     * API Method: sets current window height.
+     * Params: int height
+     * Throws a SizeException if the height is negative
+     **/
     public void setHeight(int height) throws SizeException {
         window.setHeight(height);
     }
 
-    /** API method: get width ... */
+    /**
+     * API Method: retrieves current width of the window
+     * Return type: int
+     **/
     public int getWidth() {
         return window.getWidth();
     }
 
-    /** API method: set width ... */
+    /**
+     * API Method: sets current window width
+     * Params: int width
+     * Throws a SizeException if the width is smaller than 750 (due to MacOS
+     * incompability)
+     **/
     public void setWidth(int width) throws SizeException {
         window.setWidth(width);
     }
 
-    /** API method: set fg color ... */
+    /**
+     * API Method: sets current foreground color.
+     * Params: String new_color
+     * Available Colors: "black", "green", "red", "blue"
+     * Throws an ColorException if the color to be set is not recognized
+     **/
     public void setFGColor(String new_color) throws ColorException {
         window.setFGColor(new_color);
     }
 
-    /** API method: get fg color ... */
+    /**
+     * API Method: retrieves current foreground color
+     * Return type: String
+     **/
     public String getFGColor() {
         return window.getFGColor();
     }
 
-    /** API method: set bg color ... */
+    /**
+     * API Method: sets current background color.
+     * Params: String new_color
+     * Available Colors: "black", "green", "red", "blue", "white"
+     * Throws an ColorException if the color to be set is not recognized
+     **/
     public void setBGColor(String new_color) throws ColorException {
         window.setBGColor(new_color);
     }
 
-    /** API method: get bg color ... */
+    /**
+     * API Method: retrieves current background color
+     * Return type: String
+     **/
     public String getBGColor() {
         return window.getBGColor();
     }
 
-    /** API method: get drawing ... */
+    /**
+     * API Method: retrieves the current drawing as a BufferedImage
+     * Return type: BufferedImage
+     **/
     public Image getDrawing() {
         return window.getDrawing();
     }
 
-    /** API method: writeImage ... */
+    /**
+     * API Method: saves an BufferedImage to a file and saves it under a given
+     * name in the current directory.
+     * Params: Image img, String filename
+     * Throws an IOException if image cant be saved
+     **/
     public void writeImage(Image img, String filename) throws IOException {
         window.writeImage(img, filename);
     }
 
-    /** API method: readImage ... */
+    /**
+     * API Method: reads a file and gets the content of the BMP file as
+     * a buffered image
+     * Returns: BufferedImage
+     * Throws an IOException if filename cant be found
+     **/
     public Image readImage(String filename) throws IOException {
         return window.readImage(filename);
     }
 
-    /** API method: clear ... */
+    /**
+     * API Method: clears the drawing pane and sets the color to the current
+     * bgColor
+     **/
     public void clear() {
         window.clear();
     }
 
-    /** API - test method: paint every shape ... */
+    /**
+     * API Method: script, that draws different shapes automatically on
+     * the drawing pane. Saves them afterward as an BMP image.
+     **/
     public void autoDraw() {
         window.autoDraw();
         // paint your testimage now using API methods
     }
 
-    /** API: paint a rectangle ... */
+    /**
+     * API Method: draws a rectangle on the front panel and drawing panel, where two
+     * points are used
+     * to calculate the overall width and height of the rectangle
+     * Prams: Point upper_left, Point lower_right
+     **/
     public void drawRectangle(Point upper_left, Point lower_right) {
         window.drawRectangle(upper_left, lower_right);
     }
 
-    /** API: paint an oval ... */
+    /**
+     * API Method: draws a circle/ellipse on the front panel and drawing panel,
+     * where two points are used
+     * to calculate the overall width and height of the circle/ellipse
+     * Prams: Point upper_left, Point lower_right
+     **/
     public void drawOval(Point upper_left, Point lower_right) {
         window.drawOval(upper_left, lower_right);
     }
 
-    /** API: paint a polyline/scribble ... */
+    /**
+     * API Method: draws a polyline on the front panel and drawing panel, where
+     * multiple points are used
+     * to draw lines from one point to another: e.g. p1 - p2 - p3
+     * Prams: List<Point> points
+     **/
     public void drawPolyLine(java.util.List<Point> points) {
         window.drawPolyLine(points);
     }

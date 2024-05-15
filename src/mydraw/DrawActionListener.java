@@ -13,6 +13,6 @@ class DrawActionListener implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
-        application.doCommand(command);
+        application.getWindow().doCommand(command);
     }
 }
