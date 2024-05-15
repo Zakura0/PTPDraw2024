@@ -115,9 +115,8 @@ public class DrawGUI extends JFrame {
         this.pack();
         this.frontPanel.setBackground(app.bgColor);
         this.setBackground(Color.white);
-        this.setResizable(false);
-        // this.show(); //awt
-        this.setVisible(true); // ++
+        this.setResizable(true);
+        this.setVisible(true);
     }
 
     public void doCommand(String command) {
@@ -229,7 +228,7 @@ public class DrawGUI extends JFrame {
         int y = Math.min(upper_left.y, lower_right.y);
         int width = Math.abs(lower_right.x - upper_left.x);
         int height = Math.abs(lower_right.y - upper_left.y);
-
+        
         Graphics g = this.frontPanel.getGraphics();
         g.setColor(this.fgColor);
         g.drawRect(x, y, width, height);
