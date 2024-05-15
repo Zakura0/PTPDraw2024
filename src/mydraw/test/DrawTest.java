@@ -74,7 +74,7 @@ class DrawTest {
     void WidthTest() throws SizeException {
         int expectedWidth, actualWidth;
 
-        expectedWidth = 750;
+        expectedWidth = 1200;
         draw.setWidth(expectedWidth);
         actualWidth = draw.getWidth();
 

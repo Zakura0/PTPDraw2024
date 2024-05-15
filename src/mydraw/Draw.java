@@ -56,7 +56,7 @@ public class Draw {
     /**
      * API Method: sets current window width
      * Params: int width
-     * Throws a SizeException if the width is smaller than 750 (due to MacOS
+     * Throws a SizeException if the width is smaller than 1105 (due to MacOS
      * incompability)
      **/
     public void setWidth(int width) throws SizeException {
@@ -189,11 +189,11 @@ public class Draw {
     public void drawFillOval(Point upper_left, Point lower_right) {
         window.drawFillOval(upper_left, lower_right);
     }
-    
+
     public void undo() {
         window.undo();
     }
-    
+
     public void redo() {
         window.redo();
     }

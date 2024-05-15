@@ -140,7 +140,7 @@ public class DrawGUI extends JFrame {
 
         // Finally, set the size of the window, and pop it up
         this.frontPanel.setPreferredSize(new Dimension(800, 400));
-        this.pack();        
+        this.pack();
         this.setResizable(true);
         this.setVisible(true);
     }
@@ -186,8 +186,7 @@ public class DrawGUI extends JFrame {
     public void redraw(Graphics g) {
         g.setColor(bgColor);
         g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
-        for (Drawable drawable : commandQueue)
-        {
+        for (Drawable drawable : commandQueue) {
             drawable.draw(g);
         }
         g.dispose();
@@ -227,7 +226,7 @@ public class DrawGUI extends JFrame {
 
     public String getFGColor() {
         for (String key : colors.keySet()) {
-            if (colors.get(key).equals(bgColor)) {
+            if (colors.get(key).equals(fgColor)) {
                 return key;
             }
         }
@@ -253,8 +252,8 @@ public class DrawGUI extends JFrame {
     }
 
     public void setWidth(int width) throws SizeException {
-        if (width < 750) {
-            throw new SizeException("Width must be at least 600 pixels.");
+        if (width < 1105) {
+            throw new SizeException("Width must be at least 1105 pixels.");
         }
         this.frontPanel.setPreferredSize(new Dimension(width, getHeight()));
         this.pack();
@@ -441,8 +440,7 @@ public class DrawGUI extends JFrame {
         return MyBMPFile.read(filename);
     }
 
-    public DrawPanel getDrawPanel()
-    {
+    public DrawPanel getDrawPanel() {
         return frontPanel;
     }
 
