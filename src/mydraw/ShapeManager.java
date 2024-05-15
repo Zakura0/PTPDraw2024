@@ -91,7 +91,13 @@ class ShapeManager implements ItemListener {
                 int y = p.y;
                 doDraw(pressx, pressy, x, y, g);
                 doDraw(pressx, pressy, x, y, g2);
-                gui.commandQueue.add(new rectangleCommand(gui, pressx, pressy, x, y, gui.fgColor));
+                if (this instanceof OvalDrawer)
+                {
+                    gui.commandQueue.add(new ovalCommand(gui, pressx, pressy, x, y, gui.fgColor));
+                }
+                else {
+                    gui.commandQueue.add(new rectangleCommand(gui, pressx, pressy, x, y, gui.fgColor));
+                }           
             }
         }
 
@@ -118,17 +124,17 @@ class ShapeManager implements ItemListener {
             }
         }
 
-                public void doDraw(int x0, int y0, int x1, int y1, Graphics g) {
-                    // calculate upperleft and width/height of rectangle
-                    int x = Math.min(x0, x1);
-                    int y = Math.min(y0, y1);
-                    int w = Math.abs(x1 - x0);
-                    int h = Math.abs(y1 - y0);
-                    
-                    // draw rectangle
-                    g.drawRect(x, y, w, h);
-                }
-            }
+        public void doDraw(int x0, int y0, int x1, int y1, Graphics g) {
+            // calculate upperleft and width/height of rectangle
+            int x = Math.min(x0, x1);
+            int y = Math.min(y0, y1);
+            int w = Math.abs(x1 - x0);
+            int h = Math.abs(y1 - y0);
+
+            // draw rectangle
+            g.drawRect(x, y, w, h);
+        }
+    }
 
     // if this class is active, ovals are drawn
     class OvalDrawer extends RectangleDrawer {
@@ -139,7 +145,6 @@ class ShapeManager implements ItemListener {
             int h = Math.abs(y1 - y0);
             // draw oval instead of rectangle
             g.drawOval(x, y, w, h);
-                    gui.commandQueue.add(new ovalCommand(gui, x, y, w, h, gui.fgColor));
         }
     }
 

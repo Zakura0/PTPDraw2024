@@ -1,6 +1,8 @@
 package mydraw;
 
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -21,7 +23,7 @@ public class DrawGUI extends JFrame {
     Draw app; // A reference to the application, to send commands to.
     Color fgColor; // A referenec to the current foreground color (drawing color)
     Color bgColor; // A reference to the current background color
-    JPanel frontPanel; // A reference to the GUI panel
+    DrawPanel frontPanel; // A reference to the GUI panel
     BufferedImage buffImage; // A reference to the drawing panel (used to save the drawing)
 
     public Hashtable<String, Color> colors;
@@ -99,7 +101,7 @@ public class DrawGUI extends JFrame {
         backPanel.add(redo);
 
         // Initializes the GUI front panel
-        frontPanel = new JPanel();
+        frontPanel = new DrawPanel(this);
         frontPanel.setBackground(bgColor);
 
         // Sets up the different layers/panels
@@ -131,10 +133,19 @@ public class DrawGUI extends JFrame {
             }
         });
 
+        this.addComponentListener(new ComponentAdapter() {
+            public void componentResized(ComponentEvent e) {
+                Graphics g = frontPanel.getGraphics();
+                g.setColor(bgColor);
+                g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
+                g.dispose();
+                redraw();
+            }
+        });
+
         // Finally, set the size of the window, and pop it up
         this.frontPanel.setPreferredSize(new Dimension(800, 400));
-        this.pack();
-        this.frontPanel.setBackground(bgColor);
+        this.pack();        
         this.setResizable(true);
         this.setVisible(true);
     }
@@ -177,14 +188,25 @@ public class DrawGUI extends JFrame {
         }
     }
 
-    public void undo() {
+    private void redraw() {
+        Graphics g = frontPanel.getGraphics();
+        g.setColor(bgColor);
+        g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
+        for (Drawable drawable : commandQueue)
+        {
+            drawable.draw(g);
+        }
+        g.dispose();
+    }
+
+    private void undo() {
         if (commandQueue.size() > 0) {
             undoStack.add(commandQueue.get(commandQueue.size() - 1));
             commandQueue.remove(commandQueue.size() - 1);
             Graphics g = this.frontPanel.getGraphics();
             Graphics g2 = this.buffImage.getGraphics();
             g.setColor(bgColor);
-            g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
+            g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight()); // clear the screen
             for (Drawable command : commandQueue) {
                 command.draw(g);
                 command.draw(g2);
@@ -193,14 +215,14 @@ public class DrawGUI extends JFrame {
         }
     }
 
-    public void redo() {
+    private void redo() {
         if (undoStack.size() > 0) {
             commandQueue.add(undoStack.get(undoStack.size() - 1));
             undoStack.remove(undoStack.size() - 1);
             Graphics g = this.frontPanel.getGraphics();
             Graphics g2 = this.buffImage.getGraphics();
             g.setColor(bgColor);
-            g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
+            g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight()); // clear the screen
             for (Drawable command : commandQueue) {
                 command.draw(g);
                 command.draw(g2);
