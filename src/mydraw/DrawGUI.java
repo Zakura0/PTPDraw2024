@@ -169,12 +169,8 @@ public class DrawGUI extends JFrame {
         }
     }
 
-<<<<<<< HEAD
-    public void undo(){        
-=======
 
     public void undo(){
->>>>>>> ac7df7da3bb2922974afe355ff1d05b677d46d19
         if (commandQueue.size() > 0) {
             undoStack.add(commandQueue.get(commandQueue.size()-1));
             commandQueue.remove(commandQueue.size() - 1);
