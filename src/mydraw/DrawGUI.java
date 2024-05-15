@@ -27,6 +27,7 @@ public class DrawGUI extends JFrame {
 
     public Hashtable<String, Color> colors;
     List<Drawable> commandQueue;
+    List <Drawable> undoStack;
 
     /**
      * The GUI constructor does all the work of creating the GUI and setting
@@ -43,7 +44,7 @@ public class DrawGUI extends JFrame {
         colors.put("white", Color.WHITE);        
         bgColor = Color.WHITE;
         commandQueue = new ArrayList<>();
-
+        undoStack = new ArrayList<>();
         // Initializes the drawing panel
         doubleBuffering();
 
@@ -83,6 +84,9 @@ public class DrawGUI extends JFrame {
         JButton quit = new JButton("Quit");
         JButton save = new JButton("Save");
         JButton auto = new JButton("Auto");
+        JButton undo = new JButton("Undo");
+        JButton redo = new JButton("Redo");
+        
 
         // Set a LayoutManager, and add the choosers and buttons to the window.
         JPanel backPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
@@ -94,6 +98,9 @@ public class DrawGUI extends JFrame {
         backPanel.add(quit);
         backPanel.add(save);
         backPanel.add(auto);
+        backPanel.add(undo);
+        backPanel.add(redo);
+
 
         // Initializes the GUI front panel
         frontPanel = new JPanel();
@@ -110,6 +117,8 @@ public class DrawGUI extends JFrame {
         quit.addActionListener(new DrawActionListener("quit", app));
         save.addActionListener(new DrawActionListener("save", app));
         auto.addActionListener(new DrawActionListener("auto", app));
+        undo.addActionListener(new DrawActionListener("undo", app));
+        redo.addActionListener(new DrawActionListener("redo", app));
 
         // vorher ShapeManager hier!
 
@@ -143,6 +152,10 @@ public class DrawGUI extends JFrame {
             autoDraw();
         } else if (command.equals("save")) {
             openSaveDialog();
+        } else if (command.equals("undo")) {
+            undo();
+        } else if (command.equals("redo")) {
+            redo();
         }
 
     }
@@ -169,10 +182,25 @@ public class DrawGUI extends JFrame {
 
 
     public void undo(){
-        
         if (commandQueue.size() > 0) {
+            undoStack.add(commandQueue.get(commandQueue.size()-1));
             commandQueue.remove(commandQueue.size() - 1);
-            clear();
+            g.setColor(bgColor);
+            g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
+            g.dispose();
+            for (Drawable command : commandQueue) {
+                command.draw(g);
+            }
+        }
+    }
+
+    public void redo(){
+        if (undoStack.size() > 0) {
+            commandQueue.add(undoStack.get(undoStack.size()-1));
+            undoStack.remove(undoStack.size() - 1);
+            g.setColor(bgColor);
+            g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
+            g.dispose();
             for (Drawable command : commandQueue) {
                 command.draw(g);
             }
