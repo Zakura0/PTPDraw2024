@@ -1,8 +1,6 @@
 package mydraw;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -23,7 +21,7 @@ public class DrawGUI extends JFrame {
     JPanel frontPanel; // A reference to the GUI panel
     BufferedImage buffImage; // A reference to the drawing panel (used to save the drawing)
 
-    public  Hashtable<String, Color> colors;
+    public Hashtable<String, Color> colors;
 
     /**
      * The GUI constructor does all the work of creating the GUI and setting
@@ -84,27 +82,15 @@ public class DrawGUI extends JFrame {
         contentPane.add(backPanel, BorderLayout.NORTH);
         contentPane.add(frontPanel, BorderLayout.CENTER);
 
-        class DrawActionListener implements ActionListener {
-            private String command;
-        
-            public DrawActionListener(String cmd){
-                command = cmd;
-            }
-            public void actionPerformed(ActionEvent e) {
-                app.doCommand(command);
-            }
-        }
-
         // Define action listener adapters that connect the buttons to the app
-        clear.addActionListener(new DrawActionListener("clear"));
-        quit.addActionListener(new DrawActionListener("quit"));
-        save.addActionListener(new DrawActionListener("save"));
-        auto.addActionListener(new DrawActionListener("auto"));
+        clear.addActionListener(new DrawActionListener("clear", app));
+        quit.addActionListener(new DrawActionListener("quit", app));
+        save.addActionListener(new DrawActionListener("save", app));
+        auto.addActionListener(new DrawActionListener("auto", app));
 
         // vorher ShapeManager hier!
 
         shape_chooser.addItemListener(new ShapeManager(this));
-
 
         color_chooser.addItemListener(new ColorItemListener(this));
 
@@ -124,6 +110,7 @@ public class DrawGUI extends JFrame {
         // this.show(); //awt
         this.setVisible(true); // ++
     }
+
     /**
      * API Method: retrieves current foreground color
      * Return type: String
@@ -136,7 +123,6 @@ public class DrawGUI extends JFrame {
         }
         return null;
     }
-
 
     /**
      * API Method: sets current foreground color.
@@ -409,36 +395,48 @@ public class DrawGUI extends JFrame {
         return null;
     }
 
-    /* 
-    public Draw getAppField() {
-        return app;
+    public void redraw() {
+
     }
-    public Color getFgColorField() {
-        return fgColor;
+
+    public void undo() {
+
     }
-    public Color getBgColor() {
-        return bgColor;
+
+    public void redo() {
+
     }
-    public void setBgColor(Color bgColor) {
-        this.bgColor = bgColor;
-    }
-    public JPanel getFrontPanel() {
-        return frontPanel;
-    }
-    public void setFrontPanel(JPanel frontPanel) {
-        this.frontPanel = frontPanel;
-    }
-    public BufferedImage getBuffImage() {
-        return buffImage;
-    }
-    public void setBuffImage(BufferedImage buffImage) {
-        this.buffImage = buffImage;
-    }
-    public  Hashtable<String, Color> getColors() {
-        return colors;
-    }
-    public void setColors(Hashtable<String, Color> colors) {
-        this.colors = colors;
-    }
-    */
+
+    /*
+     * public Draw getAppField() {
+     * return app;
+     * }
+     * public Color getFgColorField() {
+     * return fgColor;
+     * }
+     * public Color getBgColor() {
+     * return bgColor;
+     * }
+     * public void setBgColor(Color bgColor) {
+     * this.bgColor = bgColor;
+     * }
+     * public JPanel getFrontPanel() {
+     * return frontPanel;
+     * }
+     * public void setFrontPanel(JPanel frontPanel) {
+     * this.frontPanel = frontPanel;
+     * }
+     * public BufferedImage getBuffImage() {
+     * return buffImage;
+     * }
+     * public void setBuffImage(BufferedImage buffImage) {
+     * this.buffImage = buffImage;
+     * }
+     * public Hashtable<String, Color> getColors() {
+     * return colors;
+     * }
+     * public void setColors(Hashtable<String, Color> colors) {
+     * this.colors = colors;
+     * }
+     */
 }
