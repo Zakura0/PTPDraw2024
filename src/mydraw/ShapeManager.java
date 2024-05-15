@@ -129,7 +129,7 @@ import java.awt.event.MouseEvent;
                     
                     // draw rectangle
                     g.drawRect(x, y, w, h);
-                    gui.commandQueue.(new rectangleCommand(gui, upper_left, lower_right));
+                    gui.commandQueue.add(new rectangleCommand(gui, upper_left, lower_right));
                 }
             }
 
