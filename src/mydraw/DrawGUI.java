@@ -14,7 +14,15 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import mydraw.drawable.Drawable;
+import mydraw.drawable.backgroundCommand;
 import mydraw.drawable.clearCommand;
+import mydraw.drawable.fillovalCommand;
+import mydraw.drawable.fillrectangleCommand;
+import mydraw.drawable.ovalCommand;
+import mydraw.drawable.polyLineCommand;
+import mydraw.drawable.rectangleCommand;
+import mydraw.drawable.rhombusCommand;
+import mydraw.drawable.triangleCommand;
 import mydraw.exceptions.ColorException;
 import mydraw.exceptions.SizeException;
 import mydraw.listener.ColorItemListener;
@@ -143,6 +151,9 @@ public class DrawGUI extends JFrame {
         this.pack();
         this.setResizable(true);
         this.setVisible(true);
+        Graphics g = frontPanel.getGraphics();
+        g.setColor(bgColor);
+        g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
     }
 
     public void doCommand(String command) {
@@ -275,15 +286,13 @@ public class DrawGUI extends JFrame {
         } else {
             throw new ColorException("Invalid color: " + new_color);
         }
-        Graphics g = this.frontPanel.getGraphics();
-        g.setColor(bgColor);
-        g.fillRect(0, 0, this.frontPanel.getWidth(), this.frontPanel.getHeight());
-        g.dispose();
-
-        Graphics g2 = this.buffImage.createGraphics();
-        g2.setColor(bgColor);
-        g2.fillRect(0, 0, this.buffImage.getWidth(), this.buffImage.getHeight());
-        g2.dispose();
+        List<Drawable> commandQueueRev = commandQueue.reversed();
+        if (commandQueue.size() > 0 && commandQueue.get(0) instanceof backgroundCommand) {
+            commandQueue.remove(0);
+        }
+        commandQueueRev.add(new backgroundCommand(this, bgColor));
+        commandQueue = commandQueueRev.reversed();
+        redraw(frontPanel.getGraphics());
     }
 
     public String getBGColor() {
@@ -310,6 +319,7 @@ public class DrawGUI extends JFrame {
         g2.setColor(this.fgColor);
         g2.drawRect(x, y, width, height);
         g2.dispose();
+        commandQueue.add(new rectangleCommand(this, upper_left.x, upper_left.y, lower_right.x, lower_right.y, fgColor));
     }
 
     public void drawOval(Point upper_left, Point lower_right) {
@@ -327,6 +337,7 @@ public class DrawGUI extends JFrame {
         g2.setColor(this.fgColor);
         g2.drawOval(x, y, width, height);
         g2.dispose();
+        commandQueue.add(new ovalCommand(this, upper_left.x, upper_left.y, lower_right.x, lower_right.y, fgColor));
     }
 
     public void drawPolyLine(java.util.List<Point> points) {
@@ -346,6 +357,7 @@ public class DrawGUI extends JFrame {
         }
         g.dispose();
         g2.dispose();
+        commandQueue.add(new polyLineCommand(this, fgColor, points));
     }
 
     public void drawTriangle(Point upper_left, Point lower_right) {
@@ -362,7 +374,7 @@ public class DrawGUI extends JFrame {
         g2.drawLine(upper_left.x, lower_right.y, lower_right.x, lower_right.y);
         g2.drawLine(upper_left.x, lower_right.y, (lower_right.x + upper_left.x) / 2, upper_left.y);
         g2.dispose();
-
+        commandQueue.add(new triangleCommand(this, upper_left.x, upper_left.y, lower_right.x, lower_right.y, fgColor));
     }
 
     public void drawRhombus(Point upper_left, Point lower_right) {
@@ -385,7 +397,7 @@ public class DrawGUI extends JFrame {
                 (upper_left.y + lower_right.y) / 2);
         g2.drawLine(upper_left.x, (upper_left.y + lower_right.y) / 2, (upper_left.x + lower_right.x) / 2, upper_left.y);
         g2.dispose();
-
+        commandQueue.add(new rhombusCommand(this, upper_left.x, upper_left.y, lower_right.x, lower_right.y, fgColor));
     }
 
     public void drawFillRectangle(Point upper_left, Point lower_right) {
@@ -403,7 +415,7 @@ public class DrawGUI extends JFrame {
         g2.setColor(this.fgColor);
         g2.fillRect(x, y, width, height);
         g2.dispose();
-
+        commandQueue.add(new fillrectangleCommand(this, upper_left.x, upper_left.y, lower_right.x, lower_right.y, fgColor));
     }
 
     public void drawFillOval(Point upper_left, Point lower_right) {
@@ -421,6 +433,7 @@ public class DrawGUI extends JFrame {
         g2.setColor(this.fgColor);
         g2.fillOval(x, y, width, height);
         g2.dispose();
+        commandQueue.add(new fillovalCommand(this, upper_left.x, upper_left.y, lower_right.x, lower_right.y, fgColor));
     }
 
     /**
