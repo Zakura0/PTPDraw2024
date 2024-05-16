@@ -1,6 +1,8 @@
 package mydraw;
 
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -16,21 +18,10 @@ import java.util.List;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import mydraw.exceptions.*;
+import mydraw.drawable.*;
+import mydraw.listener.*;
 
-import mydraw.drawable.Drawable;
-import mydraw.drawable.backgroundCommand;
-import mydraw.drawable.clearCommand;
-import mydraw.drawable.fillovalCommand;
-import mydraw.drawable.fillrectangleCommand;
-import mydraw.drawable.ovalCommand;
-import mydraw.drawable.polyLineCommand;
-import mydraw.drawable.rectangleCommand;
-import mydraw.drawable.rhombusCommand;
-import mydraw.drawable.triangleCommand;
-import mydraw.exceptions.ColorException;
-import mydraw.exceptions.SizeException;
-import mydraw.listener.ColorItemListener;
-import mydraw.listener.DrawActionListener;
 
 /*
  * @authors Giahung Bui 7557640 , Ben Woller 7740402, Simon Kazemi 7621942
@@ -41,6 +32,7 @@ public class DrawGUI extends JFrame {
     Color fgColor; // A referenec to the current foreground color (drawing color)
     Color bgColor; // A reference to the current background color
     DrawPanel frontPanel; // A reference to the GUI panel
+    JPanel backPanel; // A reference to the Control panel
     BufferedImage buffImage; // A reference to the drawing panel (used to save the drawing)
 
     public Hashtable<String, Color> colors;
@@ -67,9 +59,17 @@ public class DrawGUI extends JFrame {
         // Initializes the drawing panel
         doubleBuffering();
         setupGUI();
+        redraw(frontPanel.getGraphics());
     }
 
     private void setupGUI() {
+        // Create a menu bar
+        JMenuBar menuBar = new JMenuBar();
+        JMenu fileMenu = new JMenu("Menu");
+        JMenuItem save = new JMenuItem("Save");
+        JMenuItem saveText = new JMenuItem("Save Text");
+        JMenuItem readText = new JMenuItem("Read Text");
+        JMenuItem quit = new JMenuItem("Quit");
         // selector for drawing modes
         JComboBox<String> shape_chooser = new JComboBox<>();
         shape_chooser.addItem("Scribble");
@@ -96,16 +96,12 @@ public class DrawGUI extends JFrame {
 
         // Create three buttons
         JButton clear = new JButton("Clear");
-        JButton quit = new JButton("Quit");
-        JButton save = new JButton("Save");
         JButton auto = new JButton("Auto");
         JButton undo = new JButton("Undo");
         JButton redo = new JButton("Redo");
-        JButton saveText = new JButton("Save Text");
-        JButton readText = new JButton("Read Text");
 
         // Set a LayoutManager, and add the choosers and buttons to the window.
-        JPanel backPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
+        backPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
         backPanel.add(new JLabel("Shape:"));
         backPanel.add(shape_chooser);
         backPanel.add(new JLabel("Color:"));
@@ -113,13 +109,9 @@ public class DrawGUI extends JFrame {
         backPanel.add(new JLabel("BGColor:"));
         backPanel.add(bgColor_chooser);
         backPanel.add(clear);
-        backPanel.add(quit);
-        backPanel.add(save);
         backPanel.add(auto);
         backPanel.add(undo);
         backPanel.add(redo);
-        backPanel.add(saveText);
-        backPanel.add(readText);
 
         // Initializes the GUI front panel
         frontPanel = new DrawPanel(this);
@@ -140,6 +132,13 @@ public class DrawGUI extends JFrame {
         redo.addActionListener(new DrawActionListener("redo", app));
         saveText.addActionListener(new DrawActionListener("save text", app));
         readText.addActionListener(new DrawActionListener("read text", app));
+
+        fileMenu.add(save);
+        fileMenu.add(saveText);
+        fileMenu.add(readText);
+        fileMenu.add(quit);
+        menuBar.add(fileMenu);
+        this.setJMenuBar(menuBar);
 
         // vorher ShapeManager hier!
 
@@ -249,9 +248,12 @@ public class DrawGUI extends JFrame {
     }
 
     public void redraw(Graphics g) {
+        buffImage = new BufferedImage(frontPanel.getWidth(), frontPanel.getHeight(), BufferedImage.TYPE_INT_RGB);
         g.setColor(bgColor);
         g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
         Graphics g2 = this.buffImage.getGraphics();
+        g2.setColor(bgColor);
+        g2.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
         for (Drawable drawable : commandQueue) {
             drawable.draw(g);
             drawable.draw(g2);
@@ -264,14 +266,7 @@ public class DrawGUI extends JFrame {
             undoStack.add(commandQueue.get(commandQueue.size() - 1));
             commandQueue.remove(commandQueue.size() - 1);
             Graphics g = this.frontPanel.getGraphics();
-            Graphics g2 = this.buffImage.getGraphics();
-            g.setColor(bgColor);
-            g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight()); // clear the screen
-            for (Drawable command : commandQueue) {
-                command.draw(g);
-                command.draw(g2);
-            }
-            g.dispose();
+            redraw(g);
         }
     }
 
@@ -280,14 +275,7 @@ public class DrawGUI extends JFrame {
             commandQueue.add(undoStack.get(undoStack.size() - 1));
             undoStack.remove(undoStack.size() - 1);
             Graphics g = this.frontPanel.getGraphics();
-            Graphics g2 = this.buffImage.getGraphics();
-            g.setColor(bgColor);
-            g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight()); // clear the screen
-            for (Drawable command : commandQueue) {
-                command.draw(g);
-                command.draw(g2);
-            }
-            g.dispose();
+            redraw(g);
         }
     }
 
@@ -403,12 +391,6 @@ public class DrawGUI extends JFrame {
         } else {
             throw new ColorException("Invalid color: " + new_color);
         }
-        List<Drawable> commandQueueRev = commandQueue.reversed();
-        if (commandQueue.size() > 0 && commandQueue.get(0) instanceof backgroundCommand) {
-            commandQueue.remove(0);
-        }
-        commandQueueRev.add(new backgroundCommand(this, bgColor));
-        commandQueue = commandQueueRev.reversed();
         redraw(frontPanel.getGraphics());
     }
 
