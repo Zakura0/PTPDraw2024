@@ -4,7 +4,9 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -100,6 +102,7 @@ public class DrawGUI extends JFrame {
         JButton undo = new JButton("Undo");
         JButton redo = new JButton("Redo");
         JButton saveText = new JButton("Save Text");
+        JButton readText = new JButton("Read Text");
 
 
         // Set a LayoutManager, and add the choosers and buttons to the window.
@@ -117,6 +120,7 @@ public class DrawGUI extends JFrame {
         backPanel.add(undo);
         backPanel.add(redo);
         backPanel.add(saveText);
+        backPanel.add(readText);
 
         // Initializes the GUI front panel
         frontPanel = new DrawPanel(this);
@@ -136,6 +140,7 @@ public class DrawGUI extends JFrame {
         undo.addActionListener(new DrawActionListener("undo", app));
         redo.addActionListener(new DrawActionListener("redo", app));
         saveText.addActionListener(new DrawActionListener("save text", app));
+        readText.addActionListener(new DrawActionListener("read text", app));
 
         // vorher ShapeManager hier!
 
@@ -178,14 +183,16 @@ public class DrawGUI extends JFrame {
             redo();
         } else if (command.equals("save text")){
             try {
-                openSaveTextDialog();
+                openSaveText();
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        } else if(command.equals("read text")) {
+            openReadText();
             }
         }
         
 
-    }
 
     private void openSaveDialog() {
         Image ImgToSave = getDrawing();
@@ -207,7 +214,7 @@ public class DrawGUI extends JFrame {
         }
     }
 
-    private void openSaveTextDialog() throws IOException{
+    private void openSaveText() throws IOException{
         String drawingData = ImageToText();
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Save Text");
@@ -227,6 +234,21 @@ public class DrawGUI extends JFrame {
         }
     }
 
+    private void openReadText(){
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Open Text");
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Textfile (*.txt)", "txt"));
+        int userSelection = fileChooser.showOpenDialog(this);
+
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToOpen = fileChooser.getSelectedFile();
+            String filePath = fileToOpen.getAbsolutePath();
+                try {
+                    textToImage(filePath);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }}
 
     public void redraw(Graphics g) {
         g.setColor(bgColor);
@@ -277,6 +299,51 @@ public class DrawGUI extends JFrame {
         }
         return drawingData.toString();
     }
+
+    public void textToImage(String filePath) throws IOException {
+    List<Drawable> drawables = new ArrayList<>();
+    BufferedReader reader = new BufferedReader(new FileReader(filePath));
+    String line;
+    while ((line = reader.readLine())!= null) {
+        String[] parts = line.split(";");
+        String type = parts[0];
+        int x0 = Integer.parseInt(parts[1]);    
+        int y0 = Integer.parseInt(parts[2]);
+        int x1 = Integer.parseInt(parts[3]);
+        int y1 = Integer.parseInt(parts[4]);
+        Color color = parseColor(parts[5]);
+        List<Point> points = new ArrayList<>();
+        if (type.equals("rectangle")) {
+            drawables.add(new rectangleCommand(this, x0, y0, x1, y1, color));
+        } else if (type.equals("oval")) {
+            drawables.add(new ovalCommand(this, x0, y0, x1, y1, color));
+        } else if (type.equals("polyline")) {
+            drawables.add(new polyLineCommand(this, color, points));
+        } else if (type.equals("fillrectangle")) {
+            drawables.add(new fillrectangleCommand(this, x0, y0, x1, y1, color));
+        } else if (type.equals("filloval")) {
+            drawables.add(new fillovalCommand(this, x0, y0, x1, y1, color));
+        } else if (type.equals("rhombus")) {
+            drawables.add(new rhombusCommand(this, x0, y0, x1, y1, color));
+        } else if (type.equals("triangle")) {
+            drawables.add(new triangleCommand(this, x0, y0, x1, y1, color));
+        }
+    }
+    reader.close();
+
+    for (Drawable drawable : drawables) {
+        drawable.draw(getGraphics());
+    }
+}
+    private Color parseColor(String colorString) {
+        String[] parts = colorString.split("\\[|\\]");
+        String rgbString = parts[1];
+        String[] rgbParts = rgbString.split(",");
+        int r = Integer.parseInt(rgbParts[0]);
+        int g = Integer.parseInt(rgbParts[1]);
+        int b = Integer.parseInt(rgbParts[2]);
+        return new Color(r, g, b);
+}
 
     public String getFGColor() {
         for (String key : colors.keySet()) {

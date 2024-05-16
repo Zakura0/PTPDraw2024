@@ -32,6 +32,6 @@ public rectangleCommand(DrawGUI window, int x0, int y0, int x1, int y1, Color co
 
     @Override
     public String toString(){
-        return "rectangle; " + x0 + ";" + y0 + ";" + x1 + ";" + y1 + ";" + color.getRGB();
+        return "rectangle; " + x0 + ";" + y0 + ";" + x1 + ";" + y1 + ";" + color.toString();
     }
 }

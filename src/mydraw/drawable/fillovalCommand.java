@@ -32,6 +32,6 @@ public class fillovalCommand implements Drawable {
         
         @Override
         public String toString(){
-        return "filloval; " + x0 + ";" + y0 + ";" + x1 + ";" + y1 + ";" + color.getRGB();
+        return "filloval; " + x0 + ";" + y0 + ";" + x1 + ";" + y1 + ";" + color.toString();
     }
     }

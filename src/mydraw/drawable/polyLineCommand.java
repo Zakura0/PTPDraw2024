@@ -30,6 +30,6 @@ public polyLineCommand(DrawGUI window, Color color, List<Point> points){
     }
     @Override
     public String toString(){
-        return "polyline; " + points + ";"  + color.getRGB();
+        return "polyline; " + points + ";"  + color.toString();
     }
 }
