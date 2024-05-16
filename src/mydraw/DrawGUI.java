@@ -104,7 +104,6 @@ public class DrawGUI extends JFrame {
         JButton saveText = new JButton("Save Text");
         JButton readText = new JButton("Read Text");
 
-
         // Set a LayoutManager, and add the choosers and buttons to the window.
         JPanel backPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
         backPanel.add(new JLabel("Shape:"));
@@ -181,18 +180,16 @@ public class DrawGUI extends JFrame {
             undo();
         } else if (command.equals("redo")) {
             redo();
-        } else if (command.equals("save text")){
+        } else if (command.equals("save text")) {
             try {
                 openSaveText();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } else if(command.equals("read text")) {
+        } else if (command.equals("read text")) {
             openReadText();
-            }
         }
-        
-
+    }
 
     private void openSaveDialog() {
         Image ImgToSave = getDrawing();
@@ -214,8 +211,8 @@ public class DrawGUI extends JFrame {
         }
     }
 
-    private void openSaveText() throws IOException{
-        String drawingData = ImageToText();
+    private void openSaveText() throws IOException {
+        String drawingData = writeText();
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Save Text");
         fileChooser.setFileFilter(new FileNameExtensionFilter("Textfile (*.txt)", "txt"));
@@ -234,7 +231,7 @@ public class DrawGUI extends JFrame {
         }
     }
 
-    private void openReadText(){
+    private void openReadText() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Open Text");
         fileChooser.setFileFilter(new FileNameExtensionFilter("Textfile (*.txt)", "txt"));
@@ -243,18 +240,21 @@ public class DrawGUI extends JFrame {
         if (userSelection == JFileChooser.APPROVE_OPTION) {
             File fileToOpen = fileChooser.getSelectedFile();
             String filePath = fileToOpen.getAbsolutePath();
-                try {
-                    textToImage(filePath);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }}
+            try {
+                readText(filePath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     public void redraw(Graphics g) {
         g.setColor(bgColor);
         g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
+        Graphics g2 = this.buffImage.getGraphics();
         for (Drawable drawable : commandQueue) {
             drawable.draw(g);
+            drawable.draw(g2);
         }
         g.dispose();
     }
@@ -291,59 +291,67 @@ public class DrawGUI extends JFrame {
         }
     }
 
-    public String ImageToText() throws IOException{
+    public String writeText() throws IOException {
         StringBuilder drawingData = new StringBuilder();
 
-        for (Drawable drawable: commandQueue){
+        for (Drawable drawable : commandQueue) {
             drawingData.append(drawable.toString()).append("\n");
         }
         return drawingData.toString();
     }
 
-    public void textToImage(String filePath) throws IOException {
-    List<Drawable> drawables = new ArrayList<>();
-    BufferedReader reader = new BufferedReader(new FileReader(filePath));
-    String line;
-    while ((line = reader.readLine())!= null) {
-        String[] parts = line.split(";");
-        String type = parts[0];
-        int x0 = Integer.parseInt(parts[1]);    
-        int y0 = Integer.parseInt(parts[2]);
-        int x1 = Integer.parseInt(parts[3]);
-        int y1 = Integer.parseInt(parts[4]);
-        Color color = parseColor(parts[5]);
-        List<Point> points = new ArrayList<>();
-        if (type.equals("rectangle")) {
-            drawables.add(new rectangleCommand(this, x0, y0, x1, y1, color));
-        } else if (type.equals("oval")) {
-            drawables.add(new ovalCommand(this, x0, y0, x1, y1, color));
-        } else if (type.equals("polyline")) {
-            drawables.add(new polyLineCommand(this, color, points));
-        } else if (type.equals("fillrectangle")) {
-            drawables.add(new fillrectangleCommand(this, x0, y0, x1, y1, color));
-        } else if (type.equals("filloval")) {
-            drawables.add(new fillovalCommand(this, x0, y0, x1, y1, color));
-        } else if (type.equals("rhombus")) {
-            drawables.add(new rhombusCommand(this, x0, y0, x1, y1, color));
-        } else if (type.equals("triangle")) {
-            drawables.add(new triangleCommand(this, x0, y0, x1, y1, color));
-        }
-    }
-    reader.close();
+    public void readText(String filePath) throws IOException {
+        commandQueue.clear();
+        BufferedReader reader = new BufferedReader(new FileReader(filePath));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            String[] parts = line.split(";");
+            String type = parts[0];
+            if (type.equals("clear")) {
+                int color_rgb = Integer.parseInt(parts[1]);
+                Color color = new Color(color_rgb, true);
+                commandQueue.add(new clearCommand(this, color));
+            }
+            else if (type.equals("polyline")) {
+                String points = parts[1];
+                int color_rgb = Integer.parseInt(parts[2]);
+                Color color = new Color(color_rgb, true);
+                String[] pointStrings = points.split(":");
+                List<Point> pointList = new ArrayList<>();
+                for (String pointString : pointStrings) {
+                    String[] coords = pointString.split(",");
+                    int x = Integer.parseInt(coords[0]);
+                    int y = Integer.parseInt(coords[1]);
+                    pointList.add(new Point(x, y));
+                }
+                commandQueue.add(new polyLineCommand(this, color, pointList));
+            } else {
+                int x0 = Integer.parseInt(parts[1]);
+                int y0 = Integer.parseInt(parts[2]);
+                int x1 = Integer.parseInt(parts[3]);
+                int y1 = Integer.parseInt(parts[4]);
+                int color_rgb = Integer.parseInt(parts[5]);
+                Color color = new Color(color_rgb, true);
+                if (type.equals("rectangle")) {
+                    commandQueue.add(new rectangleCommand(this, x0, y0, x1, y1, color));
+                } else if (type.equals("oval")) {
+                    commandQueue.add(new ovalCommand(this, x0, y0, x1, y1, color));
+                } else if (type.equals("fillrectangle")) {
+                    commandQueue.add(new fillrectangleCommand(this, x0, y0, x1, y1, color));
+                } else if (type.equals("filloval")) {
+                    commandQueue.add(new fillovalCommand(this, x0, y0, x1, y1, color));
+                } else if (type.equals("rhombus")) {
+                    commandQueue.add(new rhombusCommand(this, x0, y0, x1, y1, color));
+                } else if (type.equals("triangle")) {
+                    commandQueue.add(new triangleCommand(this, x0, y0, x1, y1, color));
+                }
+            }
 
-    for (Drawable drawable : drawables) {
-        drawable.draw(getGraphics());
+        }
+        reader.close();
+
+        redraw(frontPanel.getGraphics());
     }
-}
-    private Color parseColor(String colorString) {
-        String[] parts = colorString.split("\\[|\\]");
-        String rgbString = parts[1];
-        String[] rgbParts = rgbString.split(",");
-        int r = Integer.parseInt(rgbParts[0]);
-        int g = Integer.parseInt(rgbParts[1]);
-        int b = Integer.parseInt(rgbParts[2]);
-        return new Color(r, g, b);
-}
 
     public String getFGColor() {
         for (String key : colors.keySet()) {
@@ -524,7 +532,8 @@ public class DrawGUI extends JFrame {
         g2.setColor(this.fgColor);
         g2.fillRect(x, y, width, height);
         g2.dispose();
-        commandQueue.add(new fillrectangleCommand(this, upper_left.x, upper_left.y, lower_right.x, lower_right.y, fgColor));
+        commandQueue
+                .add(new fillrectangleCommand(this, upper_left.x, upper_left.y, lower_right.x, lower_right.y, fgColor));
     }
 
     public void drawFillOval(Point upper_left, Point lower_right) {

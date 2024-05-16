@@ -30,6 +30,6 @@ public rhombusCommand(DrawGUI window, int x0, int y0, int x1, int y1, Color colo
     }
     @Override
     public String toString(){
-        return "rhombus; " + x0 + ";" + y0 + ";" + x1 + ";" + y1 + ";" + color.toString();
+        return "rhombus;" + x0 + ";" + y0 + ";" + x1 + ";" + y1 + ";" + color.getRGB();
     }
 }

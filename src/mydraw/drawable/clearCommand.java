@@ -20,4 +20,9 @@ public class clearCommand implements Drawable {
         g.setColor(color);
         g.fillRect(0, 0, window.getDrawPanel().getWidth(), window.getDrawPanel().getHeight());
     }
+
+    @Override
+    public String toString(){
+        return "clear;" + color.getRGB();
+    }
 }

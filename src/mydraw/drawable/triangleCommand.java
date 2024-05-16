@@ -18,7 +18,6 @@ public triangleCommand(DrawGUI window, int x0, int y0, int x1, int y1, Color col
     this.x1 = x1;
     this.y1 = y1;
     this.color = color;
-
 }
     @Override
     public void draw(Graphics g){
@@ -30,6 +29,6 @@ public triangleCommand(DrawGUI window, int x0, int y0, int x1, int y1, Color col
 
     @Override
     public String toString(){
-        return "triangle; " + x0 + ";" + y0 + ";" + x1 + ";" + y1 + ";" + color.toString() + ";";
+        return "triangle;" + x0 + ";" + y0 + ";" + x1 + ";" + y1 + ";" + color.getRGB() + ";";
     }
 }
