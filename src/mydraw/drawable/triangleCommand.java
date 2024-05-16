@@ -27,4 +27,9 @@ public triangleCommand(DrawGUI window, int x0, int y0, int x1, int y1, Color col
         g.drawLine(x0, y1, x1, y1);
         g.drawLine(x0, y1, (x1 + x0) / 2, y0);
     }
+
+    @Override
+    public String toString(){
+        return "triangle; " + x0 + ";" + y0 + ";" + x1 + ";" + y1 + ";" + color.getRGB();
+    }
 }

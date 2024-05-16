@@ -28,4 +28,8 @@ public rhombusCommand(DrawGUI window, int x0, int y0, int x1, int y1, Color colo
         g.drawLine((x0 + x1) / 2, y1, x0, (y0 + y1) / 2);
         g.drawLine(x0, (y0 + y1) / 2, (x0 + x1) / 2, y0);
     }
+    @Override
+    public String toString(){
+        return "rhombus; " + x0 + ";" + y0 + ";" + x1 + ";" + y1 + ";" + color.getRGB();
+    }
 }

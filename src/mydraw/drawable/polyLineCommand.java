@@ -28,4 +28,8 @@ public polyLineCommand(DrawGUI window, Color color, List<Point> points){
             g.drawLine(prevPoint.x, prevPoint.y, nextPoint.x, nextPoint.y);
         }
     }
+    @Override
+    public String toString(){
+        return "polyline; " + points + ";"  + color.getRGB();
+    }
 }

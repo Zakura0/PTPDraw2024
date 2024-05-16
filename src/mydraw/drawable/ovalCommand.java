@@ -29,4 +29,9 @@ public class ovalCommand implements Drawable {
             g.setColor(color);
             g.drawOval(x, y, w, h);
         }
+
+        @Override
+        public String toString(){
+        return "oval; " + x0 + ";" + y0 + ";" + x1 + ";" + y1 + ";" + color.getRGB();
+    }
     }

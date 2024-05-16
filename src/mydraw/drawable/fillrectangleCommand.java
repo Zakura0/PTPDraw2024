@@ -29,4 +29,9 @@ public fillrectangleCommand(DrawGUI window, int x0, int y0, int x1, int y1, Colo
         g.setColor(color);
         g.fillRect(x, y, w, h);
     }
+
+    @Override
+    public String toString(){
+        return "fillrectangle; " + x0 + ";" + y0 + ";" + x1 + ";" + y1 + ";" + color.getRGB();
+    }
 }

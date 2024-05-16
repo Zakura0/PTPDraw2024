@@ -29,4 +29,9 @@ public class fillovalCommand implements Drawable {
             g.setColor(color);
             g.fillOval(x, y, w, h);
         }
+        
+        @Override
+        public String toString(){
+        return "filloval; " + x0 + ";" + y0 + ";" + x1 + ";" + y1 + ";" + color.getRGB();
+    }
     }

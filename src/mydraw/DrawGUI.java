@@ -5,7 +5,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -97,6 +99,8 @@ public class DrawGUI extends JFrame {
         JButton auto = new JButton("Auto");
         JButton undo = new JButton("Undo");
         JButton redo = new JButton("Redo");
+        JButton saveText = new JButton("Save Text");
+
 
         // Set a LayoutManager, and add the choosers and buttons to the window.
         JPanel backPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
@@ -112,6 +116,7 @@ public class DrawGUI extends JFrame {
         backPanel.add(auto);
         backPanel.add(undo);
         backPanel.add(redo);
+        backPanel.add(saveText);
 
         // Initializes the GUI front panel
         frontPanel = new DrawPanel(this);
@@ -130,6 +135,7 @@ public class DrawGUI extends JFrame {
         auto.addActionListener(new DrawActionListener("auto", app));
         undo.addActionListener(new DrawActionListener("undo", app));
         redo.addActionListener(new DrawActionListener("redo", app));
+        saveText.addActionListener(new DrawActionListener("save text", app));
 
         // vorher ShapeManager hier!
 
@@ -170,7 +176,14 @@ public class DrawGUI extends JFrame {
             undo();
         } else if (command.equals("redo")) {
             redo();
+        } else if (command.equals("save text")){
+            try {
+                openSaveTextDialog();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+        
 
     }
 
@@ -193,6 +206,27 @@ public class DrawGUI extends JFrame {
             }
         }
     }
+
+    private void openSaveTextDialog() throws IOException{
+        String drawingData = ImageToText();
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Save Text");
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Textfile (*.txt)", "txt"));
+        int userSelection = fileChooser.showSaveDialog(this);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            String filePath = fileToSave.getAbsolutePath();
+            if (!filePath.toLowerCase().endsWith(".txt")) {
+                filePath += ".txt";
+            }
+            File textFile = new File(filePath);
+            FileWriter fileWriter = new FileWriter(textFile);
+            PrintWriter printWriter = new PrintWriter(fileWriter);
+            printWriter.print(drawingData);
+            printWriter.close();
+        }
+    }
+
 
     public void redraw(Graphics g) {
         g.setColor(bgColor);
@@ -235,6 +269,15 @@ public class DrawGUI extends JFrame {
         }
     }
 
+    public String ImageToText() throws IOException{
+        StringBuilder drawingData = new StringBuilder();
+
+        for (Drawable drawable: commandQueue){
+            drawingData.append(drawable.toString()).append("\n");
+        }
+        return drawingData.toString();
+    }
+
     public String getFGColor() {
         for (String key : colors.keySet()) {
             if (colors.get(key).equals(fgColor)) {
@@ -250,7 +293,6 @@ public class DrawGUI extends JFrame {
         } else {
             throw new ColorException("Invalid color: " + new_color);
         }
-
     }
 
     public int getWidth() {
