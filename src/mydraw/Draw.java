@@ -39,7 +39,7 @@ public class Draw {
     /**
      * API Method: sets current window height.
      * Params: int height
-     * Throws a SizeException if the height is negative
+     * Throws a SizeException if the height is smaller than 400
      **/
     public void setHeight(int height) throws SizeException {
         window.setHeight(height);
@@ -56,7 +56,7 @@ public class Draw {
     /**
      * API Method: sets current window width
      * Params: int width
-     * Throws a SizeException if the width is smaller than 1105 (due to MacOS
+     * Throws a SizeException if the width is smaller than 925 (due to MacOS
      * incompability)
      **/
     public void setWidth(int width) throws SizeException {

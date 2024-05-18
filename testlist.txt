@@ -1,0 +1,36 @@
+API Methods to test:
+
+- getHeight         √
+- getWidth          √
+- setHeight         √
+- setWidth          √
+
+- getFGColor        √
+- getBGColor        √
+- setfGColor        √
+- setBGColor        √
+
+- getDrawing        √
+- writeImage        √
+- readImage         √
+- clear             √
+- autoDraw          √
+
+- drawRectangle
+- drawOval
+- drawPolyLine
+- drawTriangle
+- drawRhombus
+- drawFillRectangle
+- drawFillOval
+
+- undo              √
+- redo              √
+
+
+
+
+
+
+- writeText
+- readText

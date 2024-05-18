@@ -1,8 +1,6 @@
 package mydraw;
 
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -368,8 +366,8 @@ public class DrawGUI extends JFrame {
     }
 
     public void setWidth(int width) throws SizeException {
-        if (width < 1105) {
-            throw new SizeException("Width must be at least 1105 pixels.");
+        if (width < 925) {
+            throw new SizeException("Width must be at least 925 pixels.");
         }
         this.frontPanel.setPreferredSize(new Dimension(width, getHeight()));
         this.pack();
@@ -377,7 +375,7 @@ public class DrawGUI extends JFrame {
     }
 
     public void setHeight(int height) throws SizeException {
-        if (height < 70) {
+        if (height < 400) {
             throw new SizeException("Height must be at least 70 pixels.");
         }
         this.frontPanel.setPreferredSize(new Dimension(getWidth(), height));
