@@ -293,12 +293,7 @@ public class DrawGUI extends JFrame {
         while ((line = reader.readLine()) != null) {
             String[] parts = line.split(";");
             String type = parts[0];
-            if (type.equals("clear")) {
-                int color_rgb = Integer.parseInt(parts[1]);
-                Color color = new Color(color_rgb, true);
-                commandQueue.add(new clearCommand(this, color));
-            }
-            else if (type.equals("polyline")) {
+            if (type.equals("polyline")) {
                 String points = parts[1];
                 int color_rgb = Integer.parseInt(parts[2]);
                 Color color = new Color(color_rgb, true);
@@ -560,16 +555,19 @@ public class DrawGUI extends JFrame {
     }
 
     public void clear() {
-        Graphics g = frontPanel.getGraphics();
-        g.setColor(bgColor);
-        g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
-        g.dispose();
-        commandQueue.add(new clearCommand(this, bgColor));
+        int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to clear the drawing? \n This action is irreversible.", "Confirmation", JOptionPane.YES_NO_OPTION);
+        if (dialogResult == JOptionPane.YES_OPTION) {
+            commandQueue.clear();
+            Graphics g = frontPanel.getGraphics();
+            g.setColor(bgColor);
+            g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
+            g.dispose();
 
-        Graphics g2 = buffImage.getGraphics();
-        g2.setColor(bgColor);
-        g2.fillRect(0, 0, buffImage.getWidth(), buffImage.getHeight());
-        g2.dispose();
+            Graphics g2 = buffImage.getGraphics();
+            g2.setColor(bgColor);
+            g2.fillRect(0, 0, buffImage.getWidth(), buffImage.getHeight());
+            g2.dispose();
+        }
     }
 
     public void autoDraw() {
