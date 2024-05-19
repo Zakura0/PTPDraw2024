@@ -11,6 +11,9 @@ import mydraw.exceptions.SizeException;
 
 public class Draw {
     protected DrawGUI window;
+    protected DrawShape shape;
+    protected DrawSaveImage save;
+    protected DrawFunctions func;
 
     public static void main(String[] args) {
         new Draw();
@@ -114,7 +117,7 @@ public class Draw {
      * Throws an IOException if image cant be saved
      **/
     public void writeImage(Image img, String filename) throws IOException {
-        window.writeImage(img, filename);
+        save.writeImage(img, filename);
     }
 
     /**
@@ -124,7 +127,7 @@ public class Draw {
      * Throws an IOException if filename cant be found
      **/
     public Image readImage(String filename) throws IOException {
-        return window.readImage(filename);
+        return save.readImage(filename);
     }
 
     /**
@@ -132,7 +135,7 @@ public class Draw {
      * bgColor
      **/
     public void clear() {
-        window.clear();
+        func.clear();
     }
 
     /**
@@ -140,7 +143,7 @@ public class Draw {
      * the drawing pane. Saves them afterward as an BMP image.
      **/
     public void autoDraw() {
-        window.autoDraw();
+        func.autoDraw();
         // paint your testimage now using API methods
     }
 
@@ -151,7 +154,7 @@ public class Draw {
      * Prams: Point upper_left, Point lower_right
      **/
     public void drawRectangle(Point upper_left, Point lower_right) {
-        window.drawRectangle(upper_left, lower_right);
+        shape.drawRectangle(upper_left, lower_right);
     }
 
     /**
@@ -161,7 +164,7 @@ public class Draw {
      * Prams: Point upper_left, Point lower_right
      **/
     public void drawOval(Point upper_left, Point lower_right) {
-        window.drawOval(upper_left, lower_right);
+        shape.drawOval(upper_left, lower_right);
     }
 
     /**
@@ -171,30 +174,30 @@ public class Draw {
      * Prams: List<Point> points
      **/
     public void drawPolyLine(java.util.List<Point> points) {
-        window.drawPolyLine(points);
+        shape.drawPolyLine(points);
     }
 
     public void drawTriangle(Point upper_left, Point lower_right) {
-        window.drawTriangle(upper_left, lower_right);
+        shape.drawTriangle(upper_left, lower_right);
     }
 
     public void drawRhombus(Point upper_left, Point lower_right) {
-        window.drawRhombus(upper_left, lower_right);
+        shape.drawRhombus(upper_left, lower_right);
     }
 
     public void drawFillRectangle(Point upper_left, Point lower_right) {
-        window.drawFillRectangle(upper_left, lower_right);
+        shape.drawFillRectangle(upper_left, lower_right);
     }
 
     public void drawFillOval(Point upper_left, Point lower_right) {
-        window.drawFillOval(upper_left, lower_right);
+        shape.drawFillOval(upper_left, lower_right);
     }
 
     public void undo() {
-        window.undo();
+        func.undo();
     }
 
     public void redo() {
-        window.redo();
+        func.redo();
     }
 }

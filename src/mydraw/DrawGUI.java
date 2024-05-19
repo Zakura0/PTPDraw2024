@@ -4,9 +4,7 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -32,10 +30,14 @@ public class DrawGUI extends JFrame {
     DrawPanel frontPanel; // A reference to the GUI panel
     JPanel backPanel; // A reference to the Control panel
     BufferedImage buffImage; // A reference to the drawing panel (used to save the drawing)
-
     public Hashtable<String, Color> colors;
     public List<Drawable> commandQueue;
     public List<Drawable> undoStack;
+    public DrawShape shape;
+    public DrawTextReader read;
+    public DrawTextWriter write;
+    public DrawSaveImage save;
+    public DrawFunctions func;
 
     /**
      * The GUI constructor does all the work of creating the GUI and setting
@@ -44,6 +46,16 @@ public class DrawGUI extends JFrame {
     public DrawGUI(Draw application) {
         super("Draw"); // Create the window
         app = application; // Remember the application reference
+        DrawShape shape = new DrawShape(this);
+        this.shape = shape;
+        DrawTextReader read = new DrawTextReader(this);
+        this.read = read;
+        DrawTextWriter write = new DrawTextWriter(this);
+        this.write = write;
+        DrawSaveImage save = new DrawSaveImage(this);
+        this.save = save;
+        DrawFunctions func = new DrawFunctions(this, shape);
+        this.func = func;
         colors = new Hashtable<>();
         colors.put("black", Color.BLACK);
         colors.put("green", Color.GREEN);
@@ -165,18 +177,18 @@ public class DrawGUI extends JFrame {
 
     public void doCommand(String command) {
         if (command.equals("clear")) {
-            clear();
+            func.clear();
         } else if (command.equals("quit")) {
             this.dispose();
             System.exit(0);
         } else if (command.equals("auto")) {
-            autoDraw();
+            func.autoDraw();
         } else if (command.equals("save")) {
             openSaveDialog();
         } else if (command.equals("undo")) {
-            undo();
+            func.undo();
         } else if (command.equals("redo")) {
-            redo();
+            func.redo();
         } else if (command.equals("save text")) {
             try {
                 openSaveText();
@@ -205,7 +217,7 @@ public class DrawGUI extends JFrame {
                 filePath += ".bmp";
             }
             try {
-                writeImage(ImgToSave, filePath);
+                save.writeImage(ImgToSave, filePath);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -213,7 +225,7 @@ public class DrawGUI extends JFrame {
     }
 
     private void openSaveText() throws TxtIOException, IOException {
-        String drawingData = writeText();
+        String drawingData = write.writeText();
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Save Text");
         fileChooser.setFileFilter(new FileNameExtensionFilter("Textfile (*.txt)", "txt"));
@@ -242,7 +254,7 @@ public class DrawGUI extends JFrame {
             File fileToOpen = fileChooser.getSelectedFile();
             String filePath = fileToOpen.getAbsolutePath();
             try {
-                readText(filePath);
+                read.readText(filePath);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -253,7 +265,7 @@ public class DrawGUI extends JFrame {
         buffImage = new BufferedImage(frontPanel.getWidth(), frontPanel.getHeight(), BufferedImage.TYPE_INT_RGB);
         g.setColor(bgColor);
         g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
-        Graphics g2 = this.buffImage.getGraphics();
+        Graphics g2 = buffImage.getGraphics();
         g2.setColor(bgColor);
         g2.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
         for (Drawable drawable : commandQueue) {
@@ -263,91 +275,6 @@ public class DrawGUI extends JFrame {
         g.dispose();
     }
 
-    void undo() {
-        if (commandQueue.size() > 0) {
-            undoStack.add(commandQueue.get(commandQueue.size() - 1));
-            commandQueue.remove(commandQueue.size() - 1);
-            Graphics g = this.frontPanel.getGraphics();
-            redraw(g);
-        }
-    }
-
-    void redo() {
-        if (undoStack.size() > 0) {
-            commandQueue.add(undoStack.get(undoStack.size() - 1));
-            undoStack.remove(undoStack.size() - 1);
-            Graphics g = this.frontPanel.getGraphics();
-            redraw(g);
-        }
-    }
-
-    public String writeText() throws TxtIOException {
-        StringBuilder drawingData = new StringBuilder();
-
-        if (commandQueue.isEmpty()) {
-            throw new TxtIOException("No valid commands found.");
-        }
-
-        for (Drawable drawable : commandQueue) {
-            drawingData.append(drawable.toString()).append("\n");
-        }
-        return drawingData.toString();
-    }
-
-    public void readText(String filePath) throws TxtIOException, IOException {
-        commandQueue.clear();
-        BufferedReader reader = new BufferedReader(new FileReader(filePath));
-        String line;
-        if (reader.readLine() == null) {
-            reader.close();
-            throw new TxtIOException("No valid commands found.");
-        }
-        while ((line = reader.readLine()) != null) {
-            String[] parts = line.split(";");
-            String type = parts[0];
-            if (type.equals("polyline")) {
-                String points = parts[1];
-                int color_rgb = Integer.parseInt(parts[2]);
-                Color color = new Color(color_rgb, true);
-                String[] pointStrings = points.split(":");
-                List<Point> pointList = new ArrayList<>();
-                for (String pointString : pointStrings) {
-                    String[] coords = pointString.split(",");
-                    int x = Integer.parseInt(coords[0]);
-                    int y = Integer.parseInt(coords[1]);
-                    pointList.add(new Point(x, y));
-                }
-                commandQueue.add(new polyLineCommand(this, color, pointList));
-            } else {
-                int x0 = Integer.parseInt(parts[1]);
-                int y0 = Integer.parseInt(parts[2]);
-                int x1 = Integer.parseInt(parts[3]);
-                int y1 = Integer.parseInt(parts[4]);
-                int color_rgb = Integer.parseInt(parts[5]);
-                Color color = new Color(color_rgb, true);
-                if (type.equals("rectangle")) {
-                    commandQueue.add(new rectangleCommand(this, x0, y0, x1, y1, color));
-                } else if (type.equals("oval")) {
-                    commandQueue.add(new ovalCommand(this, x0, y0, x1, y1, color));
-                } else if (type.equals("fillrectangle")) {
-                    commandQueue.add(new fillrectangleCommand(this, x0, y0, x1, y1, color));
-                } else if (type.equals("filloval")) {
-                    commandQueue.add(new fillovalCommand(this, x0, y0, x1, y1, color));
-                } else if (type.equals("rhombus")) {
-                    commandQueue.add(new rhombusCommand(this, x0, y0, x1, y1, color));
-                } else if (type.equals("triangle")) {
-                    commandQueue.add(new triangleCommand(this, x0, y0, x1, y1, color));
-                } else {
-                    reader.close();
-                    throw new TxtIOException("No valid commands found.");
-                }
-            } 
-
-        }
-        reader.close();
-
-        redraw(frontPanel.getGraphics());
-    }
 
     public String getFGColor() {
         for (String key : colors.keySet()) {
@@ -411,142 +338,6 @@ public class DrawGUI extends JFrame {
         return null;
     }
 
-    public void drawRectangle(Point upper_left, Point lower_right) {
-        int x = Math.min(upper_left.x, lower_right.x);
-        int y = Math.min(upper_left.y, lower_right.y);
-        int width = Math.abs(lower_right.x - upper_left.x);
-        int height = Math.abs(lower_right.y - upper_left.y);
-
-        Graphics g = this.frontPanel.getGraphics();
-        g.setColor(this.fgColor);
-        g.drawRect(x, y, width, height);
-        g.dispose();
-
-        Graphics g2 = this.buffImage.getGraphics();
-        g2.setColor(this.fgColor);
-        g2.drawRect(x, y, width, height);
-        g2.dispose();
-        commandQueue.add(new rectangleCommand(this, upper_left.x, upper_left.y, lower_right.x, lower_right.y, fgColor));
-    }
-
-    public void drawOval(Point upper_left, Point lower_right) {
-        int x = Math.min(upper_left.x, lower_right.x);
-        int y = Math.min(upper_left.y, lower_right.y);
-        int width = Math.abs(lower_right.x - upper_left.x);
-        int height = Math.abs(lower_right.y - upper_left.y);
-
-        Graphics g = this.frontPanel.getGraphics();
-        g.setColor(this.fgColor);
-        g.drawOval(x, y, width, height);
-        g.dispose();
-
-        Graphics g2 = this.buffImage.getGraphics();
-        g2.setColor(this.fgColor);
-        g2.drawOval(x, y, width, height);
-        g2.dispose();
-        commandQueue.add(new ovalCommand(this, upper_left.x, upper_left.y, lower_right.x, lower_right.y, fgColor));
-    }
-
-    public void drawPolyLine(java.util.List<Point> points) {
-        Graphics g = this.frontPanel.getGraphics();
-        g.setPaintMode();
-        g.setColor(this.fgColor);
-
-        Graphics g2 = this.buffImage.getGraphics();
-        g2.setColor(this.fgColor);
-        g2.setPaintMode();
-
-        for (int i = 1; i < points.size(); i++) {
-            Point prevPoint = points.get(i - 1);
-            Point currPoint = points.get(i);
-            g.drawLine(prevPoint.x, prevPoint.y, currPoint.x, currPoint.y);
-            g2.drawLine(prevPoint.x, prevPoint.y, currPoint.x, currPoint.y);
-        }
-        g.dispose();
-        g2.dispose();
-        commandQueue.add(new polyLineCommand(this, fgColor, points));
-    }
-
-    public void drawTriangle(Point upper_left, Point lower_right) {
-        Graphics g = this.frontPanel.getGraphics();
-        g.setColor(this.fgColor);
-        g.drawLine((lower_right.x + upper_left.x) / 2, upper_left.y, lower_right.x, lower_right.y);
-        g.drawLine(upper_left.x, lower_right.y, lower_right.x, lower_right.y);
-        g.drawLine(upper_left.x, lower_right.y, (lower_right.x + upper_left.x) / 2, upper_left.y);
-        g.dispose();
-
-        Graphics g2 = this.buffImage.getGraphics();
-        g2.setColor(this.fgColor);
-        g2.drawLine((lower_right.x + upper_left.x) / 2, upper_left.y, lower_right.x, lower_right.y);
-        g2.drawLine(upper_left.x, lower_right.y, lower_right.x, lower_right.y);
-        g2.drawLine(upper_left.x, lower_right.y, (lower_right.x + upper_left.x) / 2, upper_left.y);
-        g2.dispose();
-        commandQueue.add(new triangleCommand(this, upper_left.x, upper_left.y, lower_right.x, lower_right.y, fgColor));
-    }
-
-    public void drawRhombus(Point upper_left, Point lower_right) {
-        Graphics g = this.frontPanel.getGraphics();
-        g.setColor(this.fgColor);
-        g.drawLine((upper_left.x + lower_right.x) / 2, upper_left.y, lower_right.x, (upper_left.y + lower_right.y) / 2);
-        g.drawLine(lower_right.x, (upper_left.y + lower_right.y) / 2, (upper_left.x + lower_right.x) / 2,
-                lower_right.y);
-        g.drawLine((upper_left.x + lower_right.x) / 2, lower_right.y, upper_left.x, (upper_left.y + lower_right.y) / 2);
-        g.drawLine(upper_left.x, (upper_left.y + lower_right.y) / 2, (upper_left.x + lower_right.x) / 2, upper_left.y);
-        g.dispose();
-
-        Graphics g2 = this.buffImage.getGraphics();
-        g2.setColor(this.fgColor);
-        g2.drawLine((upper_left.x + lower_right.x) / 2, upper_left.y, lower_right.x,
-                (upper_left.y + lower_right.y) / 2);
-        g2.drawLine(lower_right.x, (upper_left.y + lower_right.y) / 2, (upper_left.x + lower_right.x) / 2,
-                lower_right.y);
-        g2.drawLine((upper_left.x + lower_right.x) / 2, lower_right.y, upper_left.x,
-                (upper_left.y + lower_right.y) / 2);
-        g2.drawLine(upper_left.x, (upper_left.y + lower_right.y) / 2, (upper_left.x + lower_right.x) / 2, upper_left.y);
-        g2.dispose();
-        commandQueue.add(new rhombusCommand(this, upper_left.x, upper_left.y, lower_right.x, lower_right.y, fgColor));
-    }
-
-    public void drawFillRectangle(Point upper_left, Point lower_right) {
-        int x = Math.min(upper_left.x, lower_right.x);
-        int y = Math.min(upper_left.y, lower_right.y);
-        int width = Math.abs(lower_right.x - upper_left.x);
-        int height = Math.abs(lower_right.y - upper_left.y);
-
-        Graphics g = this.frontPanel.getGraphics();
-        g.setColor(this.fgColor);
-        g.drawRect(x, y, width, height);
-        g.fillRect(x, y, width, height);
-        g.dispose();
-
-        Graphics g2 = this.buffImage.getGraphics();
-        g2.setColor(this.fgColor);
-        g2.drawRect(x, y, width, height);
-        g2.fillRect(x, y, width, height);
-        g2.dispose();
-        commandQueue
-                .add(new fillrectangleCommand(this, upper_left.x, upper_left.y, lower_right.x, lower_right.y, fgColor));
-    }
-
-    public void drawFillOval(Point upper_left, Point lower_right) {
-        int x = Math.min(upper_left.x, lower_right.x);
-        int y = Math.min(upper_left.y, lower_right.y);
-        int width = Math.abs(lower_right.x - upper_left.x);
-        int height = Math.abs(lower_right.y - upper_left.y);
-
-        Graphics g = this.frontPanel.getGraphics();
-        g.setColor(this.fgColor);
-        g.drawOval(x, y, width, height);
-        g.fillOval(x, y, width, height);
-        g.dispose();
-
-        Graphics g2 = this.buffImage.getGraphics();
-        g2.setColor(this.fgColor);
-        g2.drawOval(x, y, width, height);
-        g2.fillOval(x, y, width, height);
-        g2.dispose();
-        commandQueue.add(new fillovalCommand(this, upper_left.x, upper_left.y, lower_right.x, lower_right.y, fgColor));
-    }
 
     /**
      * API Method: retrieves the current drawing as a BufferedImage
@@ -557,73 +348,11 @@ public class DrawGUI extends JFrame {
         return this.buffImage;
     }
 
-    public void writeImage(Image img, String filename) throws IOException {
-        MyBMPFile.write(filename, (BufferedImage) img);
-    }
-
-    public Image readImage(String filename) throws IOException {
-        return MyBMPFile.read(filename);
-    }
 
     public DrawPanel getDrawPanel() {
         return frontPanel;
     }
 
-    public void clear() {
-        int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to clear the drawing? \n This action is irreversible.", "Confirmation", JOptionPane.YES_NO_OPTION);
-        if (dialogResult == JOptionPane.YES_OPTION) {
-            commandQueue.clear();
-            Graphics g = frontPanel.getGraphics();
-            g.setColor(bgColor);
-            g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
-            g.dispose();
-
-            Graphics g2 = buffImage.getGraphics();
-            g2.setColor(bgColor);
-            g2.fillRect(0, 0, buffImage.getWidth(), buffImage.getHeight());
-            g2.dispose();
-        }
-    }
-
-    public void autoDraw() {
-        Point p1 = new Point(100, 200);
-        Point p2 = new Point(200, 100);
-        try {
-            setFGColor("red");
-        } catch (ColorException e) {
-            System.err.println("Color Exception: " + e.getMessage());
-        }
-        drawRectangle(p1, p2);
-        Point p3 = new Point(300, 200);
-        Point p4 = new Point(400, 100);
-        try {
-            setFGColor("blue");
-        } catch (ColorException e) {
-            System.err.println("Color Exception: " + e.getMessage());
-        }
-        drawOval(p3, p4);
-        Point pl1 = new Point(500, 200);
-        Point pl2 = new Point(600, 100);
-        Point pl3 = new Point(700, 200);
-        try {
-            setFGColor("green");
-        } catch (ColorException e) {
-            System.err.println("Color Exception: " + e.getMessage());
-        }
-        drawPolyLine(List.of(pl1, pl2, pl3));
-        Point p5 = new Point(100, 350);
-        Point p6 = new Point(200, 250);
-        drawFillRectangle(p5, p6);
-        Point p7 = new Point(300, 350);
-        Point p8 = new Point(400, 250);
-        drawFillOval(p7, p8);
-        Point p9 = new Point(500, 350);
-        Point p10 = new Point(600, 250);
-        drawRhombus(p9, p10);
-        Point p11 = new Point(600, 250);
-        Point p12 = new Point(700, 350);
-        drawTriangle(p11, p12);
-    }
 
     /**
      * Helper Method: Sets up a BufferedImage to save the drawings on an extra pane
