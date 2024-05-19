@@ -34,8 +34,8 @@ public class DrawGUI extends JFrame {
     BufferedImage buffImage; // A reference to the drawing panel (used to save the drawing)
 
     public Hashtable<String, Color> colors;
-    List<Drawable> commandQueue;
-    List<Drawable> undoStack;
+    public List<Drawable> commandQueue;
+    public List<Drawable> undoStack;
 
     /**
      * The GUI constructor does all the work of creating the GUI and setting
@@ -621,22 +621,21 @@ public class DrawGUI extends JFrame {
         g.dispose();
     }
 
-    /**
-     * Helper Method: used to get a String from integer color value 
-     * (used in tests to verify correct coloring)
+    /*
+     * Helper Method: used to test clear without mocking the user confirmation
+     * (assuming the user agreed for all test cases)
      */
 
-    public String intToCol(int pixel) {
-        int red = (pixel & 0xff0000) >> 16;
-        int green = (pixel & 0x00ff00) >> 8;
-        int blue = pixel & 0x0000ff;
-        Color col = new Color(red, green, blue);
-        for (String key : colors.keySet()) {
-            if (colors.get(key).equals(col)) {
-                return key;
-            }
-        }
-        return null;
-    }
+    public void clearHelper() {
+        commandQueue.clear();
+        Graphics g = frontPanel.getGraphics();
+        g.setColor(bgColor);
+        g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
+        g.dispose();
 
+        Graphics g2 = buffImage.getGraphics();
+        g2.setColor(bgColor);
+        g2.fillRect(0, 0, buffImage.getWidth(), buffImage.getHeight());
+        g2.dispose();
+    }
 }

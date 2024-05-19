@@ -4,6 +4,7 @@ package mydraw.test;
  */
 
 import mydraw.Draw;
+import mydraw.drawable.Drawable;
 import mydraw.exceptions.ColorException;
 import mydraw.exceptions.SizeException;
 
@@ -77,6 +78,19 @@ class DrawTest {
         result.add(new Point(centerX - radiusX, centerY));
 
         return result;
+    }
+
+    public String intToCol(int pixel) {
+        int red = (pixel & 0xff0000) >> 16;
+        int green = (pixel & 0x00ff00) >> 8;
+        int blue = pixel & 0x0000ff;
+        Color col = new Color(red, green, blue);
+        for (String key : draw.getWindow().colors.keySet()) {
+            if (draw.getWindow().colors.get(key).equals(col)) {
+                return key;
+            }
+        }
+        return null;
     }
 
     /*
@@ -232,9 +246,9 @@ class DrawTest {
         List<String> expectedColors = Arrays.asList("red", "blue", "green");
         List<String> actualColors = new ArrayList<>();
 
-        actualColors.add(draw.intToCol(actualImage.getRGB(100, 200)));
-        actualColors.add(draw.intToCol(actualImage.getRGB(350, 200)));
-        actualColors.add(draw.intToCol(actualImage.getRGB(700, 350)));
+        actualColors.add(intToCol(actualImage.getRGB(100, 200)));
+        actualColors.add(intToCol(actualImage.getRGB(350, 200)));
+        actualColors.add(intToCol(actualImage.getRGB(700, 350)));
 
         assertEquals(expectedColors, actualColors);
     }
@@ -246,9 +260,9 @@ class DrawTest {
         List<String> expectedColors = Arrays.asList("red", "blue", "green");
         List<String> actualColors = new ArrayList<>();
 
-        actualColors.add(draw.intToCol(actualImage.getRGB(50, 200)));
-        actualColors.add(draw.intToCol(actualImage.getRGB(500, 200)));
-        actualColors.add(draw.intToCol(actualImage.getRGB(750, 350)));
+        actualColors.add(intToCol(actualImage.getRGB(50, 200)));
+        actualColors.add(intToCol(actualImage.getRGB(500, 200)));
+        actualColors.add(intToCol(actualImage.getRGB(750, 350)));
 
         assertNotEquals(expectedColors, actualColors);
     }
@@ -256,30 +270,32 @@ class DrawTest {
     @Test
     void clearPositiveTest() {
         draw.autoDraw();
-        draw.clear();
+        draw.getWindow().clearHelper();
         BufferedImage actualImage = toBufferedImage(draw.getDrawing());
         List<String> expectedColors = Arrays.asList("white", "white", "white");
         List<String> actualColors = new ArrayList<>();
 
-        actualColors.add(draw.intToCol(actualImage.getRGB(100, 200)));
-        actualColors.add(draw.intToCol(actualImage.getRGB(350, 200)));
-        actualColors.add(draw.intToCol(actualImage.getRGB(700, 350)));
+        actualColors.add(intToCol(actualImage.getRGB(100, 200)));
+        actualColors.add(intToCol(actualImage.getRGB(350, 200)));
+        actualColors.add(intToCol(actualImage.getRGB(700, 350)));
 
+        assertTrue(draw.getWindow().commandQueue.isEmpty());
         assertEquals(expectedColors, actualColors);
     }
 
     @Test
     void clearNegativeTest() {
         draw.autoDraw();
-        draw.clear();
+        draw.getWindow().clearHelper();
         BufferedImage actualImage = toBufferedImage(draw.getDrawing());
         List<String> expectedColors = Arrays.asList("red", "blue", "green");
         List<String> actualColors = new ArrayList<>();
 
-        actualColors.add(draw.intToCol(actualImage.getRGB(100, 200)));
-        actualColors.add(draw.intToCol(actualImage.getRGB(350, 200)));
-        actualColors.add(draw.intToCol(actualImage.getRGB(700, 350)));
+        actualColors.add(intToCol(actualImage.getRGB(100, 200)));
+        actualColors.add(intToCol(actualImage.getRGB(350, 200)));
+        actualColors.add(intToCol(actualImage.getRGB(700, 350)));
 
+        assertTrue(draw.getWindow().commandQueue.isEmpty());
         assertNotEquals(expectedColors, actualColors);
     }
 
@@ -288,7 +304,7 @@ class DrawTest {
         draw.autoDraw();
         Image reference = draw.getDrawing();
         draw.writeImage(reference, "reference.bmp");
-        draw.clear();
+        draw.getWindow().clearHelper();
 
         Point p1 = new Point(100, 200);
         Point p2 = new Point(200, 100);
@@ -343,7 +359,7 @@ class DrawTest {
         draw.autoDraw();
         Image reference = draw.getDrawing();
         draw.writeImage(reference, "reference.bmp");
-        draw.clear();
+        draw.getWindow().clearHelper();
 
         Point p1 = new Point(100, 200);
         Point p2 = new Point(200, 100);
@@ -374,7 +390,7 @@ class DrawTest {
 
         for (Point pointx : points) {
             for (Point pointy : points) {
-                String actual = draw.intToCol(img.getRGB(pointx.x, pointy.y));
+                String actual = intToCol(img.getRGB(pointx.x, pointy.y));
                 assertEquals("red", actual);
             }
         }
@@ -390,7 +406,7 @@ class DrawTest {
 
         for (Point pointx : points) {
             for (Point pointy : points) {
-                String actual = draw.intToCol(img.getRGB(pointx.x, pointy.y));
+                String actual = intToCol(img.getRGB(pointx.x, pointy.y));
                 assertNotEquals("red", actual);
             }
         }
@@ -407,7 +423,7 @@ class DrawTest {
         List<Point> circlePoints = createCircleMeasurements(points);
     
         for (Point point : circlePoints) {
-            String actual = draw.intToCol(img.getRGB(point.x, point.y));
+            String actual = intToCol(img.getRGB(point.x, point.y));
             assertEquals("red", actual);
         }
     }
@@ -423,7 +439,7 @@ class DrawTest {
         List<Point> circlePoints = createCircleMeasurements(points);
     
         for (Point point : circlePoints) {
-            String actual = draw.intToCol(img.getRGB(point.x, point.y));
+            String actual = intToCol(img.getRGB(point.x, point.y));
             assertNotEquals("red", actual);
         }
     }
@@ -438,7 +454,7 @@ class DrawTest {
         BufferedImage img = toBufferedImage(draw.getDrawing());
     
         for (Point point : points) {
-            String actual = draw.intToCol(img.getRGB(point.x, point.y));
+            String actual = intToCol(img.getRGB(point.x, point.y));
             assertEquals("red", actual);
         }
     }
@@ -453,7 +469,7 @@ class DrawTest {
         BufferedImage img = toBufferedImage(draw.getDrawing());
     
         for (Point point : points) {
-            String actual = draw.intToCol(img.getRGB(point.x, point.y));
+            String actual = intToCol(img.getRGB(point.x, point.y));
             assertNotEquals("red", actual);
         }
     }
@@ -468,7 +484,7 @@ class DrawTest {
         BufferedImage img = toBufferedImage(draw.getDrawing());
 
         for (Point point : points) {
-            String actual = draw.intToCol(img.getRGB(point.x, point.y));
+            String actual = intToCol(img.getRGB(point.x, point.y));
             assertEquals("red", actual);
         }
     }
@@ -482,7 +498,7 @@ class DrawTest {
         BufferedImage img = toBufferedImage(draw.getDrawing());
 
         for (Point point : points) {
-            String actual = draw.intToCol(img.getRGB(point.x, point.y));
+            String actual = intToCol(img.getRGB(point.x, point.y));
             assertNotEquals("red", actual);
         }
     }
@@ -498,7 +514,7 @@ class DrawTest {
         List<Point> rhombusPoints = createCircleMeasurements(points);
     
         for (Point point : rhombusPoints) {
-            String actual = draw.intToCol(img.getRGB(point.x, point.y));
+            String actual = intToCol(img.getRGB(point.x, point.y));
             assertEquals("red", actual);
         }
     }
@@ -514,7 +530,7 @@ class DrawTest {
         List<Point> rhombusPoints = createCircleMeasurements(points);
     
         for (Point point : rhombusPoints) {
-            String actual = draw.intToCol(img.getRGB(point.x, point.y));
+            String actual = intToCol(img.getRGB(point.x, point.y));
             assertNotEquals("red", actual);
         }
     }
@@ -529,7 +545,7 @@ class DrawTest {
 
         for (Point pointx : points) {
             for (Point pointy : points) {
-                String actual = draw.intToCol(img.getRGB(pointx.x, pointy.y));
+                String actual = intToCol(img.getRGB(pointx.x, pointy.y));
                 assertEquals("red", actual);
             }
         }
@@ -545,7 +561,7 @@ class DrawTest {
 
         for (Point pointx : points) {
             for (Point pointy : points) {
-                String actual = draw.intToCol(img.getRGB(pointx.x, pointy.y));
+                String actual = intToCol(img.getRGB(pointx.x, pointy.y));
                 assertNotEquals("red", actual);
             }
         }
@@ -562,10 +578,10 @@ class DrawTest {
         List<Point> circlePoints = createCircleMeasurements(points);
     
         for (Point point : circlePoints) {
-            String actual = draw.intToCol(img.getRGB(point.x, point.y));
+            String actual = intToCol(img.getRGB(point.x, point.y));
             assertEquals("red", actual);
         }
-        assertEquals("red", draw.intToCol(img.getRGB(150, 150)));
+        assertEquals("red", intToCol(img.getRGB(150, 150)));
     }
 
     @Test
@@ -579,7 +595,7 @@ class DrawTest {
         List<Point> circlePoints = createCircleMeasurements(points);
     
         for (Point point : circlePoints) {
-            String actual = draw.intToCol(img.getRGB(point.x, point.y));
+            String actual = intToCol(img.getRGB(point.x, point.y));
             assertNotEquals("red", actual);
         }
     }
@@ -587,18 +603,18 @@ class DrawTest {
     @Test
     void undoPositiveTest() {
         draw.drawRectangle(new Point(100, 100), new Point(200, 200));
-        String expectedColor = draw.intToCol(toBufferedImage(draw.getDrawing()).getRGB(100, 100));
+        String expectedColor = intToCol(toBufferedImage(draw.getDrawing()).getRGB(100, 100));
         draw.undo();
-        String actualColor = draw.intToCol(toBufferedImage(draw.getDrawing()).getRGB(100, 100));
+        String actualColor = intToCol(toBufferedImage(draw.getDrawing()).getRGB(100, 100));
 
         assertNotEquals(expectedColor, actualColor);
     }
 
     @Test
     void undoNegativeeTest() {
-        String expectedColor = draw.intToCol(toBufferedImage(draw.getDrawing()).getRGB(100, 100));
+        String expectedColor = intToCol(toBufferedImage(draw.getDrawing()).getRGB(100, 100));
         draw.undo();
-        String actualColor = draw.intToCol(toBufferedImage(draw.getDrawing()).getRGB(100, 100));
+        String actualColor = intToCol(toBufferedImage(draw.getDrawing()).getRGB(100, 100));
 
         assertEquals(expectedColor, actualColor);
     }
@@ -606,23 +622,65 @@ class DrawTest {
     @Test
     void redoPositiveTest() {
         draw.drawRectangle(new Point(100, 100), new Point(200, 200));
-        String expectedColor = draw.intToCol(toBufferedImage(draw.getDrawing()).getRGB(100, 100));
+        String expectedColor = intToCol(toBufferedImage(draw.getDrawing()).getRGB(100, 100));
         draw.undo();
         draw.redo();
-        String actualColor = draw.intToCol(toBufferedImage(draw.getDrawing()).getRGB(100, 100));
+        String actualColor = intToCol(toBufferedImage(draw.getDrawing()).getRGB(100, 100));
 
         assertEquals(expectedColor, actualColor);
     }
 
     @Test
     void redoNegativeeTest() {
-        String expectedColor = draw.intToCol(toBufferedImage(draw.getDrawing()).getRGB(100, 100));
+        String expectedColor = intToCol(toBufferedImage(draw.getDrawing()).getRGB(100, 100));
         draw.drawRectangle(new Point(100, 100), new Point(200, 200));
         draw.redo();
-        String actualColor = draw.intToCol(toBufferedImage(draw.getDrawing()).getRGB(100, 100));
+        String actualColor = intToCol(toBufferedImage(draw.getDrawing()).getRGB(100, 100));
 
         assertNotEquals(expectedColor, actualColor);
     }
+
+    @Test
+    void writeTextPositiveTest() {
+
+    }
+
+    @Test
+    void writeTextNegativeTest() {
+        
+    }
+
+    @Test
+    void writeTextStandardTest() {
+        
+    }
+
+    @Test
+    void writeTextThrowsTest() {
+        
+    }
+
+    @Test
+    void readTextPositiveTest() {
+
+    }
+
+    @Test
+    void readTextNegativeTest() {
+        
+    }
+
+    @Test
+    void readTextStandardTest() {
+        
+    }
+
+    @Test
+    void readTextThrowsTest() {
+        
+    }
+
+    
 
     @AfterAll
     static void cleanup() {

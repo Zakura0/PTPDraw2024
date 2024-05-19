@@ -27,10 +27,5 @@ API Methods to test:
 - undo              √
 - redo              √
 
-
-
-
-
-
 - writeText
 - readText
