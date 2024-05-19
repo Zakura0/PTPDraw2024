@@ -8,8 +8,6 @@ import java.io.IOException;
 
 import mydraw.exceptions.ColorException;
 import mydraw.exceptions.SizeException;
-import mydraw.drawable.*;
-import java.util.List;
 
 public class Draw {
     protected DrawGUI window;
@@ -28,6 +26,10 @@ public class Draw {
      **/
     public DrawGUI getWindow() {
         return window;
+    }
+
+    public Graphics getGraphics() {
+        return window.getGraphics();
     }
 
     /**

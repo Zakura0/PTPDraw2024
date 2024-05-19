@@ -180,11 +180,15 @@ public class DrawGUI extends JFrame {
         } else if (command.equals("save text")) {
             try {
                 openSaveText();
-            } catch (IOException e) {
+            } catch (IOException | TxtIOException e) {
+                e.printStackTrace();
+            } 
+        } else if (command.equals("read text")) {
+            try {
+                openReadText();
+            } catch (TxtIOException e) {
                 e.printStackTrace();
             }
-        } else if (command.equals("read text")) {
-            openReadText();
         }
     }
 
@@ -208,7 +212,7 @@ public class DrawGUI extends JFrame {
         }
     }
 
-    private void openSaveText() throws IOException {
+    private void openSaveText() throws TxtIOException, IOException {
         String drawingData = writeText();
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Save Text");
@@ -228,7 +232,7 @@ public class DrawGUI extends JFrame {
         }
     }
 
-    private void openReadText() {
+    private void openReadText() throws TxtIOException{
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Open Text");
         fileChooser.setFileFilter(new FileNameExtensionFilter("Textfile (*.txt)", "txt"));
@@ -277,8 +281,12 @@ public class DrawGUI extends JFrame {
         }
     }
 
-    public String writeText() throws IOException {
+    public String writeText() throws TxtIOException {
         StringBuilder drawingData = new StringBuilder();
+
+        if (commandQueue.isEmpty()) {
+            throw new TxtIOException("No valid commands found.");
+        }
 
         for (Drawable drawable : commandQueue) {
             drawingData.append(drawable.toString()).append("\n");
@@ -286,10 +294,14 @@ public class DrawGUI extends JFrame {
         return drawingData.toString();
     }
 
-    public void readText(String filePath) throws IOException {
+    public void readText(String filePath) throws TxtIOException, IOException {
         commandQueue.clear();
         BufferedReader reader = new BufferedReader(new FileReader(filePath));
         String line;
+        if (reader.readLine() == null) {
+            reader.close();
+            throw new TxtIOException("No valid commands found.");
+        }
         while ((line = reader.readLine()) != null) {
             String[] parts = line.split(";");
             String type = parts[0];
@@ -325,8 +337,11 @@ public class DrawGUI extends JFrame {
                     commandQueue.add(new rhombusCommand(this, x0, y0, x1, y1, color));
                 } else if (type.equals("triangle")) {
                     commandQueue.add(new triangleCommand(this, x0, y0, x1, y1, color));
+                } else {
+                    reader.close();
+                    throw new TxtIOException("No valid commands found.");
                 }
-            }
+            } 
 
         }
         reader.close();
@@ -637,5 +652,9 @@ public class DrawGUI extends JFrame {
         g2.setColor(bgColor);
         g2.fillRect(0, 0, buffImage.getWidth(), buffImage.getHeight());
         g2.dispose();
+    }
+
+    public BufferedImage getBuffImage() {
+        return this.buffImage;
     }
 }

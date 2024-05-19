@@ -4,9 +4,13 @@ package mydraw.test;
  */
 
 import mydraw.Draw;
+import mydraw.DrawGUI;
 import mydraw.drawable.Drawable;
+import mydraw.drawable.ovalCommand;
+import mydraw.drawable.rectangleCommand;
 import mydraw.exceptions.ColorException;
 import mydraw.exceptions.SizeException;
+import mydraw.exceptions.TxtIOException;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +20,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
@@ -105,10 +111,14 @@ class DrawTest {
      */
 
     private Draw draw;
+    private DrawGUI window;
+    private Graphics g;
 
     @BeforeEach
     void setUp() {
         draw = new Draw();
+        window = draw.getWindow();
+        g = window.getGraphics();
     }
     
     /*
@@ -641,51 +651,132 @@ class DrawTest {
     }
 
     @Test
-    void writeTextPositiveTest() {
+    void redrawPositiveTest() throws ColorException {
+        List<String> expectedColors = Arrays.asList("red", "red", "red", "red");
+        List<String> actualColors = new ArrayList<>();
 
+        draw.setFGColor("red");
+        draw.drawRectangle(new Point(100, 100), new Point(200, 200));
+        draw.drawOval(new Point(200, 100), new Point(300, 200));
+        window.clearHelper();
+        window.commandQueue.add(new rectangleCommand(window, 100, 100, 200, 200, Color.RED));
+        window.commandQueue.add(new ovalCommand(window, 200, 100, 300, 200, Color.RED));
+        window.redraw(g);
+        BufferedImage img = toBufferedImage(draw.getDrawing());
+
+        actualColors.add(intToCol(img.getRGB(100, 100)));
+        actualColors.add(intToCol(img.getRGB(200, 200)));
+        actualColors.add(intToCol(img.getRGB(250, 100)));
+        actualColors.add(intToCol(img.getRGB(300, 150)));
+
+        assertEquals(expectedColors, actualColors);
     }
 
     @Test
-    void writeTextNegativeTest() {
-        
+    void redrawNegativeTest() throws ColorException {
+        List<String> expectedColors = Arrays.asList("red", "red", "red", "red");
+        List<String> actualColors = new ArrayList<>();
+
+        draw.setFGColor("red");
+        draw.drawRectangle(new Point(100, 100), new Point(200, 200));
+        draw.drawOval(new Point(200, 100), new Point(300, 200));
+        window.clearHelper();
+        window.commandQueue.add(new rectangleCommand(window, 100, 100, 200, 200, Color.GREEN));
+        window.commandQueue.add(new ovalCommand(window, 200, 100, 300, 200, Color.GREEN));
+        window.redraw(g);
+        BufferedImage img = toBufferedImage(draw.getDrawing());
+
+        actualColors.add(intToCol(img.getRGB(100, 100)));
+        actualColors.add(intToCol(img.getRGB(200, 200)));
+        actualColors.add(intToCol(img.getRGB(250, 100)));
+        actualColors.add(intToCol(img.getRGB(300, 150)));
+
+        assertNotEquals(expectedColors, actualColors);
     }
 
     @Test
-    void writeTextStandardTest() {
-        
+    void redrawStandardTest() {
+        List<String> expectedColors = Arrays.asList("white", "white", "white", "white");
+        List<String> actualColors = new ArrayList<>();
+
+        window.clearHelper();
+        window.redraw(g);
+        BufferedImage img = toBufferedImage(draw.getDrawing());
+
+        actualColors.add(intToCol(img.getRGB(100, 100)));
+        actualColors.add(intToCol(img.getRGB(200, 200)));
+        actualColors.add(intToCol(img.getRGB(250, 100)));
+        actualColors.add(intToCol(img.getRGB(300, 150)));
+
+        assertEquals(expectedColors, actualColors); 
+    }
+
+    @Test
+    void writeTextPositiveTest() throws TxtIOException {
+        draw.drawRectangle(new Point(100, 100), new Point(200, 200));
+
+        String expectedCommand = "rectangle;100;100;200;200;-16777216\n";
+        String actualCommand = window.writeText();
+
+        assertEquals(expectedCommand, actualCommand);
+    }
+
+    @Test
+    void writeTextNegativeTest() throws TxtIOException {
+        draw.drawOval(new Point(100, 100), new Point(200, 200));
+
+        String expectedCommand = "rectangle;100;100;200;200;-16777216\n";
+        String actualCommand = window.writeText();
+
+        assertNotEquals(expectedCommand, actualCommand);
     }
 
     @Test
     void writeTextThrowsTest() {
-        
+        window.commandQueue.clear();
+        assertThrows(TxtIOException.class, () -> window.writeText());
     }
 
     @Test
-    void readTextPositiveTest() {
+    void readTextPositiveTest() throws TxtIOException, IOException {
+        List<Drawable> expectedCommandQueue;
+        List<Drawable> actualCommandQueue;
 
+        draw.drawRectangle(new Point(100, 100), new Point(200, 200));
+
+        expectedCommandQueue = window.commandQueue;
+        String drawingData = window.writeText();
+        File textFile = new File("readTextPositive.txt");
+        FileWriter fileWriter = new FileWriter(textFile);
+        PrintWriter printWriter = new PrintWriter(fileWriter);
+        printWriter.print(drawingData);
+        printWriter.close();
+        window.readText("readTextPositive.txt");
+        actualCommandQueue = window.commandQueue;
+
+        assertEquals(expectedCommandQueue, actualCommandQueue);
     }
 
     @Test
-    void readTextNegativeTest() {
-        
+    void readTextNegativeTest() throws IOException {
+        assertThrows(FileNotFoundException.class, () -> window.readText(""));
     }
 
     @Test
-    void readTextStandardTest() {
-        
+    void readTextThrowsTest() throws TxtIOException, IOException{
+        File textFile = new File("readTextThrows.txt");
+        FileWriter fileWriter = new FileWriter(textFile);
+        PrintWriter printWriter = new PrintWriter(fileWriter);
+        printWriter.print("");
+        printWriter.close();
+        assertThrows(TxtIOException.class, () -> window.readText("readTextThrows.txt"));
     }
 
-    @Test
-    void readTextThrowsTest() {
-        
-    }
-
-    
 
     @AfterAll
     static void cleanup() {
         File directory = new File(".");
-        File[] files = directory.listFiles((dir, name) -> name.endsWith(".bmp"));
+        File[] files = directory.listFiles((dir, name) -> name.endsWith(".bmp") || name.endsWith(".txt"));
         if (files != null) {
             for (File file : files) {
                 file.delete();
