@@ -28,10 +28,6 @@ public class Draw {
         return window;
     }
 
-    public Graphics getGraphics() {
-        return window.getGraphics();
-    }
-
     /**
      * API Method: retrieves current height of the window
      * Return type: int

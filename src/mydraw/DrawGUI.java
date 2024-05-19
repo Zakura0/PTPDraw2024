@@ -653,8 +653,4 @@ public class DrawGUI extends JFrame {
         g2.fillRect(0, 0, buffImage.getWidth(), buffImage.getHeight());
         g2.dispose();
     }
-
-    public BufferedImage getBuffImage() {
-        return this.buffImage;
-    }
 }
