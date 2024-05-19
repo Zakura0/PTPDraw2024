@@ -4,7 +4,12 @@ package mydraw.test;
  */
 
 import mydraw.Draw;
+import mydraw.DrawFunctions;
 import mydraw.DrawGUI;
+import mydraw.DrawSaveImage;
+import mydraw.DrawShape;
+import mydraw.DrawTextReader;
+import mydraw.DrawTextWriter;
 import mydraw.drawable.Drawable;
 import mydraw.drawable.ovalCommand;
 import mydraw.drawable.rectangleCommand;
@@ -113,12 +118,29 @@ class DrawTest {
     private Draw draw;
     private DrawGUI window;
     private Graphics g;
+    private DrawFunctions func;
+    private DrawSaveImage save;
+    private DrawTextReader read;
+    private DrawTextWriter write;
+    private DrawShape shape;
 
     @BeforeEach
     void setUp() {
         draw = new Draw();
         window = draw.getWindow();
         g = window.getGraphics();
+
+        DrawShape shape = new DrawShape(window);
+        this.shape = shape;
+        DrawFunctions func = new DrawFunctions(window, shape);
+        this.func = func;
+        DrawSaveImage save = new DrawSaveImage(window);
+        this.save = save;
+        DrawTextReader read = new DrawTextReader(window);
+        this.read = read;
+        DrawTextWriter write = new DrawTextWriter(window);
+        this.write = write;
+        
     }
     
     /*
@@ -218,40 +240,40 @@ class DrawTest {
 
     @Test
     void writeImagePositiveTest() throws IOException {
-        draw.writeImage(draw.getDrawing(), "writeImagePositive.bmp");
+        save.writeImage(draw.getDrawing(), "writeImagePositive.bmp");
         assertTrue(isFile("writeImagePositive.bmp"));
     }
 
     @Test
     void writeImageNegativeeTest() throws IOException {
-        assertThrows(FileNotFoundException.class, () -> draw.writeImage(draw.getDrawing(), ""));
+        assertThrows(FileNotFoundException.class, () -> save.writeImage(draw.getDrawing(), ""));
     }
 
     @Test
     void writeImageThrowsTest() {
-        assertThrows(NullPointerException.class, () -> draw.writeImage(null, "writeImageThrows.bmp"));
+        assertThrows(NullPointerException.class, () -> save.writeImage(null, "writeImageThrows.bmp"));
     }
 
     @Test
     void readImagePositiveTest() throws IOException {
-        draw.writeImage(draw.getDrawing(), "imageReadPositive.bmp");
-        assertTrue(imagesEqual(toBufferedImage(draw.getDrawing()), toBufferedImage(draw.readImage("imageReadPositive.bmp"))));
+        save.writeImage(draw.getDrawing(), "imageReadPositive.bmp");
+        assertTrue(imagesEqual(toBufferedImage(draw.getDrawing()), toBufferedImage(save.readImage("imageReadPositive.bmp"))));
     }
 
     @Test
     void readImageNegativeTest() throws IOException {
-        draw.writeImage(draw.getDrawing(), "imageReadPositive.bmp");
-        assertThrows(FileNotFoundException.class, () -> draw.readImage("notFound.bmp"));
+        save.writeImage(draw.getDrawing(), "imageReadPositive.bmp");
+        assertThrows(FileNotFoundException.class, () -> save.readImage("notFound.bmp"));
     }
 
     @Test
     void readImageThrowsTest() throws IOException {
-        assertThrows(NullPointerException.class, () -> draw.readImage(null));
+        assertThrows(NullPointerException.class, () -> save.readImage(null));
     }
 
     @Test
     void autoDrawPositiveTest() {
-        draw.autoDraw();
+        func.autoDraw();
         BufferedImage actualImage = toBufferedImage(draw.getDrawing());
         List<String> expectedColors = Arrays.asList("red", "blue", "green");
         List<String> actualColors = new ArrayList<>();
@@ -265,7 +287,7 @@ class DrawTest {
 
     @Test
     void autoDrawNegativeTest() {
-        draw.autoDraw();
+        func.autoDraw();
         BufferedImage actualImage = toBufferedImage(draw.getDrawing());
         List<String> expectedColors = Arrays.asList("red", "blue", "green");
         List<String> actualColors = new ArrayList<>();
@@ -279,7 +301,7 @@ class DrawTest {
 
     @Test
     void clearPositiveTest() {
-        draw.autoDraw();
+        func.autoDraw();
         draw.getWindow().clearHelper();
         BufferedImage actualImage = toBufferedImage(draw.getDrawing());
         List<String> expectedColors = Arrays.asList("white", "white", "white");
@@ -295,7 +317,7 @@ class DrawTest {
 
     @Test
     void clearNegativeTest() {
-        draw.autoDraw();
+        func.autoDraw();
         draw.getWindow().clearHelper();
         BufferedImage actualImage = toBufferedImage(draw.getDrawing());
         List<String> expectedColors = Arrays.asList("red", "blue", "green");
@@ -311,9 +333,9 @@ class DrawTest {
 
     @Test
     void compareImagePositiveTest() throws IOException {
-        draw.autoDraw();
+        func.autoDraw();
         Image reference = draw.getDrawing();
-        draw.writeImage(reference, "reference.bmp");
+        save.writeImage(reference, "reference.bmp");
         draw.getWindow().clearHelper();
 
         Point p1 = new Point(100, 200);
@@ -323,7 +345,7 @@ class DrawTest {
         } catch (ColorException e) {
             System.err.println("Color Exception: " + e.getMessage());
         }
-        draw.drawRectangle(p1, p2);
+        shape.drawRectangle(p1, p2);
         Point p3 = new Point(300, 200);
         Point p4 = new Point(400, 100);
         try {
@@ -331,7 +353,7 @@ class DrawTest {
         } catch (ColorException e) {
             System.err.println("Color Exception: " + e.getMessage());
         }
-        draw.drawOval(p3, p4);
+        shape.drawOval(p3, p4);
         Point pl1 = new Point(500, 200);
         Point pl2 = new Point(600, 100);
         Point pl3 = new Point(700, 200);
@@ -340,25 +362,25 @@ class DrawTest {
         } catch (ColorException e) {
             System.err.println("Color Exception: " + e.getMessage());
         }
-        draw.drawPolyLine(List.of(pl1, pl2, pl3));
+        shape.drawPolyLine(List.of(pl1, pl2, pl3));
         Point p5 = new Point(100, 350);
         Point p6 = new Point(200, 250);
-        draw.drawFillRectangle(p5, p6);
+        shape.drawFillRectangle(p5, p6);
         Point p7 = new Point(300, 350);
         Point p8 = new Point(400, 250);
-        draw.drawFillOval(p7, p8);
+        shape.drawFillOval(p7, p8);
         Point p9 = new Point(500, 350);
         Point p10 = new Point(600, 250);
-        draw.drawRhombus(p9, p10);
+        shape.drawRhombus(p9, p10);
         Point p11 = new Point(600, 250);
         Point p12 = new Point(700, 350);
-        draw.drawTriangle(p11, p12);
+        shape.drawTriangle(p11, p12);
 
         Image actual = draw.getDrawing();
-        draw.writeImage(actual, "actual.bmp");
+        save.writeImage(actual, "actual.bmp");
 
-        BufferedImage expectedImage = toBufferedImage(draw.readImage("reference.bmp"));
-        BufferedImage actualImage = toBufferedImage(draw.readImage("actual.bmp"));
+        BufferedImage expectedImage = toBufferedImage(save.readImage("reference.bmp"));
+        BufferedImage actualImage = toBufferedImage(save.readImage("actual.bmp"));
 
         assertTrue(imagesEqual(expectedImage, actualImage));
 
@@ -366,9 +388,9 @@ class DrawTest {
 
     @Test
     void compareImageNegativeTest() throws IOException {
-        draw.autoDraw();
+        func.autoDraw();
         Image reference = draw.getDrawing();
-        draw.writeImage(reference, "reference.bmp");
+        save.writeImage(reference, "reference.bmp");
         draw.getWindow().clearHelper();
 
         Point p1 = new Point(100, 200);
@@ -378,13 +400,13 @@ class DrawTest {
         } catch (ColorException e) {
             System.err.println("Color Exception: " + e.getMessage());
         }
-        draw.drawRectangle(p1, p2);
+        shape.drawRectangle(p1, p2);
 
         Image actual = draw.getDrawing();
-        draw.writeImage(actual, "actual.bmp");
+        save.writeImage(actual, "actual.bmp");
 
-        BufferedImage expectedImage = toBufferedImage(draw.readImage("reference.bmp"));
-        BufferedImage actualImage = toBufferedImage(draw.readImage("actual.bmp"));
+        BufferedImage expectedImage = toBufferedImage(save.readImage("reference.bmp"));
+        BufferedImage actualImage = toBufferedImage(save.readImage("actual.bmp"));
 
         assertFalse(imagesEqual(expectedImage, actualImage));
 
@@ -395,7 +417,7 @@ class DrawTest {
         List<Point> points = Arrays.asList(new Point(100, 100), new Point(200, 200));
 
         draw.setFGColor("red");
-        draw.drawRectangle(new Point(100, 100), new Point(200, 200));
+        shape.drawRectangle(new Point(100, 100), new Point(200, 200));
         BufferedImage img = toBufferedImage(draw.getDrawing());
 
         for (Point pointx : points) {
@@ -411,7 +433,7 @@ class DrawTest {
         List<Point> points = Arrays.asList(new Point(40, 40), new Point(230, 240));
 
         draw.setFGColor("red");
-        draw.drawRectangle(new Point(100, 100), new Point(200, 200));
+        shape.drawRectangle(new Point(100, 100), new Point(200, 200));
         BufferedImage img = toBufferedImage(draw.getDrawing());
 
         for (Point pointx : points) {
@@ -427,7 +449,7 @@ class DrawTest {
         List<Point> points = Arrays.asList(new Point(100, 100), new Point(200, 200));
     
         draw.setFGColor("red");
-        draw.drawOval(new Point(100, 100), new Point(200, 200));
+        shape.drawOval(new Point(100, 100), new Point(200, 200));
         BufferedImage img = toBufferedImage(draw.getDrawing());
 
         List<Point> circlePoints = createCircleMeasurements(points);
@@ -443,7 +465,7 @@ class DrawTest {
         List<Point> points = Arrays.asList(new Point(40, 40), new Point(230, 240));
     
         draw.setFGColor("red");
-        draw.drawOval(new Point(100, 100), new Point(200, 200));
+        shape.drawOval(new Point(100, 100), new Point(200, 200));
         BufferedImage img = toBufferedImage(draw.getDrawing());
 
         List<Point> circlePoints = createCircleMeasurements(points);
@@ -460,7 +482,7 @@ class DrawTest {
         List<Point> polyline = Arrays.asList(new Point(100, 100), new Point(200, 200), new Point(100, 200));
     
         draw.setFGColor("red");
-        draw.drawPolyLine(polyline);
+        shape.drawPolyLine(polyline);
         BufferedImage img = toBufferedImage(draw.getDrawing());
     
         for (Point point : points) {
@@ -475,7 +497,7 @@ class DrawTest {
         List<Point> polyline = Arrays.asList(new Point(100, 100), new Point(200, 200), new Point(100, 200));
     
         draw.setFGColor("red");
-        draw.drawPolyLine(polyline);
+        shape.drawPolyLine(polyline);
         BufferedImage img = toBufferedImage(draw.getDrawing());
     
         for (Point point : points) {
@@ -490,7 +512,7 @@ class DrawTest {
         List<Point> points = Arrays.asList(new Point(150, 100), new Point(200, 200), new Point(100, 200));
 
         draw.setFGColor("red");
-        draw.drawTriangle(new Point(100, 100), new Point(200, 200));
+        shape.drawTriangle(new Point(100, 100), new Point(200, 200));
         BufferedImage img = toBufferedImage(draw.getDrawing());
 
         for (Point point : points) {
@@ -504,7 +526,7 @@ class DrawTest {
         List<Point> points = Arrays.asList(new Point(100, 100), new Point(150, 150), new Point(200, 100));
 
         draw.setFGColor("red");
-        draw.drawTriangle(new Point(100, 100), new Point(200, 200));
+        shape.drawTriangle(new Point(100, 100), new Point(200, 200));
         BufferedImage img = toBufferedImage(draw.getDrawing());
 
         for (Point point : points) {
@@ -518,7 +540,7 @@ class DrawTest {
         List<Point> points = Arrays.asList(new Point(100, 100), new Point(200, 200));
     
         draw.setFGColor("red");
-        draw.drawRhombus(new Point(100, 100), new Point(200, 200));
+        shape.drawRhombus(new Point(100, 100), new Point(200, 200));
         BufferedImage img = toBufferedImage(draw.getDrawing());
 
         List<Point> rhombusPoints = createCircleMeasurements(points);
@@ -534,7 +556,7 @@ class DrawTest {
         List<Point> points = Arrays.asList(new Point(100, 100), new Point(200, 200));
     
         draw.setFGColor("red");
-        draw.drawRhombus(new Point(40, 100), new Point(230, 240));
+        shape.drawRhombus(new Point(40, 100), new Point(230, 240));
         BufferedImage img = toBufferedImage(draw.getDrawing());
 
         List<Point> rhombusPoints = createCircleMeasurements(points);
@@ -550,7 +572,7 @@ class DrawTest {
         List<Point> points = Arrays.asList(new Point(100, 100), new Point(200, 200), new Point(150, 150));
 
         draw.setFGColor("red");
-        draw.drawFillRectangle(new Point(100, 100), new Point(200, 200));
+        shape.drawFillRectangle(new Point(100, 100), new Point(200, 200));
         BufferedImage img = toBufferedImage(draw.getDrawing());
 
         for (Point pointx : points) {
@@ -566,7 +588,7 @@ class DrawTest {
         List<Point> points = Arrays.asList(new Point(90, 90), new Point(210, 210), new Point(150, 95));
 
         draw.setFGColor("red");
-        draw.drawFillRectangle(new Point(100, 100), new Point(200, 200));
+        shape.drawFillRectangle(new Point(100, 100), new Point(200, 200));
         BufferedImage img = toBufferedImage(draw.getDrawing());
 
         for (Point pointx : points) {
@@ -582,7 +604,7 @@ class DrawTest {
         List<Point> points = Arrays.asList(new Point(100, 100), new Point(200, 200));
     
         draw.setFGColor("red");
-        draw.drawFillOval(new Point(100, 100), new Point(200, 200));
+        shape.drawFillOval(new Point(100, 100), new Point(200, 200));
         BufferedImage img = toBufferedImage(draw.getDrawing());
 
         List<Point> circlePoints = createCircleMeasurements(points);
@@ -599,7 +621,7 @@ class DrawTest {
         List<Point> points = Arrays.asList(new Point(90, 90), new Point(210, 210), new Point(150, 95));
     
         draw.setFGColor("red");
-        draw.drawFillOval(new Point(100, 100), new Point(200, 200));
+        shape.drawFillOval(new Point(100, 100), new Point(200, 200));
         BufferedImage img = toBufferedImage(draw.getDrawing());
 
         List<Point> circlePoints = createCircleMeasurements(points);
@@ -612,9 +634,9 @@ class DrawTest {
 
     @Test
     void undoPositiveTest() {
-        draw.drawRectangle(new Point(100, 100), new Point(200, 200));
+        shape.drawRectangle(new Point(100, 100), new Point(200, 200));
         String expectedColor = intToCol(toBufferedImage(draw.getDrawing()).getRGB(100, 100));
-        draw.undo();
+        func.undo();
         String actualColor = intToCol(toBufferedImage(draw.getDrawing()).getRGB(100, 100));
 
         assertNotEquals(expectedColor, actualColor);
@@ -623,7 +645,7 @@ class DrawTest {
     @Test
     void undoNegativeeTest() {
         String expectedColor = intToCol(toBufferedImage(draw.getDrawing()).getRGB(100, 100));
-        draw.undo();
+        func.undo();
         String actualColor = intToCol(toBufferedImage(draw.getDrawing()).getRGB(100, 100));
 
         assertEquals(expectedColor, actualColor);
@@ -631,10 +653,10 @@ class DrawTest {
 
     @Test
     void redoPositiveTest() {
-        draw.drawRectangle(new Point(100, 100), new Point(200, 200));
+        shape.drawRectangle(new Point(100, 100), new Point(200, 200));
         String expectedColor = intToCol(toBufferedImage(draw.getDrawing()).getRGB(100, 100));
-        draw.undo();
-        draw.redo();
+        func.undo();
+        func.redo();
         String actualColor = intToCol(toBufferedImage(draw.getDrawing()).getRGB(100, 100));
 
         assertEquals(expectedColor, actualColor);
@@ -643,8 +665,8 @@ class DrawTest {
     @Test
     void redoNegativeeTest() {
         String expectedColor = intToCol(toBufferedImage(draw.getDrawing()).getRGB(100, 100));
-        draw.drawRectangle(new Point(100, 100), new Point(200, 200));
-        draw.redo();
+        shape.drawRectangle(new Point(100, 100), new Point(200, 200));
+        func.redo();
         String actualColor = intToCol(toBufferedImage(draw.getDrawing()).getRGB(100, 100));
 
         assertNotEquals(expectedColor, actualColor);
@@ -656,8 +678,8 @@ class DrawTest {
         List<String> actualColors = new ArrayList<>();
 
         draw.setFGColor("red");
-        draw.drawRectangle(new Point(100, 100), new Point(200, 200));
-        draw.drawOval(new Point(200, 100), new Point(300, 200));
+        shape.drawRectangle(new Point(100, 100), new Point(200, 200));
+        shape.drawOval(new Point(200, 100), new Point(300, 200));
         window.clearHelper();
         window.commandQueue.add(new rectangleCommand(window, 100, 100, 200, 200, Color.RED));
         window.commandQueue.add(new ovalCommand(window, 200, 100, 300, 200, Color.RED));
@@ -678,8 +700,8 @@ class DrawTest {
         List<String> actualColors = new ArrayList<>();
 
         draw.setFGColor("red");
-        draw.drawRectangle(new Point(100, 100), new Point(200, 200));
-        draw.drawOval(new Point(200, 100), new Point(300, 200));
+        shape.drawRectangle(new Point(100, 100), new Point(200, 200));
+        shape.drawOval(new Point(200, 100), new Point(300, 200));
         window.clearHelper();
         window.commandQueue.add(new rectangleCommand(window, 100, 100, 200, 200, Color.GREEN));
         window.commandQueue.add(new ovalCommand(window, 200, 100, 300, 200, Color.GREEN));
@@ -713,20 +735,20 @@ class DrawTest {
 
     @Test
     void writeTextPositiveTest() throws TxtIOException {
-        draw.drawRectangle(new Point(100, 100), new Point(200, 200));
+        shape.drawRectangle(new Point(100, 100), new Point(200, 200));
 
         String expectedCommand = "rectangle;100;100;200;200;-16777216\n";
-        String actualCommand = window.writeText();
+        String actualCommand = write.writeText();
 
         assertEquals(expectedCommand, actualCommand);
     }
 
     @Test
     void writeTextNegativeTest() throws TxtIOException {
-        draw.drawOval(new Point(100, 100), new Point(200, 200));
+        shape.drawOval(new Point(100, 100), new Point(200, 200));
 
         String expectedCommand = "rectangle;100;100;200;200;-16777216\n";
-        String actualCommand = window.writeText();
+        String actualCommand = write.writeText();
 
         assertNotEquals(expectedCommand, actualCommand);
     }
@@ -734,7 +756,7 @@ class DrawTest {
     @Test
     void writeTextThrowsTest() {
         window.commandQueue.clear();
-        assertThrows(TxtIOException.class, () -> window.writeText());
+        assertThrows(TxtIOException.class, () -> write.writeText());
     }
 
     @Test
@@ -742,16 +764,16 @@ class DrawTest {
         List<Drawable> expectedCommandQueue;
         List<Drawable> actualCommandQueue;
 
-        draw.drawRectangle(new Point(100, 100), new Point(200, 200));
+        shape.drawRectangle(new Point(100, 100), new Point(200, 200));
 
         expectedCommandQueue = window.commandQueue;
-        String drawingData = window.writeText();
+        String drawingData = write.writeText();
         File textFile = new File("readTextPositive.txt");
         FileWriter fileWriter = new FileWriter(textFile);
         PrintWriter printWriter = new PrintWriter(fileWriter);
         printWriter.print(drawingData);
         printWriter.close();
-        window.readText("readTextPositive.txt");
+        read.readText("readTextPositive.txt");
         actualCommandQueue = window.commandQueue;
 
         assertEquals(expectedCommandQueue, actualCommandQueue);
@@ -759,7 +781,7 @@ class DrawTest {
 
     @Test
     void readTextNegativeTest() throws IOException {
-        assertThrows(FileNotFoundException.class, () -> window.readText(""));
+        assertThrows(FileNotFoundException.class, () -> read.readText(""));
     }
 
     @Test
@@ -769,7 +791,7 @@ class DrawTest {
         PrintWriter printWriter = new PrintWriter(fileWriter);
         printWriter.print("");
         printWriter.close();
-        assertThrows(TxtIOException.class, () -> window.readText("readTextThrows.txt"));
+        assertThrows(TxtIOException.class, () -> read.readText("readTextThrows.txt"));
     }
 
 

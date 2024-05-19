@@ -11,7 +11,7 @@ public class DrawTextWriter {
         this.gui = gui;
     }
 
-        public String writeText() throws TxtIOException {
+    public String writeText() throws TxtIOException {
         StringBuilder drawingData = new StringBuilder();
 
         if (gui.commandQueue.isEmpty()) {
