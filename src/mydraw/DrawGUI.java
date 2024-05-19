@@ -505,11 +505,13 @@ public class DrawGUI extends JFrame {
 
         Graphics g = this.frontPanel.getGraphics();
         g.setColor(this.fgColor);
+        g.drawRect(x, y, width, height);
         g.fillRect(x, y, width, height);
         g.dispose();
 
         Graphics g2 = this.buffImage.getGraphics();
         g2.setColor(this.fgColor);
+        g2.drawRect(x, y, width, height);
         g2.fillRect(x, y, width, height);
         g2.dispose();
         commandQueue
@@ -524,11 +526,13 @@ public class DrawGUI extends JFrame {
 
         Graphics g = this.frontPanel.getGraphics();
         g.setColor(this.fgColor);
+        g.drawOval(x, y, width, height);
         g.fillOval(x, y, width, height);
         g.dispose();
 
         Graphics g2 = this.buffImage.getGraphics();
         g2.setColor(this.fgColor);
+        g2.drawOval(x, y, width, height);
         g2.fillOval(x, y, width, height);
         g2.dispose();
         commandQueue.add(new fillovalCommand(this, upper_left.x, upper_left.y, lower_right.x, lower_right.y, fgColor));
@@ -618,6 +622,11 @@ public class DrawGUI extends JFrame {
         g.fillRect(0, 0, buffImage.getWidth(), buffImage.getHeight());
         g.dispose();
     }
+
+    /**
+     * Helper Method: used to get a String from integer color value 
+     * (used in tests to verify correct coloring)
+     */
 
     public String intToCol(int pixel) {
         int red = (pixel & 0xff0000) >> 16;

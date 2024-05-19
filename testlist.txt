@@ -16,13 +16,13 @@ API Methods to test:
 - clear             √
 - autoDraw          √
 
-- drawRectangle
-- drawOval
-- drawPolyLine
-- drawTriangle
-- drawRhombus
-- drawFillRectangle
-- drawFillOval
+- drawRectangle     √
+- drawOval          √
+- drawPolyLine      √
+- drawTriangle      √
+- drawRhombus       √
+- drawFillRectangle √
+- drawFillOval      √
 
 - undo              √
 - redo              √

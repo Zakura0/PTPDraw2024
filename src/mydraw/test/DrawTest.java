@@ -63,14 +63,19 @@ class DrawTest {
         return file.exists() && !file.isDirectory();
     }
 
-    List<Integer> createCircleMeasurements(List<Point> points) {
-        List<Integer> result = new ArrayList<>();
-        int centerX = (points.get(0).x + points.get(1).x) / 2;
-        int centerY = (points.get(0).y + points.get(1).y) / 2;
-        int radiusX = Math.abs(points.get(1).x - points.get(0).x) / 2;
-        int radiusY = Math.abs(points.get(1).y - points.get(0).y) / 2;
+    List<Point> createCircleMeasurements(List<Point> points) {
+        List<Point> result = new ArrayList<>();
+        int centerX, centerY, radiusX, radiusY;
+        centerX = (points.get(0).x + points.get(1).x) / 2;
+        centerY = (points.get(0).y + points.get(1).y) / 2;
+        radiusX = Math.abs(points.get(1).x - points.get(0).x) / 2;
+        radiusY = Math.abs(points.get(1).y - points.get(0).y) / 2;
+        
+        result.add(new Point(centerX, centerY - radiusY));
+        result.add(new Point(centerX, centerY + radiusY));
+        result.add(new Point(centerX + radiusX, centerY));
+        result.add(new Point(centerX - radiusX, centerY));
 
-        result = Arrays.asList(centerX, centerY, radiusX, radiusY);
         return result;
     }
 
@@ -172,8 +177,6 @@ class DrawTest {
         assertEquals("white", draw.getBGColor());
     }
 
-
-
     @Test
     void getDrawingPositiveTest() {
         assertInstanceOf(BufferedImage.class, draw.getDrawing());
@@ -188,9 +191,6 @@ class DrawTest {
     void getDrawingStandardTest() {
         assertNotNull(draw.getDrawing());
     }
-
-
-
 
     @Test
     void writeImagePositiveTest() throws IOException {
@@ -208,9 +208,6 @@ class DrawTest {
         assertThrows(NullPointerException.class, () -> draw.writeImage(null, "writeImageThrows.bmp"));
     }
 
-
-
-
     @Test
     void readImagePositiveTest() throws IOException {
         draw.writeImage(draw.getDrawing(), "imageReadPositive.bmp");
@@ -227,10 +224,6 @@ class DrawTest {
     void readImageThrowsTest() throws IOException {
         assertThrows(NullPointerException.class, () -> draw.readImage(null));
     }
-
-
-
-
 
     @Test
     void autoDrawPositiveTest() {
@@ -259,9 +252,6 @@ class DrawTest {
 
         assertNotEquals(expectedColors, actualColors);
     }
-
-
-
 
     @Test
     void clearPositiveTest() {
@@ -292,9 +282,6 @@ class DrawTest {
 
         assertNotEquals(expectedColors, actualColors);
     }
-
-
-
 
     @Test
     void compareImagePositiveTest() throws IOException {
@@ -377,149 +364,225 @@ class DrawTest {
 
     }
 
-
     @Test
-    void drawRectangleTest() throws ColorException {
-        List<Point> pointsPos = new ArrayList<>();
-        List<Point> pointsNeg = new ArrayList<>();
-
-        pointsPos.add(new Point(100, 100));
-        pointsPos.add(new Point(200, 200));
-
-        pointsNeg.add(new Point(40, 40));
-        pointsNeg.add(new Point(230, 340));
+    void drawRectanglePositiveTest() throws ColorException {
+        List<Point> points = Arrays.asList(new Point(100, 100), new Point(200, 200));
 
         draw.setFGColor("red");
-        String expectedColor = draw.getFGColor();
-        draw.drawRectangle(pointsPos.get(0), pointsPos.get(1));
+        draw.drawRectangle(new Point(100, 100), new Point(200, 200));
         BufferedImage img = toBufferedImage(draw.getDrawing());
 
-        for (Point pointx : pointsPos) {
-            for (Point pointy : pointsPos) {
+        for (Point pointx : points) {
+            for (Point pointy : points) {
                 String actual = draw.intToCol(img.getRGB(pointx.x, pointy.y));
-                assertEquals(expectedColor, actual);
+                assertEquals("red", actual);
             }
         }
-        for (Point pointx : pointsNeg) {
-            for (Point pointy : pointsNeg) {
-                String actual = draw.intToCol(img.getRGB(pointx.x, pointy.y));
-                assertNotEquals(expectedColor, actual);
-            }
-        }
-        assertThrows(ColorException.class, () -> {
-            draw.setFGColor("yellow");
-        });
     }
 
+    @Test
+    void drawRectangleNegativeTest() throws ColorException{
+        List<Point> points = Arrays.asList(new Point(40, 40), new Point(230, 240));
 
+        draw.setFGColor("red");
+        draw.drawRectangle(new Point(100, 100), new Point(200, 200));
+        BufferedImage img = toBufferedImage(draw.getDrawing());
+
+        for (Point pointx : points) {
+            for (Point pointy : points) {
+                String actual = draw.intToCol(img.getRGB(pointx.x, pointy.y));
+                assertNotEquals("red", actual);
+            }
+        }
+    }
+
+    @Test
+    void drawOvalPositiveTest() throws ColorException {
+        List<Point> points = Arrays.asList(new Point(100, 100), new Point(200, 200));
+    
+        draw.setFGColor("red");
+        draw.drawOval(new Point(100, 100), new Point(200, 200));
+        BufferedImage img = toBufferedImage(draw.getDrawing());
+
+        List<Point> circlePoints = createCircleMeasurements(points);
+    
+        for (Point point : circlePoints) {
+            String actual = draw.intToCol(img.getRGB(point.x, point.y));
+            assertEquals("red", actual);
+        }
+    }
+
+    @Test
+    void drawOvalNegativeeTest() throws ColorException {
+        List<Point> points = Arrays.asList(new Point(40, 40), new Point(230, 240));
+    
+        draw.setFGColor("red");
+        draw.drawOval(new Point(100, 100), new Point(200, 200));
+        BufferedImage img = toBufferedImage(draw.getDrawing());
+
+        List<Point> circlePoints = createCircleMeasurements(points);
+    
+        for (Point point : circlePoints) {
+            String actual = draw.intToCol(img.getRGB(point.x, point.y));
+            assertNotEquals("red", actual);
+        }
+    }
+
+    @Test
+    void drawPolyLinePositiveTest() throws ColorException {
+        List<Point> points = Arrays.asList(new Point(100, 100), new Point(200, 200), new Point(100, 200));
+        List<Point> polyline = Arrays.asList(new Point(100, 100), new Point(200, 200), new Point(100, 200));
+    
+        draw.setFGColor("red");
+        draw.drawPolyLine(polyline);
+        BufferedImage img = toBufferedImage(draw.getDrawing());
+    
+        for (Point point : points) {
+            String actual = draw.intToCol(img.getRGB(point.x, point.y));
+            assertEquals("red", actual);
+        }
+    }
+
+    @Test
+    void drawPolylineNegativeTest() throws ColorException {
+        List<Point> points = Arrays.asList(new Point(120, 100), new Point(250, 200), new Point(100, 210));
+        List<Point> polyline = Arrays.asList(new Point(100, 100), new Point(200, 200), new Point(100, 200));
+    
+        draw.setFGColor("red");
+        draw.drawPolyLine(polyline);
+        BufferedImage img = toBufferedImage(draw.getDrawing());
+    
+        for (Point point : points) {
+            String actual = draw.intToCol(img.getRGB(point.x, point.y));
+            assertNotEquals("red", actual);
+        }
+    }
 
 
     @Test
-    void drawOvalTest() throws ColorException {
-        List<Point> pointsPos = new ArrayList<>();
-        List<Point> pointsNeg = new ArrayList<>();
-        List<String> actualColorsPos = new ArrayList<>();
-        List<String> actualColorsNeg = new ArrayList<>();
-        List<Integer> measures;
-        int centerX;
-        int centerY;
-        int radiusX;
-        int radiusY;
+    void drawTrianglePositivetest() throws ColorException {
+        List<Point> points = Arrays.asList(new Point(150, 100), new Point(200, 200), new Point(100, 200));
 
-        pointsPos.add(new Point(100, 100));
-        pointsPos.add(new Point(200, 200));
+        draw.setFGColor("red");
+        draw.drawTriangle(new Point(100, 100), new Point(200, 200));
+        BufferedImage img = toBufferedImage(draw.getDrawing());
 
-        pointsNeg.add(new Point(40, 40));
-        pointsNeg.add(new Point(230, 340));
-
-        draw.setFGColor("black");
-
-        String expectedColor = draw.getFGColor();
-
-        draw.drawOval(pointsPos.get(0), pointsPos.get(1));
-
-        BufferedImage actual = toBufferedImage(draw.getDrawing());
-
-        measures = createCircleMeasurements(pointsPos);
-
-        centerX = measures.get(0);
-        centerY = measures.get(1);
-        radiusX = measures.get(2);
-        radiusY = measures.get(3);
-
-        actualColorsPos.add(draw.intToCol(actual.getRGB(centerX, centerY - radiusY)));
-        actualColorsPos.add(draw.intToCol(actual.getRGB(centerX, centerY + radiusY)));
-        actualColorsPos.add(draw.intToCol(actual.getRGB(centerX + radiusX, centerY)));
-        actualColorsPos.add(draw.intToCol(actual.getRGB(centerX - radiusX, centerY)));
-
-        for (String color : actualColorsPos) {
-            assertEquals(expectedColor, color);
+        for (Point point : points) {
+            String actual = draw.intToCol(img.getRGB(point.x, point.y));
+            assertEquals("red", actual);
         }
-
-        measures = createCircleMeasurements(pointsNeg);
-
-        centerX = measures.get(0);
-        centerY = measures.get(1);
-        radiusX = measures.get(2);
-        radiusY = measures.get(3);
-
-        actualColorsNeg.add(draw.intToCol(actual.getRGB(centerX, centerY - radiusY)));
-        actualColorsNeg.add(draw.intToCol(actual.getRGB(centerX, centerY + radiusY)));
-        actualColorsNeg.add(draw.intToCol(actual.getRGB(centerX + radiusX, centerY)));
-        actualColorsNeg.add(draw.intToCol(actual.getRGB(centerX - radiusX, centerY)));
-
-        for (String color : actualColorsNeg) {
-            assertNotEquals(expectedColor, color);
-        }
-
-        assertThrows(ColorException.class, () -> {
-            draw.setFGColor("yellow");
-        });
     }
-
-
-
 
     @Test
-    void drawPolylineTest() throws ColorException {
-        List<Point> pointsPos = new ArrayList<>();
-        List<Point> pointsNeg = new ArrayList<>();
+    void drawTriangleNegativetest() throws ColorException {
+        List<Point> points = Arrays.asList(new Point(100, 100), new Point(150, 150), new Point(200, 100));
 
-        pointsPos.add(new Point(100, 100));
-        pointsPos.add(new Point(150, 100));
-        pointsPos.add(new Point(150, 150));
-        pointsPos.add(new Point(200, 250));
+        draw.setFGColor("red");
+        draw.drawTriangle(new Point(100, 100), new Point(200, 200));
+        BufferedImage img = toBufferedImage(draw.getDrawing());
 
-        pointsNeg.add(new Point(40, 40));
-        pointsNeg.add(new Point(23, 34));
-        pointsNeg.add(new Point(15, 9));
-        pointsNeg.add(new Point(230, 0));
-
-        draw.setFGColor("black");
-
-        String expectedColor = draw.getFGColor();
-
-        draw.drawPolyLine(pointsPos);
-
-        BufferedImage buff = toBufferedImage(draw.getDrawing());
-
-        for (Point point : pointsPos) {
-            String actual = draw.intToCol(buff.getRGB(point.x, point.y));
-            assertEquals(expectedColor, actual);
+        for (Point point : points) {
+            String actual = draw.intToCol(img.getRGB(point.x, point.y));
+            assertNotEquals("red", actual);
         }
-
-        for (Point point : pointsNeg) {
-            String actual = draw.intToCol(buff.getRGB(point.x, point.y));
-            assertNotEquals(expectedColor, actual);
-        }
-
-        assertThrows(ColorException.class, () -> {
-            draw.setFGColor("yellow");
-        });
     }
 
+    @Test
+    void drawRhombusPositiveTest() throws ColorException {
+        List<Point> points = Arrays.asList(new Point(100, 100), new Point(200, 200));
+    
+        draw.setFGColor("red");
+        draw.drawRhombus(new Point(100, 100), new Point(200, 200));
+        BufferedImage img = toBufferedImage(draw.getDrawing());
 
+        List<Point> rhombusPoints = createCircleMeasurements(points);
+    
+        for (Point point : rhombusPoints) {
+            String actual = draw.intToCol(img.getRGB(point.x, point.y));
+            assertEquals("red", actual);
+        }
+    }
 
+    @Test
+    void drawRhombusNegativeTest() throws ColorException {
+        List<Point> points = Arrays.asList(new Point(100, 100), new Point(200, 200));
+    
+        draw.setFGColor("red");
+        draw.drawRhombus(new Point(40, 100), new Point(230, 240));
+        BufferedImage img = toBufferedImage(draw.getDrawing());
+
+        List<Point> rhombusPoints = createCircleMeasurements(points);
+    
+        for (Point point : rhombusPoints) {
+            String actual = draw.intToCol(img.getRGB(point.x, point.y));
+            assertNotEquals("red", actual);
+        }
+    }
+
+    @Test
+    void drawFillRectanglePositiveTest() throws ColorException {
+        List<Point> points = Arrays.asList(new Point(100, 100), new Point(200, 200), new Point(150, 150));
+
+        draw.setFGColor("red");
+        draw.drawFillRectangle(new Point(100, 100), new Point(200, 200));
+        BufferedImage img = toBufferedImage(draw.getDrawing());
+
+        for (Point pointx : points) {
+            for (Point pointy : points) {
+                String actual = draw.intToCol(img.getRGB(pointx.x, pointy.y));
+                assertEquals("red", actual);
+            }
+        }
+    }
+
+    @Test
+    void drawFillRectangleNegativeTeest() throws ColorException {
+        List<Point> points = Arrays.asList(new Point(90, 90), new Point(210, 210), new Point(150, 95));
+
+        draw.setFGColor("red");
+        draw.drawFillRectangle(new Point(100, 100), new Point(200, 200));
+        BufferedImage img = toBufferedImage(draw.getDrawing());
+
+        for (Point pointx : points) {
+            for (Point pointy : points) {
+                String actual = draw.intToCol(img.getRGB(pointx.x, pointy.y));
+                assertNotEquals("red", actual);
+            }
+        }
+    }
+
+    @Test
+    void drawFillOvalPositiveTest() throws ColorException {
+        List<Point> points = Arrays.asList(new Point(100, 100), new Point(200, 200));
+    
+        draw.setFGColor("red");
+        draw.drawFillOval(new Point(100, 100), new Point(200, 200));
+        BufferedImage img = toBufferedImage(draw.getDrawing());
+
+        List<Point> circlePoints = createCircleMeasurements(points);
+    
+        for (Point point : circlePoints) {
+            String actual = draw.intToCol(img.getRGB(point.x, point.y));
+            assertEquals("red", actual);
+        }
+        assertEquals("red", draw.intToCol(img.getRGB(150, 150)));
+    }
+
+    @Test
+    void drawFillOvalNegativeTest() throws ColorException {
+        List<Point> points = Arrays.asList(new Point(90, 90), new Point(210, 210), new Point(150, 95));
+    
+        draw.setFGColor("red");
+        draw.drawFillOval(new Point(100, 100), new Point(200, 200));
+        BufferedImage img = toBufferedImage(draw.getDrawing());
+
+        List<Point> circlePoints = createCircleMeasurements(points);
+    
+        for (Point point : circlePoints) {
+            String actual = draw.intToCol(img.getRGB(point.x, point.y));
+            assertNotEquals("red", actual);
+        }
+    }
 
     @Test
     void undoPositiveTest() {
@@ -539,9 +602,6 @@ class DrawTest {
 
         assertEquals(expectedColor, actualColor);
     }
-
-
-
 
     @Test
     void redoPositiveTest() {
@@ -563,9 +623,6 @@ class DrawTest {
 
         assertNotEquals(expectedColor, actualColor);
     }
-
-
-
 
     @AfterAll
     static void cleanup() {
