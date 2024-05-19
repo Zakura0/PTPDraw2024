@@ -15,6 +15,7 @@ import mydraw.drawable.polyLineCommand;
 import mydraw.drawable.rectangleCommand;
 import mydraw.drawable.rhombusCommand;
 import mydraw.drawable.triangleCommand;
+import mydraw.exceptions.SizeException;
 import mydraw.exceptions.TxtIOException;
 
 public class DrawTextReader {
@@ -28,9 +29,22 @@ public DrawTextReader(DrawGUI gui){
         gui.commandQueue.clear();
         BufferedReader reader = new BufferedReader(new FileReader(filePath));
         String line;
-        if (reader.readLine() == null) {
+        if ((line = reader.readLine()) == null) {
             reader.close();
             throw new TxtIOException("No valid commands found.");
+        }
+        String[] size = line.split(";");
+        int width = Integer.parseInt(size[1]);
+        int height = Integer.parseInt(size[2]);
+        try {
+            gui.setWidth(width);
+        } catch (SizeException e) {
+            e.printStackTrace();
+        }
+        try {
+            gui.setHeight(height);
+        } catch (SizeException e) {
+            e.printStackTrace();
         }
         while ((line = reader.readLine()) != null) {
             String[] parts = line.split(";");

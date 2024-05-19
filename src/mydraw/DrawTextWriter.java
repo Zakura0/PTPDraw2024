@@ -18,6 +18,7 @@ public class DrawTextWriter {
             throw new TxtIOException("No valid commands found.");
         }
 
+        drawingData.append("size;" + gui.getWidth() + ";" + gui.getHeight() + ";\n");
         for (Drawable drawable : gui.commandQueue) {
             drawingData.append(drawable.toString()).append("\n");
         }
