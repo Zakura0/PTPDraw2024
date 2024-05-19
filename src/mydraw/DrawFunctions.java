@@ -37,7 +37,7 @@ public class DrawFunctions {
         }
     }
     
-    void undo() {
+    public void undo() {
         if (gui.commandQueue.size() > 0) {
             gui.undoStack.add(gui.commandQueue.get(gui.commandQueue.size() - 1));
             gui.commandQueue.remove(gui.commandQueue.size() - 1);
@@ -46,7 +46,7 @@ public class DrawFunctions {
         }
     }
 
-    void redo() {
+    public void redo() {
         if (gui.undoStack.size() > 0) {
             gui.commandQueue.add(gui.undoStack.get(gui.undoStack.size() - 1));
             gui.undoStack.remove(gui.undoStack.size() - 1);

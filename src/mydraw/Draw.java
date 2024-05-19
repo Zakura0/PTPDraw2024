@@ -8,12 +8,15 @@ import java.io.IOException;
 
 import mydraw.exceptions.ColorException;
 import mydraw.exceptions.SizeException;
+import mydraw.exceptions.TxtIOException;
 
 public class Draw {
-    protected DrawGUI window;
-    protected DrawShape shape;
-    protected DrawSaveImage save;
-    protected DrawFunctions func;
+    public DrawGUI window;
+    public DrawShape shape;
+    public DrawSaveImage save;
+    public DrawFunctions func;
+    public DrawTextReader read;
+    public DrawTextWriter write;
 
     public static void main(String[] args) {
         new Draw();
@@ -199,5 +202,22 @@ public class Draw {
 
     public void redo() {
         func.redo();
+    }
+
+    public void readText(String filePath) throws TxtIOException, IOException {
+        try {
+            read.readText(filePath);
+        } catch (TxtIOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String writeText() throws TxtIOException {
+        try {
+            return write.writeText();
+        } catch (TxtIOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
