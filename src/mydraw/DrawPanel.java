@@ -4,6 +4,9 @@ import javax.swing.JPanel;
 
 import java.awt.*;
 
+/*
+ * This class implements a paint component, allowing us to differenciate on what has been drawn.
+ */
 public class DrawPanel extends JPanel {
 
     DrawGUI gui;

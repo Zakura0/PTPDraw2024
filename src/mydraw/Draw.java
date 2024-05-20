@@ -28,7 +28,7 @@ public class Draw {
 
     /**
      * API Method: gets the current window
-     * Return type: DrawGUI
+     * @return type: DrawGUI
      **/
     public DrawGUI getWindow() {
         return window;
@@ -36,7 +36,7 @@ public class Draw {
 
     /**
      * API Method: retrieves current height of the window
-     * Return type: int
+     * @return type: int
      **/
     public int getHeight() {
         return window.getHeight();
@@ -44,8 +44,8 @@ public class Draw {
 
     /**
      * API Method: sets current window height.
-     * Params: int height
-     * Throws a SizeException if the height is smaller than 400
+     * @param: int height
+     * @throws SizeException if the height is smaller than 400
      **/
     public void setHeight(int height) throws SizeException {
         window.setHeight(height);
@@ -53,7 +53,7 @@ public class Draw {
 
     /**
      * API Method: retrieves current width of the window
-     * Return type: int
+     * @return type: int
      **/
     public int getWidth() {
         return window.getWidth();
@@ -61,8 +61,8 @@ public class Draw {
 
     /**
      * API Method: sets current window width
-     * Params: int width
-     * Throws a SizeException if the width is smaller than 925 (due to MacOS
+     * @param int width
+     * @throws SizeException if the width is smaller than 925 (due to MacOS
      * incompability)
      **/
     public void setWidth(int width) throws SizeException {
@@ -71,9 +71,9 @@ public class Draw {
 
     /**
      * API Method: sets current foreground color.
-     * Params: String new_color
      * Available Colors: "black", "green", "red", "blue"
-     * Throws an ColorException if the color to be set is not recognized
+     * @throws ColorException if the color to be set is not recognized
+     * @param String new_color
      **/
     public void setFGColor(String new_color) throws ColorException {
         window.setFGColor(new_color);
@@ -81,7 +81,7 @@ public class Draw {
 
     /**
      * API Method: retrieves current foreground color
-     * Return type: String
+     * @return String
      **/
     public String getFGColor() {
         return window.getFGColor();
@@ -89,9 +89,9 @@ public class Draw {
 
     /**
      * API Method: sets current background color.
-     * Params: String new_color
      * Available Colors: "black", "green", "red", "blue", "white"
-     * Throws an ColorException if the color to be set is not recognized
+     * @param String new_color
+     * @throws ColorException if the color to be set is not recognized
      **/
     public void setBGColor(String new_color) throws ColorException {
         window.setBGColor(new_color);
@@ -99,7 +99,7 @@ public class Draw {
 
     /**
      * API Method: retrieves current background color
-     * Return type: String
+     * @return String
      **/
     public String getBGColor() {
         return window.getBGColor();
@@ -107,7 +107,7 @@ public class Draw {
 
     /**
      * API Method: retrieves the current drawing as a BufferedImage
-     * Return type: BufferedImage
+     * @return BufferedImage
      **/
     public Image getDrawing() {
         return window.getDrawing();
@@ -116,8 +116,9 @@ public class Draw {
     /**
      * API Method: saves an BufferedImage to a file and saves it under a given
      * name in the current directory.
-     * Params: Image img, String filename
-     * Throws an IOException if image cant be saved
+     * @param Image img, 
+     * @param String filename
+     * @throws IOException if image cant be saved
      **/
     public void writeImage(Image img, String filename) throws IOException {
         save.writeImage(img, filename);
@@ -126,16 +127,16 @@ public class Draw {
     /**
      * API Method: reads a file and gets the content of the BMP file as
      * a buffered image
-     * Returns: BufferedImage
-     * Throws an IOException if filename cant be found
+     * @return BufferedImage
+     * @throws IOException if filename cant be found
      **/
     public Image readImage(String filename) throws IOException {
         return save.readImage(filename);
     }
 
     /**
-     * API Method: clears the drawing pane and sets the color to the current
-     * bgColor
+     * API Method: clears the drawing pane by replacing it with a rectangle in the size of the front panel in the current fgColor.
+     * Also clears the command queue, not allowing any undo()'s.
      **/
     public void clear() {
         func.clear();
@@ -154,7 +155,8 @@ public class Draw {
      * API Method: draws a rectangle on the front panel and drawing panel, where two
      * points are used
      * to calculate the overall width and height of the rectangle
-     * Prams: Point upper_left, Point lower_right
+     * @param Point upper_left 
+     * @param Point lower_right
      **/
     public void drawRectangle(Point upper_left, Point lower_right) {
         shape.drawRectangle(upper_left, lower_right);
@@ -164,7 +166,8 @@ public class Draw {
      * API Method: draws a circle/ellipse on the front panel and drawing panel,
      * where two points are used
      * to calculate the overall width and height of the circle/ellipse
-     * Prams: Point upper_left, Point lower_right
+     * @param Point upper_left 
+     * @param Point lower_right
      **/
     public void drawOval(Point upper_left, Point lower_right) {
         shape.drawOval(upper_left, lower_right);
@@ -174,36 +177,68 @@ public class Draw {
      * API Method: draws a polyline on the front panel and drawing panel, where
      * multiple points are used
      * to draw lines from one point to another: e.g. p1 - p2 - p3
-     * Prams: List<Point> points
+     * @param List<Point> points
      **/
     public void drawPolyLine(java.util.List<Point> points) {
         shape.drawPolyLine(points);
     }
-
+    /**
+     * API Method: draws a triangle on the front panel and drawing panel, where two points are used
+     * to calculate the overall width and height of the rectangle
+     * @param Point upper_left 
+     * @param Point lower_right
+     */
     public void drawTriangle(Point upper_left, Point lower_right) {
         shape.drawTriangle(upper_left, lower_right);
     }
 
+    /**
+     * API Method: draws a rhombus on the front panel and drawing panel,
+     * where two points are used
+     * to calculate the overall width and height of the rhombus
+     * @param Point upper_left 
+     * @param Point lower_right
+     **/
     public void drawRhombus(Point upper_left, Point lower_right) {
         shape.drawRhombus(upper_left, lower_right);
     }
-
+    /**
+     * API Method: draws a filled rectangle with a the selected fgColor on the front panel and drawing panel,
+     * where two points are used
+     * to calculate the overall width and height of the rectangle
+     * @param Point upper_left 
+     * @param Point lower_right
+     **/
     public void drawFillRectangle(Point upper_left, Point lower_right) {
         shape.drawFillRectangle(upper_left, lower_right);
     }
-
+    /**
+     * API Method: draws a filled Oval with a the selected fgColor on the front panel and drawing panel,
+     * where two points are used
+     * to calculate the overall width and height of the Oval
+     * @param Point upper_left 
+     * @param Point lower_right
+     **/
     public void drawFillOval(Point upper_left, Point lower_right) {
         shape.drawFillOval(upper_left, lower_right);
     }
-
+    /*
+     * API Method: undo's the last graphic object in the command queue
+     */
     public void undo() {
         func.undo();
     }
-
+    /*
+     * API Method: redo's the last graphic object in the command queue
+     */
     public void redo() {
         func.redo();
     }
-
+    /*
+    * API Method: reads a .txt file containing command queue commands and draws
+    * the graphic objects on the front panel and drawing panel.
+    * @param String filePath
+    */
     public void readText(String filePath) throws TxtIOException, IOException {
         try {
             read.readText(filePath);
@@ -211,7 +246,10 @@ public class Draw {
             e.printStackTrace();
         }
     }
-
+    /*
+    * API Method: writes the comamnds in the command queue on a .txt file
+    * 
+    */
     public String writeText() throws TxtIOException {
         try {
             return write.writeText();

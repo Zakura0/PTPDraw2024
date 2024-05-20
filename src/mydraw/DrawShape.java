@@ -11,7 +11,9 @@ import mydraw.drawable.rectangleCommand;
 import mydraw.drawable.rhombusCommand;
 import mydraw.drawable.triangleCommand;
 
-
+/*
+ * This class implements all API-Methods that display shapes.
+ */
 public class DrawShape {
     
     DrawGUI gui;

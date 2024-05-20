@@ -3,6 +3,9 @@ package mydraw;
 import mydraw.drawable.Drawable;
 import mydraw.exceptions.TxtIOException;
 
+/*
+ * This class implements the function of saving the commands in the command queue in a .txt file
+ */
 public class DrawTextWriter {
 
     DrawGUI gui;

@@ -17,7 +17,10 @@ import mydraw.drawable.rhombusCommand;
 import mydraw.drawable.triangleCommand;
 import mydraw.exceptions.SizeException;
 import mydraw.exceptions.TxtIOException;
-
+/*
+ * this class implements the function of being able to read a given .txt file and displaying
+ * the given graphic objects.
+ */
 public class DrawTextReader {
 
 DrawGUI gui;

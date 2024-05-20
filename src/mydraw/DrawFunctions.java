@@ -9,7 +9,9 @@ import javax.swing.JOptionPane;
 import mydraw.exceptions.ColorException;
 
 
-
+/*
+ * This class implements technical aspects of the program, such as undo(), redo(), clear()..
+ */
 public class DrawFunctions {
 
     DrawGUI gui;
@@ -19,7 +21,6 @@ public class DrawFunctions {
         this.gui = gui;
         this.shape = shape;
     }
-
 
     public void clear() {
         int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to clear the drawing? \n This action is irreversible.", "Confirmation", JOptionPane.YES_NO_OPTION);

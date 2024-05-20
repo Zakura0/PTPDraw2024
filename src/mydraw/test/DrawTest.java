@@ -737,7 +737,7 @@ class DrawTest {
     void writeTextPositiveTest() throws TxtIOException {
         shape.drawRectangle(new Point(100, 100), new Point(200, 200));
 
-        String expectedCommand = "rectangle;100;100;200;200;-16777216\n";
+        String expectedCommand = "size;925;400;\nrectangle;100;100;200;200;-16777216\n";
         String actualCommand = write.writeText();
 
         assertEquals(expectedCommand, actualCommand);
