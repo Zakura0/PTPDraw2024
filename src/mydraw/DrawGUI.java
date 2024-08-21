@@ -286,6 +286,7 @@ public class DrawGUI extends JFrame {
             drawable.draw(g2);
         }
         g.dispose();
+        g2.dispose();
     }
 
     public String getFGColor() {
