@@ -23,6 +23,8 @@ public class Draw {
     public Draw() {
         window = new DrawGUI(this);
         shape = new DrawShape(window);
+        func = new DrawFunctions(window, shape);
+        save = new DrawSaveImage(window);
     }
 
     /**
@@ -137,17 +139,16 @@ public class Draw {
      * API Method: clears the drawing pane by replacing it with a rectangle in the size of the front panel in the current fgColor.
      * Also clears the command queue, not allowing any undo()'s.
      **/
-    public void clear(DrawFunctions func) {
+    public void clear() {
         func.clear(true);
     }
 
     /**
      * API Method: script, that draws different shapes automatically on
-     * the drawing pane. Saves them afterward as an BMP image.
+     * the drawing pane.
      **/
     public void autoDraw() {
         func.autoDraw();
-        // paint your testimage now using API methods
     }
 
     /**

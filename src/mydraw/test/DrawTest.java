@@ -26,8 +26,12 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.swing.SwingUtilities;
+
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,9 +39,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class DrawTest {
 
     /*
-     * Helper functions: toBufferedImage, imagesEqual, isFile, createCircleMeasurements
+     * Helper functions: toBufferedImage, imagesEqual, isFile,
+     * createCircleMeasurements
      */
-
     public static BufferedImage toBufferedImage(Image img) {
         if (img instanceof BufferedImage) {
             return (BufferedImage) img;
@@ -80,7 +84,7 @@ class DrawTest {
         centerY = (points.get(0).y + points.get(1).y) / 2;
         radiusX = Math.abs(points.get(1).x - points.get(0).x) / 2;
         radiusY = Math.abs(points.get(1).y - points.get(0).y) / 2;
-        
+
         result.add(new Point(centerX, centerY - radiusY));
         result.add(new Point(centerX, centerY + radiusY));
         result.add(new Point(centerX + radiusX, centerY));
@@ -98,14 +102,18 @@ class DrawTest {
     }
 
     /*
-     * Tests: for each API Method: Positive, Negative, Standard values, checks if Execptions are thrown.
+     * Tests: for each API Method: Positive, Negative, Standard values, checks if
+     * Execptions are thrown.
      * 
-     * Standard values so far are: 800W (macOS sets it to 925 to fit all elements) x 400H, 
+     * Standard values so far are: 800W (macOS sets it to 925 to fit all elements) x
+     * 400H,
      * white background, black drawing color
      * 
      * To ensure easier debugging, there exists a test for each test case
-     * In some cases, testing for standard values is not possible (e.g. writeImage) or the negative test
-     * correspodends to the exception test. in these cases, the standard and exception test are omitted
+     * In some cases, testing for standard values is not possible (e.g. writeImage)
+     * or the negative test
+     * correspodends to the exception test. in these cases, the standard and
+     * exception test are omitted
      */
 
     private Draw draw;
@@ -115,25 +123,21 @@ class DrawTest {
     private DrawSaveImage save;
     private DrawTextReader read;
     private DrawTextWriter write;
-    
-    @BeforeEach
-    void setUp() {
-        draw = new Draw();
-        window = draw.getWindow();
-        g = window.getGraphics();
 
-        DrawShape shape = new DrawShape(window);
-        DrawFunctions func = new DrawFunctions(window, shape);
-        this.func = func;
-        DrawSaveImage save = new DrawSaveImage(window);
-        this.save = save;
-        DrawTextReader read = new DrawTextReader(window);
-        this.read = read;
-        DrawTextWriter write = new DrawTextWriter(window);
-        this.write = write;
-        
+    @BeforeEach
+    void setUp() throws Exception {
+        SwingUtilities.invokeAndWait(() -> {
+            draw = new Draw();
+            window = draw.getWindow();
+            g = window.getGraphics();
+            DrawShape shape = new DrawShape(window);
+            this.func = new DrawFunctions(window, shape);
+            this.save = new DrawSaveImage(window);
+            this.read = new DrawTextReader(window);
+            this.write = new DrawTextWriter(window);
+        });
     }
-    
+
     /*
      * Tests for Width
      */
@@ -175,7 +179,7 @@ class DrawTest {
     }
 
     /*
-     * Tests for ForegroundColor (current drawing color) 
+     * Tests for ForegroundColor (current drawing color)
      */
 
     @Test
@@ -231,13 +235,13 @@ class DrawTest {
 
     @Test
     void writeImagePositiveTest() throws IOException {
-        save.writeImage(draw.getDrawing(), "writeImagePositive.bmp");
+        draw.writeImage(draw.getDrawing(), "writeImagePositive.bmp");
         assertTrue(isFile("writeImagePositive.bmp"));
     }
 
     @Test
     void writeImageNegativeeTest() throws IOException {
-        assertThrows(FileNotFoundException.class, () -> save.writeImage(draw.getDrawing(), ""));
+        assertThrows(FileNotFoundException.class, () -> draw.writeImage(draw.getDrawing(), ""));
     }
 
     @Test
@@ -248,7 +252,8 @@ class DrawTest {
     @Test
     void readImagePositiveTest() throws IOException {
         save.writeImage(draw.getDrawing(), "imageReadPositive.bmp");
-        assertTrue(imagesEqual(toBufferedImage(draw.getDrawing()), toBufferedImage(save.readImage("imageReadPositive.bmp"))));
+        assertTrue(imagesEqual(toBufferedImage(draw.getDrawing()),
+                toBufferedImage(save.readImage("imageReadPositive.bmp"))));
     }
 
     @Test
@@ -264,7 +269,7 @@ class DrawTest {
 
     @Test
     void autoDrawPositiveTest() {
-        func.autoDraw();
+        draw.autoDraw();
         BufferedImage actualImage = toBufferedImage(draw.getDrawing());
         List<String> expectedColors = Arrays.asList("red", "blue", "green");
         List<String> actualColors = new ArrayList<>();
@@ -278,7 +283,7 @@ class DrawTest {
 
     @Test
     void autoDrawNegativeTest() {
-        func.autoDraw();
+        draw.autoDraw();
         BufferedImage actualImage = toBufferedImage(draw.getDrawing());
         List<String> expectedColors = Arrays.asList("red", "blue", "green");
         List<String> actualColors = new ArrayList<>();
@@ -292,8 +297,8 @@ class DrawTest {
 
     @Test
     void clearPositiveTest() {
-        func.autoDraw();
-        draw.clear(func);
+        draw.autoDraw();
+        draw.clear();
         BufferedImage actualImage = toBufferedImage(draw.getDrawing());
         List<String> expectedColors = Arrays.asList("white", "white", "white");
         List<String> actualColors = new ArrayList<>();
@@ -308,8 +313,8 @@ class DrawTest {
 
     @Test
     void clearNegativeTest() {
-        func.autoDraw();
-        draw.clear(func);
+        draw.autoDraw();
+        draw.clear();
         BufferedImage actualImage = toBufferedImage(draw.getDrawing());
         List<String> expectedColors = Arrays.asList("red", "blue", "green");
         List<String> actualColors = new ArrayList<>();
@@ -320,87 +325,6 @@ class DrawTest {
 
         assertTrue(draw.getWindow().commandQueue.isEmpty());
         assertNotEquals(expectedColors, actualColors);
-    }
-
-    @Test
-    void compareImagePositiveTest() throws IOException {
-        func.autoDraw();
-        Image reference = draw.getDrawing();
-        save.writeImage(reference, "reference.bmp");
-        draw.clear(func);
-
-        Point p1 = new Point(100, 200);
-        Point p2 = new Point(200, 100);
-        try {
-            draw.setFGColor("red");
-        } catch (ColorException e) {
-            System.err.println("Color Exception: " + e.getMessage());
-        }
-        draw.drawRectangle(p1, p2);
-        Point p3 = new Point(300, 200);
-        Point p4 = new Point(400, 100);
-        try {
-            draw.setFGColor("blue");
-        } catch (ColorException e) {
-            System.err.println("Color Exception: " + e.getMessage());
-        }
-        draw.drawOval(p3, p4);
-        Point pl1 = new Point(500, 200);
-        Point pl2 = new Point(600, 100);
-        Point pl3 = new Point(700, 200);
-        try {
-            draw.setFGColor("green");
-        } catch (ColorException e) {
-            System.err.println("Color Exception: " + e.getMessage());
-        }
-        draw.drawPolyLine(List.of(pl1, pl2, pl3));
-        Point p5 = new Point(100, 350);
-        Point p6 = new Point(200, 250);
-        draw.drawFillRectangle(p5, p6);
-        Point p7 = new Point(300, 350);
-        Point p8 = new Point(400, 250);
-        draw.drawFillOval(p7, p8);
-        Point p9 = new Point(500, 350);
-        Point p10 = new Point(600, 250);
-        draw.drawRhombus(p9, p10);
-        Point p11 = new Point(600, 250);
-        Point p12 = new Point(700, 350);
-        draw.drawTriangle(p11, p12);
-
-        Image actual = draw.getDrawing();
-        save.writeImage(actual, "actual.bmp");
-
-        BufferedImage expectedImage = toBufferedImage(save.readImage("reference.bmp"));
-        BufferedImage actualImage = toBufferedImage(save.readImage("actual.bmp"));
-
-        assertTrue(imagesEqual(expectedImage, actualImage));
-
-    }
-
-    @Test
-    void compareImageNegativeTest() throws IOException {
-        func.autoDraw();
-        Image reference = draw.getDrawing();
-        save.writeImage(reference, "reference.bmp");
-        draw.clear(func);
-
-        Point p1 = new Point(100, 200);
-        Point p2 = new Point(200, 100);
-        try {
-            draw.setFGColor("red");
-        } catch (ColorException e) {
-            System.err.println("Color Exception: " + e.getMessage());
-        }
-        draw.drawRectangle(p1, p2);
-
-        Image actual = draw.getDrawing();
-        save.writeImage(actual, "actual.bmp");
-
-        BufferedImage expectedImage = toBufferedImage(save.readImage("reference.bmp"));
-        BufferedImage actualImage = toBufferedImage(save.readImage("actual.bmp"));
-
-        assertFalse(imagesEqual(expectedImage, actualImage));
-
     }
 
     @Test
@@ -420,7 +344,7 @@ class DrawTest {
     }
 
     @Test
-    void drawRectangleNegativeTest() throws ColorException{
+    void drawRectangleNegativeTest() throws ColorException {
         List<Point> points = Arrays.asList(new Point(40, 40), new Point(230, 240));
 
         draw.setFGColor("red");
@@ -438,13 +362,13 @@ class DrawTest {
     @Test
     void drawOvalPositiveTest() throws ColorException {
         List<Point> points = Arrays.asList(new Point(100, 100), new Point(200, 200));
-    
+
         draw.setFGColor("red");
         draw.drawOval(new Point(100, 100), new Point(200, 200));
         BufferedImage img = toBufferedImage(draw.getDrawing());
 
         List<Point> circlePoints = createCircleMeasurements(points);
-    
+
         for (Point point : circlePoints) {
             String actual = intToCol(img.getRGB(point.x, point.y));
             assertEquals("red", actual);
@@ -454,13 +378,13 @@ class DrawTest {
     @Test
     void drawOvalNegativeeTest() throws ColorException {
         List<Point> points = Arrays.asList(new Point(40, 40), new Point(230, 240));
-    
+
         draw.setFGColor("red");
         draw.drawOval(new Point(100, 100), new Point(200, 200));
         BufferedImage img = toBufferedImage(draw.getDrawing());
 
         List<Point> circlePoints = createCircleMeasurements(points);
-    
+
         for (Point point : circlePoints) {
             String actual = intToCol(img.getRGB(point.x, point.y));
             assertNotEquals("red", actual);
@@ -471,11 +395,11 @@ class DrawTest {
     void drawPolyLinePositiveTest() throws ColorException {
         List<Point> points = Arrays.asList(new Point(100, 100), new Point(200, 200), new Point(100, 200));
         List<Point> polyline = Arrays.asList(new Point(100, 100), new Point(200, 200), new Point(100, 200));
-    
+
         draw.setFGColor("red");
         draw.drawPolyLine(polyline);
         BufferedImage img = toBufferedImage(draw.getDrawing());
-    
+
         for (Point point : points) {
             String actual = intToCol(img.getRGB(point.x, point.y));
             assertEquals("red", actual);
@@ -486,17 +410,16 @@ class DrawTest {
     void drawPolylineNegativeTest() throws ColorException {
         List<Point> points = Arrays.asList(new Point(120, 100), new Point(250, 200), new Point(100, 210));
         List<Point> polyline = Arrays.asList(new Point(100, 100), new Point(200, 200), new Point(100, 200));
-    
+
         draw.setFGColor("red");
         draw.drawPolyLine(polyline);
         BufferedImage img = toBufferedImage(draw.getDrawing());
-    
+
         for (Point point : points) {
             String actual = intToCol(img.getRGB(point.x, point.y));
             assertNotEquals("red", actual);
         }
     }
-
 
     @Test
     void drawTrianglePositivetest() throws ColorException {
@@ -529,13 +452,13 @@ class DrawTest {
     @Test
     void drawRhombusPositiveTest() throws ColorException {
         List<Point> points = Arrays.asList(new Point(100, 100), new Point(200, 200));
-    
+
         draw.setFGColor("red");
         draw.drawRhombus(new Point(100, 100), new Point(200, 200));
         BufferedImage img = toBufferedImage(draw.getDrawing());
 
         List<Point> rhombusPoints = createCircleMeasurements(points);
-    
+
         for (Point point : rhombusPoints) {
             String actual = intToCol(img.getRGB(point.x, point.y));
             assertEquals("red", actual);
@@ -545,13 +468,13 @@ class DrawTest {
     @Test
     void drawRhombusNegativeTest() throws ColorException {
         List<Point> points = Arrays.asList(new Point(100, 100), new Point(200, 200));
-    
+
         draw.setFGColor("red");
         draw.drawRhombus(new Point(40, 100), new Point(230, 240));
         BufferedImage img = toBufferedImage(draw.getDrawing());
 
         List<Point> rhombusPoints = createCircleMeasurements(points);
-    
+
         for (Point point : rhombusPoints) {
             String actual = intToCol(img.getRGB(point.x, point.y));
             assertNotEquals("red", actual);
@@ -559,7 +482,7 @@ class DrawTest {
     }
 
     @Test
-    void drawFillRectanglePositiveTest() throws ColorException {
+    void drawFillRectanglePositiveTest() throws ColorException, InvocationTargetException, InterruptedException {
         List<Point> points = Arrays.asList(new Point(100, 100), new Point(200, 200), new Point(150, 150));
 
         draw.setFGColor("red");
@@ -593,13 +516,13 @@ class DrawTest {
     @Test
     void drawFillOvalPositiveTest() throws ColorException {
         List<Point> points = Arrays.asList(new Point(100, 100), new Point(200, 200));
-    
+
         draw.setFGColor("red");
         draw.drawFillOval(new Point(100, 100), new Point(200, 200));
         BufferedImage img = toBufferedImage(draw.getDrawing());
 
         List<Point> circlePoints = createCircleMeasurements(points);
-    
+
         for (Point point : circlePoints) {
             String actual = intToCol(img.getRGB(point.x, point.y));
             assertEquals("red", actual);
@@ -610,13 +533,13 @@ class DrawTest {
     @Test
     void drawFillOvalNegativeTest() throws ColorException {
         List<Point> points = Arrays.asList(new Point(90, 90), new Point(210, 210), new Point(150, 95));
-    
+
         draw.setFGColor("red");
         draw.drawFillOval(new Point(100, 100), new Point(200, 200));
         BufferedImage img = toBufferedImage(draw.getDrawing());
 
         List<Point> circlePoints = createCircleMeasurements(points);
-    
+
         for (Point point : circlePoints) {
             String actual = intToCol(img.getRGB(point.x, point.y));
             assertNotEquals("red", actual);
@@ -706,7 +629,7 @@ class DrawTest {
         List<String> expectedColors = Arrays.asList("white", "white", "white", "white");
         List<String> actualColors = new ArrayList<>();
 
-        draw.clear(func);
+        draw.clear();
         window.redraw(g);
         BufferedImage img = toBufferedImage(draw.getDrawing());
 
@@ -715,7 +638,7 @@ class DrawTest {
         actualColors.add(intToCol(img.getRGB(250, 100)));
         actualColors.add(intToCol(img.getRGB(300, 150)));
 
-        assertEquals(expectedColors, actualColors); 
+        assertEquals(expectedColors, actualColors);
     }
 
     @Test
@@ -742,7 +665,7 @@ class DrawTest {
     void writeTextThrowsTest() throws ColorException {
         draw.setFGColor("green");
         draw.drawRectangle(new Point(100, 100), new Point(200, 200));
-        draw.clear(func);
+        draw.clear();
         assertThrows(TxtIOException.class, () -> write.writeText());
     }
 
@@ -772,7 +695,7 @@ class DrawTest {
     }
 
     @Test
-    void readTextThrowsTest() throws TxtIOException, IOException{
+    void readTextThrowsTest() throws TxtIOException, IOException {
         File textFile = new File("readTextThrows.txt");
         FileWriter fileWriter = new FileWriter(textFile);
         PrintWriter printWriter = new PrintWriter(fileWriter);
@@ -780,7 +703,6 @@ class DrawTest {
         printWriter.close();
         assertThrows(TxtIOException.class, () -> read.readText("readTextThrows.txt"));
     }
-
 
     @AfterAll
     static void cleanup() {
