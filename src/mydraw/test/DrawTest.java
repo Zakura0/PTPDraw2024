@@ -96,12 +96,7 @@ class DrawTest {
         int green = (pixel & 0x00ff00) >> 8;
         int blue = pixel & 0x0000ff;
         Color col = new Color(red, green, blue);
-        for (String key : draw.getWindow().colors.keySet()) {
-            if (draw.getWindow().colors.get(key).equals(col)) {
-                return key;
-            }
-        }
-        return null;
+        return DrawGUI.getKeyByValue(col);
     }
 
     /*
