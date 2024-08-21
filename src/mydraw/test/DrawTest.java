@@ -186,7 +186,7 @@ class DrawTest {
 
     @Test
     void FGColorNegativeTest() throws ColorException {
-        assertThrows(ColorException.class, () -> draw.setFGColor("yellow"));
+        assertThrows(ColorException.class, () -> draw.setFGColor("colorful"));
     }
 
     @Test
@@ -206,7 +206,7 @@ class DrawTest {
 
     @Test
     void BGColorNegativeTest() throws ColorException {
-        assertThrows(ColorException.class, () -> draw.setFGColor("yellow"));
+        assertThrows(ColorException.class, () -> draw.setFGColor("colorful"));
     }
 
     @Test
@@ -293,7 +293,7 @@ class DrawTest {
     @Test
     void clearPositiveTest() {
         func.autoDraw();
-        draw.getWindow().clearHelper();
+        draw.clear(func);
         BufferedImage actualImage = toBufferedImage(draw.getDrawing());
         List<String> expectedColors = Arrays.asList("white", "white", "white");
         List<String> actualColors = new ArrayList<>();
@@ -309,7 +309,7 @@ class DrawTest {
     @Test
     void clearNegativeTest() {
         func.autoDraw();
-        draw.getWindow().clearHelper();
+        draw.clear(func);
         BufferedImage actualImage = toBufferedImage(draw.getDrawing());
         List<String> expectedColors = Arrays.asList("red", "blue", "green");
         List<String> actualColors = new ArrayList<>();
@@ -327,7 +327,7 @@ class DrawTest {
         func.autoDraw();
         Image reference = draw.getDrawing();
         save.writeImage(reference, "reference.bmp");
-        draw.getWindow().clearHelper();
+        draw.clear(func);
 
         Point p1 = new Point(100, 200);
         Point p2 = new Point(200, 100);
@@ -382,7 +382,7 @@ class DrawTest {
         func.autoDraw();
         Image reference = draw.getDrawing();
         save.writeImage(reference, "reference.bmp");
-        draw.getWindow().clearHelper();
+        draw.clear(func);
 
         Point p1 = new Point(100, 200);
         Point p2 = new Point(200, 100);
@@ -706,7 +706,7 @@ class DrawTest {
         List<String> expectedColors = Arrays.asList("white", "white", "white", "white");
         List<String> actualColors = new ArrayList<>();
 
-        draw.getWindow().clearHelper();
+        draw.clear(func);
         window.redraw(g);
         BufferedImage img = toBufferedImage(draw.getDrawing());
 

@@ -398,21 +398,4 @@ public class DrawGUI extends JFrame {
         }
         return "black"; // Falls kein Key gefunden wird
     }
-    /*
-     * Helper Method: used to test clear without mocking the user confirmation
-     * (assuming the user agreed for all test cases)
-     */
-
-    public void clearHelper() {
-        commandQueue.clear();
-        Graphics g = frontPanel.getGraphics();
-        g.setColor(bgColor);
-        g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
-        g.dispose();
-
-        Graphics g2 = buffImage.getGraphics();
-        g2.setColor(bgColor);
-        g2.fillRect(0, 0, buffImage.getWidth(), buffImage.getHeight());
-        g2.dispose();
-    }
 }
