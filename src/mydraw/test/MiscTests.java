@@ -4,17 +4,9 @@ package mydraw.test;
  */
 
 import mydraw.Draw;
-import mydraw.DrawFunctions;
 import mydraw.DrawGUI;
 import mydraw.DrawSaveImage;
-import mydraw.DrawShape;
-import mydraw.DrawTextReader;
-import mydraw.DrawTextWriter;
-import mydraw.drawable.Drawable;
 import mydraw.exceptions.ColorException;
-import mydraw.exceptions.SizeException;
-import mydraw.exceptions.TxtIOException;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,16 +14,10 @@ import org.junit.jupiter.api.Test;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.SwingUtilities;
-
-import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 /*
@@ -82,16 +68,16 @@ public class MiscTests {
         SwingUtilities.invokeAndWait(() -> {
             draw = new Draw();
             window = draw.getWindow();
-            DrawShape shape = new DrawShape(window);
             this.save = new DrawSaveImage(window);
         });
     }
 
     @Test
-    void compareImagePositiveTest() throws IOException {
+    void compareImagePositiveTest() throws IOException, InterruptedException {
         draw.autoDraw();
         Image reference = draw.getDrawing();
         save.writeImage(reference, "reference.bmp");
+        Thread.sleep(1000);
         draw.clear();
 
         Point p1 = new Point(100, 200);
@@ -134,6 +120,7 @@ public class MiscTests {
 
         Image actual = draw.getDrawing();
         save.writeImage(actual, "actual.bmp");
+        Thread.sleep(1000);
 
         BufferedImage expectedImage = toBufferedImage(save.readImage("reference.bmp"));
         BufferedImage actualImage = toBufferedImage(save.readImage("actual.bmp"));
