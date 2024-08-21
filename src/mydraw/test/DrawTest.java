@@ -302,7 +302,7 @@ class DrawTest {
     @Test
     void clearPositiveTest() {
         func.autoDraw();
-        draw.clear(func);
+        draw.getWindow().clearHelper();
         BufferedImage actualImage = toBufferedImage(draw.getDrawing());
         List<String> expectedColors = Arrays.asList("white", "white", "white");
         List<String> actualColors = new ArrayList<>();
@@ -318,7 +318,7 @@ class DrawTest {
     @Test
     void clearNegativeTest() {
         func.autoDraw();
-        draw.clear(func);
+        draw.getWindow().clearHelper();
         BufferedImage actualImage = toBufferedImage(draw.getDrawing());
         List<String> expectedColors = Arrays.asList("red", "blue", "green");
         List<String> actualColors = new ArrayList<>();
@@ -336,7 +336,7 @@ class DrawTest {
         func.autoDraw();
         Image reference = draw.getDrawing();
         save.writeImage(reference, "reference.bmp");
-        draw.clear(func);
+        draw.getWindow().clearHelper();
 
         Point p1 = new Point(100, 200);
         Point p2 = new Point(200, 100);
@@ -391,7 +391,7 @@ class DrawTest {
         func.autoDraw();
         Image reference = draw.getDrawing();
         save.writeImage(reference, "reference.bmp");
-        draw.clear(func);
+        draw.getWindow().clearHelper();
 
         Point p1 = new Point(100, 200);
         Point p2 = new Point(200, 100);
@@ -680,7 +680,7 @@ class DrawTest {
         draw.setFGColor("red");
         shape.drawRectangle(new Point(100, 100), new Point(200, 200));
         shape.drawOval(new Point(200, 100), new Point(300, 200));
-        draw.clear(func);
+        draw.getWindow().clearHelper();
         window.commandQueue.add(new rectangleCommand(100, 100, 200, 200, Color.RED));
         window.commandQueue.add(new ovalCommand(200, 100, 300, 200, Color.RED));
         window.redraw(g);
@@ -702,7 +702,7 @@ class DrawTest {
         draw.setFGColor("red");
         shape.drawRectangle(new Point(100, 100), new Point(200, 200));
         shape.drawOval(new Point(200, 100), new Point(300, 200));
-        draw.clear(func);
+        draw.getWindow().clearHelper();
         window.commandQueue.add(new rectangleCommand(100, 100, 200, 200, Color.GREEN));
         window.commandQueue.add(new ovalCommand(200, 100, 300, 200, Color.GREEN));
         window.redraw(g);
@@ -721,7 +721,7 @@ class DrawTest {
         List<String> expectedColors = Arrays.asList("white", "white", "white", "white");
         List<String> actualColors = new ArrayList<>();
 
-        draw.clear(func);
+        draw.getWindow().clearHelper();
         window.redraw(g);
         BufferedImage img = toBufferedImage(draw.getDrawing());
 
@@ -737,7 +737,7 @@ class DrawTest {
     void writeTextPositiveTest() throws TxtIOException {
         shape.drawRectangle(new Point(100, 100), new Point(200, 200));
 
-        String expectedCommand = "size;800;400;\nrectangle;100;100;200;200;-16777216\n";
+        String expectedCommand = "size;800;400;\nrectangle;100;100;200;200;black\n";
         String actualCommand = write.writeText();
 
         assertEquals(expectedCommand, actualCommand);
@@ -747,7 +747,7 @@ class DrawTest {
     void writeTextNegativeTest() throws TxtIOException {
         shape.drawOval(new Point(100, 100), new Point(200, 200));
 
-        String expectedCommand = "rectangle;100;100;200;200;-16777216\n";
+        String expectedCommand = "rectangle;100;100;200;200;black\n";
         String actualCommand = write.writeText();
 
         assertNotEquals(expectedCommand, actualCommand);

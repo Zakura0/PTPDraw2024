@@ -21,7 +21,6 @@ import mydraw.exceptions.*;
 import mydraw.drawable.*;
 import mydraw.listener.*;
 
-
 /*
  * @authors Giahung Bui 7557640 , Ben Woller 7740402, Simon Kazemi 7621942
  */
@@ -187,7 +186,9 @@ public class DrawGUI extends JFrame {
 
     public void doCommand(String command) {
         if (command.equals("clear")) {
-            int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to clear the drawing? \n This action is irreversible.", "Confirmation", JOptionPane.YES_NO_OPTION);
+            int dialogResult = JOptionPane.showConfirmDialog(null,
+                    "Are you sure you want to clear the drawing? \n This action is irreversible.", "Confirmation",
+                    JOptionPane.YES_NO_OPTION);
             boolean dialogResultBool = dialogResult == JOptionPane.YES_OPTION;
             func.clear(dialogResultBool);
         } else if (command.equals("quit")) {
@@ -206,7 +207,7 @@ public class DrawGUI extends JFrame {
                 openSaveText();
             } catch (IOException | TxtIOException e) {
                 e.printStackTrace();
-            } 
+            }
         } else if (command.equals("read text")) {
             try {
                 openReadText();
@@ -256,7 +257,7 @@ public class DrawGUI extends JFrame {
         }
     }
 
-    private void openReadText() throws TxtIOException{
+    private void openReadText() throws TxtIOException {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Open Text");
         fileChooser.setFileFilter(new FileNameExtensionFilter("Textfile (*.txt)", "txt"));
@@ -286,7 +287,6 @@ public class DrawGUI extends JFrame {
         }
         g.dispose();
     }
-
 
     public String getFGColor() {
         for (String key : colors.keySet()) {
@@ -350,7 +350,6 @@ public class DrawGUI extends JFrame {
         return null;
     }
 
-
     /**
      * API Method: retrieves the current drawing as a BufferedImage
      * Return type: BufferedImage
@@ -360,11 +359,9 @@ public class DrawGUI extends JFrame {
         return this.buffImage;
     }
 
-
     public DrawPanel getDrawPanel() {
         return frontPanel;
     }
-
 
     /**
      * Helper Method: Sets up a BufferedImage to save the drawings on an extra pane
@@ -378,11 +375,28 @@ public class DrawGUI extends JFrame {
     }
 
     public static String getKeyByValue(Color value) {
-    for (Map.Entry<String, Color> entry : colors.entrySet()) {
-        if (entry.getValue().equals(value)) {
-            return entry.getKey();
+        for (Map.Entry<String, Color> entry : colors.entrySet()) {
+            if (entry.getValue().equals(value)) {
+                return entry.getKey();
+            }
         }
+        return "black"; // Falls kein Key gefunden wird
     }
-    return "black"; // Falls kein Key gefunden wird
-}
+    /*
+     * Helper Method: used to test clear without mocking the user confirmation
+     * (assuming the user agreed for all test cases)
+     */
+
+    public void clearHelper() {
+        commandQueue.clear();
+        Graphics g = frontPanel.getGraphics();
+        g.setColor(bgColor);
+        g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
+        g.dispose();
+
+        Graphics g2 = buffImage.getGraphics();
+        g2.setColor(bgColor);
+        g2.fillRect(0, 0, buffImage.getWidth(), buffImage.getHeight());
+        g2.dispose();
+    }
 }
