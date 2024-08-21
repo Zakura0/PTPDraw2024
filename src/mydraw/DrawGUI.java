@@ -64,6 +64,11 @@ public class DrawGUI extends JFrame {
         colors.put("red", Color.RED);
         colors.put("blue", Color.BLUE);
         colors.put("white", Color.WHITE);
+        colors.put("yellow", Color.YELLOW);
+        colors.put("orange", Color.ORANGE);
+        colors.put("pink", Color.PINK);
+        colors.put("cyan", Color.CYAN);
+        colors.put("magenta", Color.MAGENTA);
         fgColor = Color.BLACK;
         bgColor = Color.WHITE;
         commandQueue = new ArrayList<>();
@@ -98,6 +103,11 @@ public class DrawGUI extends JFrame {
         color_chooser.addItem("Green");
         color_chooser.addItem("Red");
         color_chooser.addItem("Blue");
+        color_chooser.addItem("Yellow");
+        color_chooser.addItem("Orange");
+        color_chooser.addItem("Pink");
+        color_chooser.addItem("Cyan");
+        color_chooser.addItem("Magenta");
 
         JComboBox<String> bgColor_chooser = new JComboBox<>();
         bgColor_chooser.addItem("White");
@@ -105,6 +115,11 @@ public class DrawGUI extends JFrame {
         bgColor_chooser.addItem("Green");
         bgColor_chooser.addItem("Red");
         bgColor_chooser.addItem("Blue");
+        bgColor_chooser.addItem("Yellow");
+        bgColor_chooser.addItem("Orange");
+        bgColor_chooser.addItem("Pink");
+        bgColor_chooser.addItem("Cyan");
+        bgColor_chooser.addItem("Magenta");
 
         // Create three buttons
         JButton clear = new JButton("Clear");
