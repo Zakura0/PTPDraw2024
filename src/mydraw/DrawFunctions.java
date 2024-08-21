@@ -4,8 +4,6 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.util.List;
 
-import javax.swing.JOptionPane;
-
 import mydraw.exceptions.ColorException;
 
 
@@ -22,9 +20,8 @@ public class DrawFunctions {
         this.shape = shape;
     }
 
-    public void clear() {
-        int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to clear the drawing? \n This action is irreversible.", "Confirmation", JOptionPane.YES_NO_OPTION);
-        if (dialogResult == JOptionPane.YES_OPTION) {
+    public void clear(boolean dialogResult) {
+        if (dialogResult) {
             gui.commandQueue.clear();
             Graphics g = gui.frontPanel.getGraphics();
             g.setColor(gui.bgColor);
@@ -57,6 +54,7 @@ public class DrawFunctions {
     }
 
     public void autoDraw() {
+        String currentColor = gui.getFGColor();
         Point p1 = new Point(100, 200);
         Point p2 = new Point(200, 100);
         try {
@@ -94,6 +92,11 @@ public class DrawFunctions {
         Point p11 = new Point(600, 250);
         Point p12 = new Point(700, 350);
         shape.drawTriangle(p11, p12);
+        try {
+            gui.setFGColor(currentColor);
+        } catch (ColorException e) {
+            System.err.println("Color Exception: " + e.getMessage());
+        }
     }
     
 

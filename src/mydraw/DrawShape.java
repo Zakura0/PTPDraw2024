@@ -37,7 +37,7 @@ public class DrawShape {
         g2.setColor(gui.fgColor);
         g2.drawRect(x, y, width, height);
         g2.dispose();
-        gui.commandQueue.add(new rectangleCommand(gui, upper_left.x, upper_left.y, lower_right.x, lower_right.y, gui.fgColor));
+        gui.commandQueue.add(new rectangleCommand(upper_left.x, upper_left.y, lower_right.x, lower_right.y, gui.fgColor));
     }
 
     public void drawOval(Point upper_left, Point lower_right) {
@@ -55,7 +55,7 @@ public class DrawShape {
         g2.setColor(gui.fgColor);
         g2.drawOval(x, y, width, height);
         g2.dispose();
-        gui.commandQueue.add(new ovalCommand(gui, upper_left.x, upper_left.y, lower_right.x, lower_right.y, gui.fgColor));
+        gui.commandQueue.add(new ovalCommand(upper_left.x, upper_left.y, lower_right.x, lower_right.y, gui.fgColor));
     }
 
     public void drawPolyLine(java.util.List<Point> points) {
@@ -75,7 +75,7 @@ public class DrawShape {
         }
         g.dispose();
         g2.dispose();
-        gui.commandQueue.add(new polyLineCommand(gui, gui.fgColor, points));
+        gui.commandQueue.add(new polyLineCommand(gui.fgColor, points));
     }
 
     public void drawTriangle(Point upper_left, Point lower_right) {
@@ -92,7 +92,7 @@ public class DrawShape {
         g2.drawLine(upper_left.x, lower_right.y, lower_right.x, lower_right.y);
         g2.drawLine(upper_left.x, lower_right.y, (lower_right.x + upper_left.x) / 2, upper_left.y);
         g2.dispose();
-        gui.commandQueue.add(new triangleCommand(gui, upper_left.x, upper_left.y, lower_right.x, lower_right.y, gui.fgColor));
+        gui.commandQueue.add(new triangleCommand(upper_left.x, upper_left.y, lower_right.x, lower_right.y, gui.fgColor));
     }
 
     public void drawRhombus(Point upper_left, Point lower_right) {
@@ -115,7 +115,7 @@ public class DrawShape {
                 (upper_left.y + lower_right.y) / 2);
         g2.drawLine(upper_left.x, (upper_left.y + lower_right.y) / 2, (upper_left.x + lower_right.x) / 2, upper_left.y);
         g2.dispose();
-        gui.commandQueue.add(new rhombusCommand(gui, upper_left.x, upper_left.y, lower_right.x, lower_right.y, gui.fgColor));
+        gui.commandQueue.add(new rhombusCommand(upper_left.x, upper_left.y, lower_right.x, lower_right.y, gui.fgColor));
     }
 
     public void drawFillRectangle(Point upper_left, Point lower_right) {
@@ -135,7 +135,7 @@ public class DrawShape {
         g2.drawRect(x, y, width, height);
         g2.fillRect(x, y, width, height);
         g2.dispose();
-        gui.commandQueue.add(new fillrectangleCommand(gui, upper_left.x, upper_left.y, lower_right.x, lower_right.y, gui.fgColor));
+        gui.commandQueue.add(new fillrectangleCommand(upper_left.x, upper_left.y, lower_right.x, lower_right.y, gui.fgColor));
     }
 
     public void drawFillOval(Point upper_left, Point lower_right) {
@@ -155,7 +155,7 @@ public class DrawShape {
         g2.drawOval(x, y, width, height);
         g2.fillOval(x, y, width, height);
         g2.dispose();
-        gui.commandQueue.add(new fillovalCommand(gui, upper_left.x, upper_left.y, lower_right.x, lower_right.y, gui.fgColor));
+        gui.commandQueue.add(new fillovalCommand(upper_left.x, upper_left.y, lower_right.x, lower_right.y, gui.fgColor));
     }
 
 

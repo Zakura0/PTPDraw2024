@@ -7,12 +7,10 @@ import mydraw.DrawGUI;
 
 public class fillrectangleCommand implements Drawable {
 
-int x0, y0, x1, y1;
-DrawGUI window;
-Color color;
+private int x0, y0, x1, y1;
+private Color color;
 
-public fillrectangleCommand(DrawGUI window, int x0, int y0, int x1, int y1, Color color) {
-    this.window = window;
+public fillrectangleCommand(int x0, int y0, int x1, int y1, Color color) {
     this.x0 = x0;
     this.y0 = y0;
     this.x1 = x1;
@@ -32,6 +30,7 @@ public fillrectangleCommand(DrawGUI window, int x0, int y0, int x1, int y1, Colo
 
     @Override
     public String toString(){
-        return "fillrectangle;" + x0 + ";" + y0 + ";" + x1 + ";" + y1 + ";" + color.getRGB();
+        String stringColor = DrawGUI.getKeyByValue(color);
+        return "fillrectangle;" + x0 + ";" + y0 + ";" + x1 + ";" + y1 + ";" + stringColor;
     }
 }

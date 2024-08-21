@@ -1,6 +1,8 @@
 package mydraw;
 
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -11,6 +13,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -30,7 +33,7 @@ public class DrawGUI extends JFrame {
     DrawPanel frontPanel; // A reference to the GUI panel
     JPanel backPanel; // A reference to the Control panel
     BufferedImage buffImage; // A reference to the drawing panel (used to save the drawing)
-    public Hashtable<String, Color> colors;
+    public static Hashtable<String, Color> colors;
     public List<Drawable> commandQueue;
     public List<Drawable> undoStack;
     public DrawShape shape;
@@ -165,6 +168,13 @@ public class DrawGUI extends JFrame {
             }
         });
 
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                redraw(frontPanel.getGraphics());
+            }
+        });
+
         // Finally, set the size of the window, and pop it up
         this.frontPanel.setPreferredSize(new Dimension(800, 400));
         this.pack();
@@ -177,7 +187,9 @@ public class DrawGUI extends JFrame {
 
     public void doCommand(String command) {
         if (command.equals("clear")) {
-            func.clear();
+            int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to clear the drawing? \n This action is irreversible.", "Confirmation", JOptionPane.YES_NO_OPTION);
+            boolean dialogResultBool = dialogResult == JOptionPane.YES_OPTION;
+            func.clear(dialogResultBool);
         } else if (command.equals("quit")) {
             this.dispose();
             System.exit(0);
@@ -224,7 +236,7 @@ public class DrawGUI extends JFrame {
         }
     }
 
-    private void openSaveText() throws TxtIOException, IOException {
+    public void openSaveText() throws TxtIOException, IOException {
         String drawingData = write.writeText();
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Save Text");
@@ -303,8 +315,8 @@ public class DrawGUI extends JFrame {
     }
 
     public void setWidth(int width) throws SizeException {
-        if (width < 925) {
-            throw new SizeException("Width must be at least 925 pixels.");
+        if (width < 800) {
+            throw new SizeException("Width must be at least 800 pixels.");
         }
         this.frontPanel.setPreferredSize(new Dimension(width, getHeight()));
         this.pack();
@@ -313,7 +325,7 @@ public class DrawGUI extends JFrame {
 
     public void setHeight(int height) throws SizeException {
         if (height < 400) {
-            throw new SizeException("Height must be at least 70 pixels.");
+            throw new SizeException("Height must be at least 400 pixels.");
         }
         this.frontPanel.setPreferredSize(new Dimension(getWidth(), height));
         this.pack();
@@ -365,21 +377,12 @@ public class DrawGUI extends JFrame {
         g.dispose();
     }
 
-    /*
-     * Helper Method: used to test clear without mocking the user confirmation
-     * (assuming the user agreed for all test cases)
-     */
-
-    public void clearHelper() {
-        commandQueue.clear();
-        Graphics g = frontPanel.getGraphics();
-        g.setColor(bgColor);
-        g.fillRect(0, 0, frontPanel.getWidth(), frontPanel.getHeight());
-        g.dispose();
-
-        Graphics g2 = buffImage.getGraphics();
-        g2.setColor(bgColor);
-        g2.fillRect(0, 0, buffImage.getWidth(), buffImage.getHeight());
-        g2.dispose();
+    public static String getKeyByValue(Color value) {
+    for (Map.Entry<String, Color> entry : colors.entrySet()) {
+        if (entry.getValue().equals(value)) {
+            return entry.getKey();
+        }
     }
+    return "black"; // Falls kein Key gefunden wird
+}
 }

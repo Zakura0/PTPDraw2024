@@ -9,12 +9,10 @@ import mydraw.DrawGUI;
 
 public class polyLineCommand implements Drawable {
 
-DrawGUI window;
-List<Point> points;
-Color color;
+private List<Point> points;
+private Color color;
 
-public polyLineCommand(DrawGUI window, Color color, List<Point> points){
-    this.window = window;
+public polyLineCommand(Color color, List<Point> points){
     this.color = color;
     this.points = points;
 }
@@ -30,10 +28,11 @@ public polyLineCommand(DrawGUI window, Color color, List<Point> points){
     }
     @Override
     public String toString(){
+        String stringColor = DrawGUI.getKeyByValue(color);
         String points_line = "";
         for (Point point : points) {
             points_line += point.x + "," + point.y + ":";
         }
-        return "polyline;" + points_line + ";"  + color.getRGB();
+        return "polyline;" + points_line + ";"  + stringColor;
     }
 }

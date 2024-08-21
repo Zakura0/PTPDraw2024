@@ -7,12 +7,10 @@ import mydraw.DrawGUI;
 
 public class rhombusCommand implements Drawable {
 
-int x0, y0, x1, y1;
-DrawGUI window;
-Color color;
+private int x0, y0, x1, y1;
+private Color color;
 
-public rhombusCommand(DrawGUI window, int x0, int y0, int x1, int y1, Color color) {
-    this.window = window;
+public rhombusCommand(int x0, int y0, int x1, int y1, Color color) {
     this.x0 = x0;
     this.y0 = y0;
     this.x1 = x1;
@@ -30,6 +28,7 @@ public rhombusCommand(DrawGUI window, int x0, int y0, int x1, int y1, Color colo
     }
     @Override
     public String toString(){
-        return "rhombus;" + x0 + ";" + y0 + ";" + x1 + ";" + y1 + ";" + color.getRGB();
+        String stringColor = DrawGUI.getKeyByValue(color);
+        return "rhombus;" + x0 + ";" + y0 + ";" + x1 + ";" + y1 + ";" + stringColor;
     }
 }

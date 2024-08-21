@@ -11,13 +11,11 @@ import mydraw.exceptions.SizeException;
 import mydraw.exceptions.TxtIOException;
 
 public class Draw {
-    public DrawGUI window;
-    public DrawShape shape;
-    public DrawSaveImage save;
-    public DrawFunctions func;
-    public DrawTextReader read;
-    public DrawTextWriter write;
-
+    private DrawGUI window;
+    private DrawShape shape;
+    private DrawSaveImage save;
+    private DrawFunctions func;
+    private DrawTextReader read;
     public static void main(String[] args) {
         new Draw();
     }
@@ -138,8 +136,8 @@ public class Draw {
      * API Method: clears the drawing pane by replacing it with a rectangle in the size of the front panel in the current fgColor.
      * Also clears the command queue, not allowing any undo()'s.
      **/
-    public void clear() {
-        func.clear();
+    public void clear(DrawFunctions func) {
+        func.clear(true);
     }
 
     /**
@@ -250,12 +248,11 @@ public class Draw {
     * API Method: writes the comamnds in the command queue on a .txt file
     * 
     */
-    public String writeText() throws TxtIOException {
+    public void writeText() throws IOException {
         try {
-            return write.writeText();
+            window.openSaveText();
         } catch (TxtIOException e) {
             e.printStackTrace();
         }
-        return null;
     }
 }

@@ -54,8 +54,7 @@ public DrawTextReader(DrawGUI gui){
             String type = parts[0];
             if (type.equals("polyline")) {
                 String points = parts[1];
-                int color_rgb = Integer.parseInt(parts[2]);
-                Color color = new Color(color_rgb, true);
+                Color color = DrawGUI.colors.get(parts[2]);
                 String[] pointStrings = points.split(":");
                 List<Point> pointList = new ArrayList<>();
                 for (String pointString : pointStrings) {
@@ -64,26 +63,25 @@ public DrawTextReader(DrawGUI gui){
                     int y = Integer.parseInt(coords[1]);
                     pointList.add(new Point(x, y));
                 }
-                gui.commandQueue.add(new polyLineCommand(gui, color, pointList));
+                gui.commandQueue.add(new polyLineCommand(color, pointList));
             } else {
                 int x0 = Integer.parseInt(parts[1]);
                 int y0 = Integer.parseInt(parts[2]);
                 int x1 = Integer.parseInt(parts[3]);
                 int y1 = Integer.parseInt(parts[4]);
-                int color_rgb = Integer.parseInt(parts[5]);
-                Color color = new Color(color_rgb, true);
+                Color color = DrawGUI.colors.get(parts[5]);
                 if (type.equals("rectangle")) {
-                    gui.commandQueue.add(new rectangleCommand(gui, x0, y0, x1, y1, color));
+                    gui.commandQueue.add(new rectangleCommand(x0, y0, x1, y1, color));
                 } else if (type.equals("oval")) {
-                    gui.commandQueue.add(new ovalCommand(gui, x0, y0, x1, y1, color));
+                    gui.commandQueue.add(new ovalCommand(x0, y0, x1, y1, color));
                 } else if (type.equals("fillrectangle")) {
-                    gui.commandQueue.add(new fillrectangleCommand(gui, x0, y0, x1, y1, color));
+                    gui.commandQueue.add(new fillrectangleCommand(x0, y0, x1, y1, color));
                 } else if (type.equals("filloval")) {
-                    gui.commandQueue.add(new fillovalCommand(gui, x0, y0, x1, y1, color));
+                    gui.commandQueue.add(new fillovalCommand(x0, y0, x1, y1, color));
                 } else if (type.equals("rhombus")) {
-                    gui.commandQueue.add(new rhombusCommand(gui, x0, y0, x1, y1, color));
+                    gui.commandQueue.add(new rhombusCommand(x0, y0, x1, y1, color));
                 } else if (type.equals("triangle")) {
-                    gui.commandQueue.add(new triangleCommand(gui, x0, y0, x1, y1, color));
+                    gui.commandQueue.add(new triangleCommand(x0, y0, x1, y1, color));
                 } else {
                     reader.close();
                     throw new TxtIOException("No valid commands found.");

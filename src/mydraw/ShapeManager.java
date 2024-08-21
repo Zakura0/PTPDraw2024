@@ -65,7 +65,7 @@ class ShapeManager implements ItemListener {
         
         public void mouseReleased(MouseEvent e) {
             List<Point> final_points = new ArrayList<Point>(this.points);
-            gui.commandQueue.add(new polyLineCommand(gui, gui.fgColor, final_points));
+            gui.commandQueue.add(new polyLineCommand(gui.fgColor, final_points));
             points.clear();
             gui.undoStack.clear(); 
         }
@@ -114,26 +114,26 @@ class ShapeManager implements ItemListener {
                 doDraw(pressx, pressy, x, y, g2);
                 if (this instanceof OvalDrawer)
                 {
-                    gui.commandQueue.add(new ovalCommand(gui, pressx, pressy, x, y, gui.fgColor));
+                    gui.commandQueue.add(new ovalCommand(pressx, pressy, x, y, gui.fgColor));
                 }
                 else  if (this instanceof TriangleDrawer)
                 {
-                    gui.commandQueue.add(new triangleCommand(gui, pressx, pressy, x, y, gui.fgColor));
+                    gui.commandQueue.add(new triangleCommand(pressx, pressy, x, y, gui.fgColor));
                 }
                 else if (this instanceof RhombusDrawer)
                 {
-                    gui.commandQueue.add(new rhombusCommand(gui, pressx, pressy, x, y, gui.fgColor));
+                    gui.commandQueue.add(new rhombusCommand(pressx, pressy, x, y, gui.fgColor));
                 }
                 else if (this instanceof RectangleFillDrawer)
                 {
-                    gui.commandQueue.add(new fillrectangleCommand(gui, pressx, pressy, x, y, gui.fgColor));
+                    gui.commandQueue.add(new fillrectangleCommand(pressx, pressy, x, y, gui.fgColor));
                 }
                 else if (this instanceof OvalFillDrawer)
                 {
-                    gui.commandQueue.add(new fillovalCommand(gui, pressx, pressy, x, y, gui.fgColor));
+                    gui.commandQueue.add(new fillovalCommand(pressx, pressy, x, y, gui.fgColor));
                 }
                 else {
-                    gui.commandQueue.add(new rectangleCommand(gui, pressx, pressy, x, y, gui.fgColor));
+                    gui.commandQueue.add(new rectangleCommand(pressx, pressy, x, y, gui.fgColor));
                 }
                 gui.undoStack.clear();           
             }
