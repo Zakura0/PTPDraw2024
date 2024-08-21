@@ -22,6 +22,7 @@ public class Draw {
 
     public Draw() {
         window = new DrawGUI(this);
+        shape = new DrawShape(window);
     }
 
     /**
