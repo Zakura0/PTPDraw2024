@@ -139,7 +139,7 @@ class DrawTest {
     }
 
     /*
-     * Tests for Width
+     * Test for Width
      */
 
     @Test
